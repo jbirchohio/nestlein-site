@@ -1,1 +1,35 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { Astro } from 'astro';
 
+const slug = Astro.params.slug;
+const file = await import(`../../../data/locations/${slug}.json`);
+const data = file.default;
+---
+
+<Layout>
+  <h1>
+    {data.logo_url && <img src={data.logo_url} alt={data.name} width="40" height="40" style="border-radius: 50%; vertical-align: middle; margin-right: 10px;" />}
+    {data.name}
+  </h1>
+
+  <p><strong>Address:</strong> {data.address}</p>
+  <p><strong>Phone:</strong> {data.phone_number}</p>
+  <p><strong>Hours:</strong> {data.hours_of_operation}</p>
+  <p><strong>Remote Work Score:</strong> {data.restaurant_score}/10</p>
+  <p><strong>Best Time to Work Remotely:</strong> {data.best_time_to_work_remotely}</p>
+
+  <h3>Remote Work Features:</h3>
+  <ul>
+    {Object.entries(data.remote_work_features).map(([key, value]) => (
+      <li><strong>{key.replace(/_/g, ' ')}:</strong> {value}</li>
+    ))}
+  </ul>
+
+  <h3>Tags:</h3>
+  <div style="margin-top: 0.5rem;">
+    {data.tags.map(tag => (
+      <span style="display: inline-block; background: #5FB49C; color: white; padding: 4px 10px; margin: 4px; border-radius: 9999px; font-size: 0.85rem;">{tag}</span>
+    ))}
+  </div>
+</Layout>
