@@ -18,29 +18,36 @@ const data = file.default;
 ---
 
 <Layout>
-  <h1>
-    {data.logo_url && <img src={data.logo_url} alt={data.name} width="40" height="40" style="border-radius: 50%; vertical-align: middle; margin-right: 10px;" />}
-    {data.name}
-  </h1>
+  <div style="max-width: 800px; margin: auto; padding: 2rem; font-family: 'Poppins', sans-serif; color: #333;">
+    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+      {data.logo_url && <img src={data.logo_url} alt={data.name} width="60" height="60" style="border-radius: 12px;" />}
+      <div>
+        <h1 style="margin: 0; font-size: 2rem;">{data.name}</h1>
+        <div style="color: #5FB49C; font-weight: 600;">Score: {data.restaurant_score}/10</div>
+      </div>
+    </div>
 
-  <p><strong>Address:</strong> {data.address}</p>
-  <p><strong>Phone:</strong> {data.phone_number}</p>
-  <p><strong>Hours:</strong> {data.hours_of_operation}</p>
-  <p><strong>Remote Work Score:</strong> {data.restaurant_score}/10</p>
-  <p><strong>Best Time to Work Remotely:</strong> {data.best_time_to_work_remotely}</p>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+      <div><strong>📍 Address:</strong><br />{data.address}</div>
+      <div><strong>📞 Phone:</strong><br />{data.phone_number}</div>
+      <div><strong>🕐 Hours:</strong><br />{data.hours_of_operation}</div>
+      <div><strong>🧠 Best Time to Work:</strong><br />{data.best_time_to_work_remotely}</div>
+    </div>
 
-  <h3>Remote Work Features:</h3>
-  <ul>
-    {Object.entries(data.remote_work_features).map(([key, value]) => (
-      <li><strong>{key.replace(/_/g, ' ')}:</strong> {value}</li>
-    ))}
-  </ul>
+    <h3 style="border-bottom: 2px solid #F2D0A9; padding-bottom: 0.5rem;">💻 Remote Work Features</h3>
+    <ul style="list-style: none; padding: 0; margin-top: 1rem;">
+      {Object.entries(data.remote_work_features).map(([key, value]) => (
+        <li style="margin-bottom: 0.5rem;">
+          <strong style="text-transform: capitalize;">{key.replace(/_/g, ' ')}:</strong> {value}
+        </li>
+      ))}
+    </ul>
 
-  <h3>Tags:</h3>
-  <div style="margin-top: 0.5rem;">
-    {data.tags.map(tag => (
-      <span style="display: inline-block; background: #5FB49C; color: white; padding: 4px 10px; margin: 4px; border-radius: 9999px; font-size: 0.85rem;">{tag}</span>
-    ))}
+    <h3 style="margin-top: 2rem;">🏷️ Tags</h3>
+    <div style="margin-top: 0.5rem;">
+      {data.tags.map(tag => (
+        <span style="display: inline-block; background: #5FB49C; color: white; padding: 6px 12px; margin: 6px 6px 0 0; border-radius: 9999px; font-size: 0.85rem;">{tag}</span>
+      ))}
+    </div>
   </div>
 </Layout>
-
