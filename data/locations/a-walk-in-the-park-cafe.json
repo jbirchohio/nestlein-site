@@ -1,0 +1,28 @@
+{
+  "name": "A Walk in the Park Café",
+  "slug": "a-walk-in-the-park-cafe",
+  "logo_url": "https://lh3.googleusercontent.com/gps-cs-s/AB5caB8PgWlTVOfn-KmvDKkXRIOHsBFEsg-Gys_fGUcaWrnghwl85ffApyrT2eJwXiiwJVzNoXxwGenbQeeJatcRdmvbJSt4CKg8_4r340nPteqqgBPs9JSb0tc0BFvsF1FQrW51vNL03w=w408-h544-k-no",
+  "address": "1491 Aster Ave, Akron, Ohio 44301",
+  "phone_number": "(330) 536-9255",
+  "hours_of_operation": "8 AM to 2 PM, Monday through Sunday",
+  "restaurant_score": 4.4,
+  "best_time_to_work_remotely": "Weekday mornings before 11 AM",
+  "remote_work_features": {
+    "wi_fi_quality": "Fast",
+    "outlet_access": "Lots",
+    "noise_level": "Quiet",
+    "seating_comfort": "Padded booths",
+    "natural_light": "Yes",
+    "stay_duration_friendliness": "Encouraged",
+    "food_drink_options": "Coffee, tea, vegan pastries, smoothies",
+    "bathroom_access": "Yes",
+    "parking_availability": "Free parking lot and street parking"
+  },
+  "tags": [
+    "Black-Owned",
+    "Family-Friendly",
+    "Good for Groups",
+    "Vegan Options",
+    "LGBTQ+ Friendly"
+  ]
+}
