@@ -1,8 +1,18 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { Astro } from 'astro';
+import fs from 'fs/promises';
+import path from 'path';
 
-const slug = Astro.params.slug;
+export async function getStaticPaths() {
+  const dir = path.resolve('./data/locations');
+  const files = await fs.readdir(dir);
+  return files.map((file) => {
+    const slug = file.replace('.json', '');
+    return { params: { slug } };
+  });
+}
+
+const { slug } = Astro.params;
 const file = await import(`../../../data/locations/${slug}.json`);
 const data = file.default;
 ---
@@ -33,3 +43,4 @@ const data = file.default;
     ))}
   </div>
 </Layout>
+
