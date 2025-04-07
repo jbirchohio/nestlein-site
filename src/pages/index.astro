@@ -118,11 +118,12 @@ const paginatedLocations = locationsWithDistance.slice((currentPage - 1) * pageS
           const url = new URL(window.location.href);
           url.searchParams.set('lat', latitude);
           url.searchParams.set('lon', longitude);
-          window.history.replaceState({}, '', url.toString());
+          window.location.href = url.toString();
         });
       }
 
-      const map = L.map('map').setView([41.08, -81.51], 12);
+      const map = L.map('map').setView([41.08, -81.51], 12); // Adjust the default view if needed
+
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '© OpenStreetMap'
