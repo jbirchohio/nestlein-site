@@ -4,7 +4,7 @@ import fs from 'fs/promises';
 import path from 'path';
 
 export async function getStaticPaths() {
-  const dir = path.resolve('./data/locations');
+  const dir = path.resolve('./src/data/locations'); // Updated path
   const files = await fs.readdir(dir);
   return files.map((file) => {
     const slug = file.replace('.json', '');
@@ -13,7 +13,7 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
-const file = await import(`../../../data/locations/${slug}.json`);
+const file = await import(`../../data/locations/${slug}.json`); // Adjusted for src/ reference
 const data = file.default;
 ---
 
