@@ -39,6 +39,7 @@ const paginatedLocations = locationsWithDistance.slice((currentPage - 1) * pageS
   <head>
     <title>NestleIn - Remote-Friendly Spots</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Leaflet (optional if you're switching to Google Maps) -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   </head>
@@ -89,61 +90,61 @@ const paginatedLocations = locationsWithDistance.slice((currentPage - 1) * pageS
 
       <section class="mt-12">
         <h2 class="text-lg font-semibold mb-2">Map View</h2>
-        <div id="map" class="w-64 h-96 rounded shadow"></div>
+        <div id="map" class="w-64 h-96 rounded shadow"></div> <!-- Adjust map size -->
       </section>
     </main>
 
     <script>
-  function filterCards() {
-    const search = document.getElementById('search').value.toLowerCase();
-    const cards = document.querySelectorAll('#card-container a');
-    cards.forEach(card => {
-      const tags = card.getAttribute('data-tags')?.toLowerCase() || '';
-      const text = card.textContent.toLowerCase();
-      card.style.display = text.includes(search) || tags.includes(search) ? 'block' : 'none';
-    });
-  }
-
-  function filterByTag(tag) {
-    const cards = document.querySelectorAll('#card-container a');
-    cards.forEach(card => {
-      const tags = card.getAttribute('data-tags') || '';
-      card.style.display = tags.includes(tag) ? 'block' : 'none';
-    });
-  }
-
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(position) {
-      const { latitude, longitude } = position.coords;
-      const url = new URL(window.location.href);
-      url.searchParams.set('lat', latitude);
-      url.searchParams.set('lon', longitude);
-      window.history.replaceState({}, '', url.toString());
-    });
-  }
-
-  // Initialize Google Maps
-  function initMap() {
-    const map = new google.maps.Map(document.getElementById("map"), {
-      center: { lat: 41.08, lng: -81.51 }, // Default center (adjust if needed)
-      zoom: 12, // Zoom level
-    });
-
-    const locations = JSON.parse(document.querySelector('[type="application/json"]').textContent);
-    locations.forEach(loc => {
-      if (loc.data.latitude && loc.data.longitude) {
-        new google.maps.Marker({
-          position: { lat: loc.data.latitude, lng: loc.data.longitude },
-          map: map,
-          title: loc.data.name,
+      function filterCards() {
+        const search = document.getElementById('search').value.toLowerCase();
+        const cards = document.querySelectorAll('#card-container a');
+        cards.forEach(card => {
+          const tags = card.getAttribute('data-tags')?.toLowerCase() || '';
+          const text = card.textContent.toLowerCase();
+          card.style.display = text.includes(search) || tags.includes(search) ? 'block' : 'none';
         });
       }
-    });
-  }
-</script>
 
-<!-- Include Google Maps API (replace YOUR_GOOGLE_MAPS_API_KEY with your actual API key) -->
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCEO1TGDpIshj-gXZH_V-0uWRpVLxHeOlM&callback=initMap" async defer></script>
+      function filterByTag(tag) {
+        const cards = document.querySelectorAll('#card-container a');
+        cards.forEach(card => {
+          const tags = card.getAttribute('data-tags') || '';
+          card.style.display = tags.includes(tag) ? 'block' : 'none';
+        });
+      }
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          const { latitude, longitude } = position.coords;
+          const url = new URL(window.location.href);
+          url.searchParams.set('lat', latitude);
+          url.searchParams.set('lon', longitude);
+          window.history.replaceState({}, '', url.toString());
+        });
+      }
+
+      // Initialize Google Maps
+      function initMap() {
+        const map = new google.maps.Map(document.getElementById("map"), {
+          center: { lat: 41.08, lng: -81.51 }, // Default center (adjust if needed)
+          zoom: 12, // Zoom level
+        });
+
+        const locations = JSON.parse(document.querySelector('[type="application/json"]').textContent);
+        locations.forEach(loc => {
+          if (loc.data.latitude && loc.data.longitude) {
+            new google.maps.Marker({
+              position: { lat: loc.data.latitude, lng: loc.data.longitude },
+              map: map,
+              title: loc.data.name,
+            });
+          }
+        });
+      }
+    </script>
+
+    <!-- Include Google Maps API (replace YOUR_GOOGLE_MAPS_API_KEY with your actual API key) -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCEO1TGDpIshj-gXZH_V-0uWRpVLxHeOlM&callback=initMap" async defer></script>
 
     <script type="application/json" id="location-data">
       {JSON.stringify(paginatedLocations)}
