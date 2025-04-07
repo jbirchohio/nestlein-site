@@ -1,53 +1,63 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import fs from 'fs/promises';
+import fs from 'fs';
 import path from 'path';
-
-export async function getStaticPaths() {
-  const dir = path.resolve('./src/data/locations'); // Updated path
-  const files = await fs.readdir(dir);
-  return files.map((file) => {
-    const slug = file.replace('.json', '');
-    return { params: { slug } };
-  });
-}
+import { Astro } from 'astro';
 
 const { slug } = Astro.params;
-const file = await import(`../../data/locations/${slug}.json`); // Adjusted for src/ reference
-const data = file.default;
+
+const filePath = path.resolve(Astro.root, 'src/data/locations', `${slug}.json`);
+let location = null;
+
+try {
+  const raw = fs.readFileSync(filePath, 'utf8');
+  location = JSON.parse(raw);
+} catch (err) {
+  console.error('Error loading location JSON:', err);
+}
 ---
 
-<Layout>
-  <div style="max-width: 800px; margin: auto; padding: 2rem; font-family: 'Poppins', sans-serif; color: #333;">
-    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-      {data.logo_url && <img src={data.logo_url} alt={data.name} width="60" height="60" style="border-radius: 12px;" />}
-      <div>
-        <h1 style="margin: 0; font-size: 2rem;">{data.name}</h1>
-        <div style="color: #5FB49C; font-weight: 600;">Score: {data.restaurant_score}/10</div>
+<html>
+  <head>
+    <title>{location?.name || 'NestleIn Listing'}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body class="p-6 font-sans bg-gray-50 text-gray-900">
+    <a href="/" class="block text-blue-600 underline mb-4">← Back to homepage</a>
+
+    {location ? (
+      <div class="max-w-2xl mx-auto bg-white p-6 rounded shadow">
+        <h1 class="text-3xl font-bold mb-2">{location.name}</h1>
+        <p class="text-sm text-gray-600 mb-1">{location.address}</p>
+        <p class="text-sm text-gray-600 mb-4">{location.phone_number}</p>
+        {location.logo_url && (
+          <img src={location.logo_url} alt={location.name + ' logo'} class="w-full h-64 object-cover rounded mb-4" />
+        )}
+        <div class="mb-4">
+          <p><strong>Hours:</strong> {location.hours_of_operation}</p>
+          <p><strong>Score:</strong> {location.restaurant_score}/10</p>
+          <p><strong>Best Time to Work Remotely:</strong> {location.best_time_to_work_remotely}</p>
+        </div>
+
+        <div class="mb-4">
+          <h2 class="font-semibold text-lg mb-2">Remote Work Features</h2>
+          <ul class="list-disc pl-6 space-y-1">
+            {Object.entries(location.remote_work_features || {}).map(([key, value]) => (
+              <li><strong>{key.replace(/_/g, ' ')}:</strong> {value}</li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="font-semibold text-lg mb-2">Tags</h2>
+          <div class="flex flex-wrap gap-2">
+            {location.tags?.map(tag => (
+              <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">{tag}</span>
+            ))}
+          </div>
+        </div>
       </div>
-    </div>
-
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
-      <div><strong>📍 Address:</strong><br />{data.address}</div>
-      <div><strong>📞 Phone:</strong><br />{data.phone_number}</div>
-      <div><strong>🕐 Hours:</strong><br />{data.hours_of_operation}</div>
-      <div><strong>🧠 Best Time to Work:</strong><br />{data.best_time_to_work_remotely}</div>
-    </div>
-
-    <h3 style="border-bottom: 2px solid #F2D0A9; padding-bottom: 0.5rem;">💻 Remote Work Features</h3>
-    <ul style="list-style: none; padding: 0; margin-top: 1rem;">
-      {Object.entries(data.remote_work_features).map(([key, value]) => (
-        <li style="margin-bottom: 0.5rem;">
-          <strong style="text-transform: capitalize;">{key.replace(/_/g, ' ')}:</strong> {value}
-        </li>
-      ))}
-    </ul>
-
-    <h3 style="margin-top: 2rem;">🏷️ Tags</h3>
-    <div style="margin-top: 0.5rem;">
-      {data.tags.map(tag => (
-        <span style="display: inline-block; background: #5FB49C; color: white; padding: 6px 12px; margin: 6px 6px 0 0; border-radius: 9999px; font-size: 0.85rem;">{tag}</span>
-      ))}
-    </div>
-  </div>
-</Layout>
+    ) : (
+      <div class="text-center text-red-600 text-xl">Location not found.</div>
+    )}
+  </body>
+</html>
