@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 
 export async function getStaticPaths() {
-  const directoryPath = path.resolve('src/data/locations');
+  const directoryPath = path.resolve('./data/locations'); // Not in src!
   const files = fs.readdirSync(directoryPath);
 
   const paths = files
@@ -16,7 +16,7 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
-const filePath = path.resolve('src/data/locations', `${slug}.json`);
+const filePath = path.resolve('./data/locations', `${slug}.json`);
 let location = null;
 
 try {
