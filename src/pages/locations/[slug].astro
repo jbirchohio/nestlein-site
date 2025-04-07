@@ -1,11 +1,22 @@
 ---
 import fs from 'fs';
 import path from 'path';
-import { Astro } from 'astro';
+
+export async function getStaticPaths() {
+  const directoryPath = path.resolve('src/data/locations');
+  const files = fs.readdirSync(directoryPath);
+
+  const paths = files
+    .filter(file => file.endsWith('.json'))
+    .map(file => ({
+      params: { slug: file.replace('.json', '') }
+    }));
+
+  return paths;
+}
 
 const { slug } = Astro.params;
-
-const filePath = path.resolve(Astro.root, 'src/data/locations', `${slug}.json`);
+const filePath = path.resolve('src/data/locations', `${slug}.json`);
 let location = null;
 
 try {
