@@ -118,7 +118,7 @@ const paginatedLocations = locationsWithDistance.slice((currentPage - 1) * pageS
           const url = new URL(window.location.href);
           url.searchParams.set('lat', latitude);
           url.searchParams.set('lon', longitude);
-          window.location.href = url.toString();
+          window.history.replaceState({}, '', url.toString());
         });
       }
 
