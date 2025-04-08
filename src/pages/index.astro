@@ -28,16 +28,11 @@ const locationsWithDistance = userLat && userLon
     }).sort((a, b) => a.distance - b.distance)
   : locations;
 
-const pageSize = 9;
+const pageSize = 99;
 const totalPages = Math.ceil(locationsWithDistance.length / pageSize);
 const currentPage = Number(Astro.url.searchParams.get('page') || '1');
 const paginatedLocations = locationsWithDistance.slice((currentPage - 1) * pageSize, currentPage * pageSize);
-
-const allTags = ["Open", "Fast Wi-Fi", "Family-Friendly", "Vegan Options", "Pet-Friendly", "Study Spot"];
-const shuffledTags = allTags.sort(() => Math.random() - 0.5);
-const tagSections = shuffledTags.slice(0, 3);
 ---
-
 <html>
   <head>
     <title>NestleIn - Remote-Friendly Spots</title>
@@ -56,31 +51,7 @@ const tagSections = shuffledTags.slice(0, 3);
     </header>
 
     <main class="px-4 py-6">
-      {tagSections.map(tag => {
-        const group = paginatedLocations.filter(({ data }) => data.tags.includes(tag));
-        return (
-          <section class="mb-12">
-            <h2 class="text-xl font-semibold text-orange-600 mb-4 px-2">{tag}</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {group.map(({ data, distance }) => (
-                <a href={`/locations/${data.slug}`} class="block bg-white rounded-lg border border-orange-200 shadow hover:shadow-md transition overflow-hidden location-card text-sm w-full max-w-[225px] mx-auto" data-tags={`Tags: ${data.tags.join(', ')}`} data-lat={data.latitude} data-lon={data.longitude}>
-                  {data.logo_url && <img src={data.logo_url} alt={`${data.name} logo`} class="w-full h-24 object-cover border-b border-orange-100" />}
-                  <div class="p-3">
-                    <h3 class="text-base font-semibold text-orange-700 mb-1">{data.name}</h3>
-                    <p class="text-xs text-gray-600 location-address">{data.address}</p>
-                    <p class="mt-1 text-xs text-gray-700 font-medium">⭐ {data.restaurant_score}/10</p>
-                    <p class="text-xs text-gray-700">🧠 {data.best_time_to_work_remotely}</p>
-                    {distance !== undefined && isFinite(distance) && <p class="text-xs text-gray-500">📍 {distance.toFixed(1)} mi away</p>}
-                    <div class="mt-2 flex flex-wrap gap-1">
-                      {data.tags.map(tag => <span class="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">{tag}</span>)}
-                    </div>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </section>
-        );
-      })}
+      <div id="dynamic-sections"></div>
 
       <div class="mt-10 flex justify-center gap-2">
         {Array.from({ length: totalPages }).map((_, i) => (
@@ -88,6 +59,41 @@ const tagSections = shuffledTags.slice(0, 3);
         ))}
       </div>
     </main>
+
+    <script>
+      const allTags = ["Open", "Fast Wi-Fi", "Family-Friendly", "Vegan Options", "Pet-Friendly", "Study Spot"];
+      const allCards = [...document.querySelectorAll('.location-card')];
+
+      // Group cards by tags
+      const tagMap = {};
+      allCards.forEach(card => {
+        const tagText = card.dataset.tags.replace('Tags: ', '').split(',').map(tag => tag.trim());
+        tagText.forEach(tag => {
+          if (!tagMap[tag]) tagMap[tag] = [];
+          tagMap[tag].push(card.cloneNode(true));
+        });
+      });
+
+      // Shuffle and pick 3 tags
+      const shuffledTags = allTags.sort(() => 0.5 - Math.random()).slice(0, 3);
+      const container = document.getElementById('dynamic-sections');
+
+      shuffledTags.forEach(tag => {
+        const section = document.createElement('section');
+        section.className = 'mb-12';
+        const title = document.createElement('h2');
+        title.className = 'text-xl font-semibold text-orange-600 mb-4 px-2';
+        title.textContent = tag;
+        const grid = document.createElement('div');
+        grid.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4';
+
+        (tagMap[tag] || []).forEach(card => grid.appendChild(card));
+
+        section.appendChild(title);
+        section.appendChild(grid);
+        container.appendChild(section);
+      });
+    </script>
 
     <script>
       const search = document.getElementById('search');
