@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 
 export async function getStaticPaths() {
-  const directoryPath = path.resolve('./data/locations'); // Not in src!
+  const directoryPath = path.resolve('./data/locations');
   const files = fs.readdirSync(directoryPath);
 
   const paths = files
@@ -25,6 +25,8 @@ try {
 } catch (err) {
   console.error('Error loading location JSON:', err);
 }
+
+const data = location;
 ---
 
 <html lang="en">
