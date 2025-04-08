@@ -3,7 +3,8 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "copy-locations": "node copy-locations.js",
+    "build": "npm run copy-locations && astro build",
     "preview": "astro preview"
   },
   "dependencies": {
@@ -14,11 +15,4 @@
     "postcss": "^8.4.0",
     "autoprefixer": "^10.4.0"
   }
-  "scripts": {
-  "dev": "astro dev",
-  "copy-locations": "node copy-locations.js",
-  "build": "npm run copy-locations && astro build",
-  "preview": "astro preview"
-}
-
 }
