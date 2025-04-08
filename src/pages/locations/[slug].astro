@@ -36,17 +36,17 @@ const data = location;
     <link href="/styles/tailwind.css" rel="stylesheet" />
   </head>
   <body class="bg-gradient-to-br from-orange-50 to-white min-h-screen font-sans text-gray-800">
-    <main class="max-w-4xl mx-auto p-6 space-y-10">
+    <main class="max-w-4xl mx-auto px-6 py-10 space-y-10">
 
       <a href="/" class="text-sm text-purple-600 hover:underline">← Back to homepage</a>
 
-      <div class="overflow-hidden rounded-2xl shadow-lg border border-orange-200">
-        {data.logo_url && (
-          <img src={data.logo_url} alt={`${data.name} logo`} class="w-full object-cover aspect-[4/2]" />
-        )}
-      </div>
+      {data.logo_url && (
+        <div class="w-full rounded-xl overflow-hidden shadow-lg border border-orange-200">
+          <img src={data.logo_url} alt={`${data.name} logo`} class="w-full max-h-64 object-cover aspect-video" />
+        </div>
+      )}
 
-      <h1 class="text-3xl sm:text-4xl font-extrabold text-orange-600">{data.name}</h1>
+      <h1 class="text-4xl sm:text-5xl font-extrabold text-orange-600 mt-6 tracking-tight leading-snug">{data.name}</h1>
 
       <section class="grid gap-3 bg-white p-6 rounded-xl shadow-md border border-orange-100 text-sm">
         <p><span class="font-semibold text-pink-600">📍 Address:</span> {data.address}</p>
