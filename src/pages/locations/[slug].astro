@@ -5,11 +5,13 @@ import path from 'path';
 export async function getStaticPaths() {
   const directoryPath = path.resolve('./data/locations');
   const files = fs.readdirSync(directoryPath);
+
   const paths = files
     .filter(file => file.endsWith('.json'))
     .map(file => ({
       params: { slug: file.replace('.json', '') }
     }));
+
   return paths;
 }
 
@@ -33,32 +35,34 @@ const data = location;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="/styles/tailwind.css" rel="stylesheet" />
   </head>
-  <body class="bg-orange-50 font-sans text-gray-800">
-    <main class="max-w-4xl mx-auto px-4 sm:px-6 py-10 space-y-8">
-      
-      <a href="/" class="text-purple-600 hover:underline text-sm">← Back to homepage</a>
+  <body class="bg-gradient-to-br from-orange-50 to-white min-h-screen font-sans text-gray-800">
+    <main class="max-w-4xl mx-auto p-6 space-y-10">
 
-      {data.logo_url && (
-        <img src={data.logo_url} alt={`${data.name} logo`} class="w-full h-64 object-cover rounded-xl shadow-md border border-orange-300" />
-      )}
+      <a href="/" class="text-sm text-purple-600 hover:underline">← Back to homepage</a>
 
-      <h1 class="text-4xl font-extrabold text-orange-600">{data.name}</h1>
-
-      <div class="bg-white rounded-xl shadow p-6 border border-orange-200 space-y-3 text-base">
-        <div><span class="font-semibold text-pink-600">📍 Address:</span> {data.address}</div>
-        <div><span class="font-semibold text-red-500">📞 Phone:</span> {data.phone_number}</div>
-        <div><span class="font-semibold text-orange-500">⏰ Hours:</span> {data.hours_of_operation}</div>
-        <div><span class="font-semibold text-yellow-500">⭐ Score:</span> {data.restaurant_score}/10</div>
-        <div><span class="font-semibold text-purple-600">🧠 Best Time to Work Remotely:</span> {data.best_time_to_work_remotely}</div>
+      <div class="overflow-hidden rounded-2xl shadow-lg border border-orange-200">
+        {data.logo_url && (
+          <img src={data.logo_url} alt={`${data.name} logo`} class="w-full object-cover aspect-[4/2]" />
+        )}
       </div>
 
-      <section class="bg-white rounded-xl shadow p-6 border border-orange-200">
-        <h2 class="text-2xl font-bold text-orange-600 mb-4 flex items-center gap-2">💻 Remote Work Features</h2>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-orange-600">{data.name}</h1>
+
+      <section class="grid gap-3 bg-white p-6 rounded-xl shadow-md border border-orange-100 text-sm">
+        <p><span class="font-semibold text-pink-600">📍 Address:</span> {data.address}</p>
+        <p><span class="font-semibold text-red-500">📞 Phone:</span> {data.phone_number}</p>
+        <p><span class="font-semibold text-orange-500">⏰ Hours:</span> {data.hours_of_operation}</p>
+        <p><span class="font-semibold text-yellow-500">⭐ Score:</span> {data.restaurant_score}/10</p>
+        <p><span class="font-semibold text-purple-500">🧠 Best Time:</span> {data.best_time_to_work_remotely}</p>
+      </section>
+
+      <section class="bg-white rounded-xl shadow-md border border-orange-100 p-6">
+        <h2 class="text-2xl font-semibold text-orange-600 mb-4 flex items-center gap-2">💻 Remote Work Features</h2>
         <ul class="grid sm:grid-cols-2 gap-4 text-sm list-disc list-inside">
           <li><strong>Wi-Fi:</strong> {data.remote_work_features?.wi_fi_quality || "Unknown"}</li>
           <li><strong>Outlets:</strong> {data.remote_work_features?.outlet_access || "Unknown"}</li>
           <li><strong>Noise Level:</strong> {data.remote_work_features?.noise_level || "Unknown"}</li>
-          <li><strong>Seating Comfort:</strong> {data.remote_work_features?.seating_comfort || "Unknown"}</li>
+          <li><strong>Seating:</strong> {data.remote_work_features?.seating_comfort || "Unknown"}</li>
           <li><strong>Natural Light:</strong> {data.remote_work_features?.natural_light || "Unknown"}</li>
           <li><strong>Stay Duration:</strong> {data.remote_work_features?.stay_duration_friendliness || "Not specified"}</li>
           <li><strong>Food/Drink:</strong> {data.remote_work_features?.food_drink_options || "Unknown"}</li>
@@ -72,17 +76,20 @@ const data = location;
           <h2 class="text-lg font-bold text-orange-600 mb-2">🏷️ Tags</h2>
           <div class="flex flex-wrap gap-2">
             {data.tags.map(tag => (
-              <span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-medium shadow-sm">{tag}</span>
+              <span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
+                {tag}
+              </span>
             ))}
           </div>
         </section>
       )}
 
-      <footer class="mt-12 pt-6 border-t text-center text-sm text-gray-500">
-        ✨ Powered by <span class="text-orange-600 font-semibold">NestleIn</span> · 
-        <a href="/" class="text-purple-500 hover:underline ml-1">Return Home</a>
+      <footer class="mt-10 pt-6 border-t text-center text-sm text-gray-500">
+        <p>
+          ✨ Powered by <span class="text-orange-600 font-semibold">NestleIn</span> ·
+          <a href="/" class="text-purple-500 hover:underline ml-1">Return Home</a>
+        </p>
       </footer>
-
     </main>
   </body>
 </html>
