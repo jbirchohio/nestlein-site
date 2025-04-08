@@ -34,8 +34,8 @@ const currentPage = Number(Astro.url.searchParams.get('page') || '1');
 const paginatedLocations = locationsWithDistance.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
 const allTags = ["Open", "Fast Wi-Fi", "Family-Friendly", "Vegan Options", "Pet-Friendly", "Study Spot"];
-const shuffled = allTags.sort(() => 0.5 - Math.random());
-const tagSections = shuffled.slice(0, 3);
+const tagSeed = Math.floor(Math.random() * allTags.length);
+const tagSections = [allTags[tagSeed], allTags[(tagSeed + 1) % allTags.length], allTags[(tagSeed + 2) % allTags.length]];
 ---
 
 <html>
@@ -140,4 +140,3 @@ const tagSections = shuffled.slice(0, 3);
     </script>
   </body>
 </html>
- 
