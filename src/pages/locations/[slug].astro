@@ -1,18 +1,14 @@
 ---
+import Layout from '../../layouts/Layout.astro';
 import fs from 'fs';
 import path from 'path';
 
 export async function getStaticPaths() {
   const directoryPath = path.resolve('./data/locations');
   const files = fs.readdirSync(directoryPath);
-
-  const paths = files
-    .filter(file => file.endsWith('.json'))
-    .map(file => ({
-      params: { slug: file.replace('.json', '') }
-    }));
-
-  return paths;
+  return files.map(file => ({
+    params: { slug: file.replace('.json', '') }
+  }));
 }
 
 const { slug } = Astro.params;
@@ -28,6 +24,9 @@ try {
 
 const data = location;
 ---
+
+<Layout title={data.name}>
+  <!-- Your page HTML goes here -->
 
 <html lang="en">
   <head>
@@ -93,3 +92,5 @@ const data = location;
     </main>
   </body>
 </html>
+  <h1 class="text-4xl font-bold text-orange-600">{data.name}</h1>
+</Layout>
