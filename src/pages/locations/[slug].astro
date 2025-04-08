@@ -33,22 +33,22 @@ const data = location;
   <head>
     <title>{data.name} - NestleIn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="/styles/tailwind.css" rel="stylesheet" />
+    <link href="/src/styles/tailwind.css" rel="stylesheet" />
   </head>
   <body class="bg-gradient-to-br from-orange-50 to-white min-h-screen font-sans text-gray-800">
-    <main class="max-w-4xl mx-auto px-6 py-10 space-y-10">
+    <main class="max-w-5xl mx-auto px-6 py-12 space-y-12">
 
       <a href="/" class="text-sm text-purple-600 hover:underline">← Back to homepage</a>
 
-      {data.logo_url && (
-        <div class="w-full rounded-xl overflow-hidden shadow-lg border border-orange-200">
-          <img src={data.logo_url} alt={`${data.name} logo`} class="w-full max-h-64 object-cover aspect-video" />
-        </div>
-      )}
+      <div class="rounded-xl overflow-hidden shadow-lg border border-orange-200">
+        {data.logo_url && (
+          <img src={data.logo_url} alt={`${data.name} logo`} class="w-full h-60 sm:h-72 object-cover" />
+        )}
+      </div>
 
-      <h1 class="text-4xl sm:text-5xl font-extrabold text-orange-600 mt-6 tracking-tight leading-snug">{data.name}</h1>
+      <h1 class="text-4xl sm:text-5xl font-extrabold text-orange-600 border-b border-orange-200 pb-2">{data.name}</h1>
 
-      <section class="grid gap-3 bg-white p-6 rounded-xl shadow-md border border-orange-100 text-sm">
+      <section class="grid gap-4 bg-white p-6 rounded-xl shadow-md border border-orange-100 text-base">
         <p><span class="font-semibold text-pink-600">📍 Address:</span> {data.address}</p>
         <p><span class="font-semibold text-red-500">📞 Phone:</span> {data.phone_number}</p>
         <p><span class="font-semibold text-orange-500">⏰ Hours:</span> {data.hours_of_operation}</p>
@@ -58,7 +58,7 @@ const data = location;
 
       <section class="bg-white rounded-xl shadow-md border border-orange-100 p-6">
         <h2 class="text-2xl font-semibold text-orange-600 mb-4 flex items-center gap-2">💻 Remote Work Features</h2>
-        <ul class="grid sm:grid-cols-2 gap-4 text-sm list-disc list-inside">
+        <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-3 text-sm list-disc list-inside">
           <li><strong>Wi-Fi:</strong> {data.remote_work_features?.wi_fi_quality || "Unknown"}</li>
           <li><strong>Outlets:</strong> {data.remote_work_features?.outlet_access || "Unknown"}</li>
           <li><strong>Noise Level:</strong> {data.remote_work_features?.noise_level || "Unknown"}</li>
@@ -73,7 +73,7 @@ const data = location;
 
       {data.tags?.length > 0 && (
         <section>
-          <h2 class="text-lg font-bold text-orange-600 mb-2">🏷️ Tags</h2>
+          <h2 class="text-xl font-bold text-orange-600 mb-2">🏷️ Tags</h2>
           <div class="flex flex-wrap gap-2">
             {data.tags.map(tag => (
               <span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
