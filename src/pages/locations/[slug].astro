@@ -1,7 +1,7 @@
 ---
 import fs from 'fs';
 import path from 'path';
-import '../../styles/tailwind.css'; // ✅ Tailwind imported correctly!
+import '../../styles/tailwind.css'; // ✅ This is the correct path for Vercel
 
 export async function getStaticPaths() {
   const directoryPath = path.resolve('./data/locations');
@@ -29,7 +29,6 @@ try {
 
 const data = location;
 ---
-
 <html lang="en">
   <head>
     <title>{data.name} - NestleIn</title>
