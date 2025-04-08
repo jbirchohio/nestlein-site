@@ -1,0 +1,29 @@
+{
+  "website_url": "https://www.starbucks.com/store-locator/store/1015905?ref=nestlein",
+  "logo_url": "https://lh3.googleusercontent.com/p/AF1QipN0amjn96M6fnibGX_3mviv1Xn7mnl5DxqMto_V=w408-h306-k-no",
+  "address": "1971 W Market St, Akron, OH 44313",
+  "phone_number": "(330) 869-4909",
+  "hours_of_operation": "5 AM to 9 PM, daily",
+  "restaurant_score": 4.1,
+  "best_time_to_work_remotely": "Weekday mornings before 11 AM  --- ##Remote Work Features##",
+  "tags": [
+    "Fast Wi-Fi",
+    "Good for Groups",
+    "Quiet Space",
+    "Study Spot",
+    "LGBTQ+ Friendly"
+  ],
+  "name": "Starbucks",
+  "slug": "starbucks",
+  "remote_work_features": {
+    "wi_fi_quality": "Fast (indicated by \"Free Wi-Fi\" and \"Good for working on laptop\" in additionalInfo)",
+    "outlet_access": "Unknown",
+    "noise_level": "Moderate to Quiet (described as \"Quiet\" and \"Cozy\" in the Atmosphere section of additionalInfo, but also busy at peak times)",
+    "seating_comfort": "Unknown (requires more specific information about seating types)",
+    "natural_light": "Unknown",
+    "stay_duration_friendliness": "Yes, Encouraged (implied by the \"Good for working on laptop\" tag and long operating hours)",
+    "food_drink_options": "Coffee, tea, pastries, sandwiches (as indicated by the categories and reviews)",
+    "bathroom_access": "Yes (indicated by \"Restroom\" in Amenities)",
+    "parking_availability": "Lot available (indicated by \"Free parking lot\" in Parking)"
+  }
+}
