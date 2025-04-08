@@ -32,30 +32,30 @@ const data = location;
 <html lang="en">
   <head>
     <title>{data.name} - NestleIn</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="/styles/tailwind.css" rel="stylesheet" />
   </head>
-  <body class="bg-gray-50 text-gray-900 font-sans">
-    <main class="max-w-4xl mx-auto p-6 space-y-8">
-      <a href="/" class="text-blue-600 hover:underline text-sm inline-block">← Back to homepage</a>
+  <body class="bg-orange-50 text-gray-900 font-sans">
+    <main class="max-w-3xl mx-auto p-6 space-y-8">
+      <a href="/" class="text-purple-600 hover:underline text-sm inline-block">← Back to homepage</a>
 
       {data.logo_url && (
-        <img src={data.logo_url} alt={`${data.name} logo`} class="w-full h-64 object-cover rounded-lg shadow-md" />
+        <img src={data.logo_url} alt={`${data.name} logo`} class="w-full h-64 object-cover rounded-lg shadow-md border border-orange-300" />
       )}
 
-      <h1 class="text-4xl font-bold text-orange-600">{data.name}</h1>
+      <h1 class="text-4xl font-extrabold text-orange-600 mt-4">{data.name}</h1>
 
-      <div class="grid gap-4 text-base bg-white p-4 rounded-lg shadow border">
-        <p><strong>📍 Address:</strong> {data.address}</p>
-        <p><strong>📞 Phone:</strong> {data.phone_number}</p>
-        <p><strong>⏰ Hours:</strong> {data.hours_of_operation}</p>
-        <p><strong>⭐ Score:</strong> {data.restaurant_score}/10</p>
-        <p><strong>🧠 Best Time to Work Remotely:</strong> {data.best_time_to_work_remotely}</p>
+      <div class="bg-white border shadow-md rounded-lg p-6 space-y-3 text-sm leading-relaxed">
+        <p><span class="font-bold text-pink-600">📍 Address:</span> {data.address}</p>
+        <p><span class="font-bold text-red-500">📞 Phone:</span> {data.phone_number}</p>
+        <p><span class="font-bold text-orange-500">⏰ Hours:</span> {data.hours_of_operation}</p>
+        <p><span class="font-bold text-yellow-600">⭐ Score:</span> {data.restaurant_score}/10</p>
+        <p><span class="font-bold text-purple-600">🧠 Best Time to Work Remotely:</span> {data.best_time_to_work_remotely}</p>
       </div>
 
-      <section class="bg-white p-6 rounded-lg shadow border">
-        <h2 class="text-2xl font-semibold mb-4 text-orange-600">💻 Remote Work Features</h2>
-        <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3 list-disc pl-5 text-sm">
+      <section class="bg-white border rounded-lg p-6 shadow space-y-4">
+        <h2 class="text-2xl font-bold text-orange-600 flex items-center gap-2">💻 Remote Work Features</h2>
+        <ul class="grid sm:grid-cols-2 gap-3 text-sm list-disc list-inside">
           <li><strong>Wi-Fi:</strong> {data.remote_work_features?.wi_fi_quality || "Unknown"}</li>
           <li><strong>Outlets:</strong> {data.remote_work_features?.outlet_access || "Unknown"}</li>
           <li><strong>Noise Level:</strong> {data.remote_work_features?.noise_level || "Unknown"}</li>
@@ -70,17 +70,19 @@ const data = location;
 
       {data.tags?.length > 0 && (
         <section>
-          <h2 class="text-lg font-medium mb-2 text-orange-600">🏷️ Tags</h2>
+          <h2 class="text-lg font-bold text-orange-600 mb-2">🏷️ Tags</h2>
           <div class="flex flex-wrap gap-2">
             {data.tags.map(tag => (
-              <span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-medium">{tag}</span>
+              <span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
+                {tag}
+              </span>
             ))}
           </div>
         </section>
       )}
 
-      <footer class="mt-8 pt-6 border-t text-center text-sm text-gray-500">
-        <p>✨ Powered by NestleIn · <a href="/" class="text-blue-500 hover:underline">Return Home</a></p>
+      <footer class="mt-10 pt-6 border-t text-center text-sm text-gray-500">
+        <p>✨ Powered by <span class="text-orange-600 font-semibold">NestleIn</span> · <a href="/" class="text-purple-500 hover:underline">Return Home</a></p>
       </footer>
     </main>
   </body>
