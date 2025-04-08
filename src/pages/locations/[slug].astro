@@ -1,7 +1,7 @@
 ---
 import fs from 'fs';
 import path from 'path';
-import '../../styles/tailwind.css'; // ✅ Tailwind imported correctly!
+import '../../styles/tailwind.css'; // ✅ This is the correct path for Vercel
 
 export async function getStaticPaths() {
   const directoryPath = path.resolve('./data/locations');
@@ -29,64 +29,3 @@ try {
 
 const data = location;
 ---
-
-<html lang="en">
-  <head>
-    <title>{data.name} - NestleIn</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  </head>
-  <body class="bg-gradient-to-br from-orange-50 to-yellow-100 min-h-screen text-gray-800 font-sans">
-    <main class="max-w-3xl mx-auto px-4 py-10 space-y-10">
-      <a href="/" class="text-purple-600 hover:text-purple-800 text-sm font-medium inline-block">
-        ← Back to homepage
-      </a>
-
-      {data.logo_url && (
-        <img src={data.logo_url} alt={`${data.name} logo`} class="w-full h-64 object-cover rounded-xl shadow-lg border border-orange-300" />
-      )}
-
-      <h1 class="text-4xl font-extrabold text-orange-600 mt-6">{data.name}</h1>
-
-      <section class="bg-white rounded-xl shadow-md border border-orange-300 p-6 text-base space-y-3">
-        <p><span class="font-semibold text-pink-500">📍 Address:</span> {data.address}</p>
-        <p><span class="font-semibold text-red-500">📞 Phone:</span> {data.phone_number}</p>
-        <p><span class="font-semibold text-orange-500">⏰ Hours:</span> {data.hours_of_operation}</p>
-        <p><span class="font-semibold text-yellow-500">⭐ Score:</span> {data.restaurant_score}/10</p>
-        <p><span class="font-semibold text-purple-600">🧠 Best Time to Work Remotely:</span> {data.best_time_to_work_remotely}</p>
-      </section>
-
-      <section class="bg-white rounded-xl shadow-md border border-orange-300 p-6">
-        <h2 class="text-2xl font-bold text-orange-600 mb-4">💻 Remote Work Features</h2>
-        <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm list-disc list-inside">
-          <li><strong>Wi-Fi:</strong> {data.remote_work_features?.wi_fi_quality || "Unknown"}</li>
-          <li><strong>Outlets:</strong> {data.remote_work_features?.outlet_access || "Unknown"}</li>
-          <li><strong>Noise Level:</strong> {data.remote_work_features?.noise_level || "Unknown"}</li>
-          <li><strong>Seating Comfort:</strong> {data.remote_work_features?.seating_comfort || "Unknown"}</li>
-          <li><strong>Natural Light:</strong> {data.remote_work_features?.natural_light || "Unknown"}</li>
-          <li><strong>Stay Duration:</strong> {data.remote_work_features?.stay_duration_friendliness || "Not specified"}</li>
-          <li><strong>Food/Drink:</strong> {data.remote_work_features?.food_drink_options || "Unknown"}</li>
-          <li><strong>Bathrooms:</strong> {data.remote_work_features?.bathroom_access || "Unknown"}</li>
-          <li><strong>Parking:</strong> {data.remote_work_features?.parking_availability || "Unknown"}</li>
-        </ul>
-      </section>
-
-      {data.tags?.length > 0 && (
-        <section>
-          <h2 class="text-lg font-bold text-orange-600 mb-2">🏷️ Tags</h2>
-          <div class="flex flex-wrap gap-2">
-            {data.tags.map(tag => (
-              <span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
-                {tag}
-              </span>
-            ))}
-          </div>
-        </section>
-      )}
-
-      <footer class="pt-6 border-t text-center text-sm text-gray-500">
-        <p>✨ Powered by <span class="text-orange-600 font-semibold">NestleIn</span> · 
-        <a href="/" class="text-purple-500 hover:underline ml-1">Return Home</a></p>
-      </footer>
-    </main>
-  </body>
-</html>
