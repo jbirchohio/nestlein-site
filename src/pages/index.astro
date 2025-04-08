@@ -11,7 +11,7 @@ function haversineDistance(lat1, lon1, lat2, lon2) {
   const dLon = toRad(lon2 - lon1);
   const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c * 0.621371; // convert to miles
+  return R * c * 0.621371;
 }
 
 const userLat = Number(Astro.url.searchParams.get('lat')) || null;
@@ -33,7 +33,6 @@ const totalPages = Math.ceil(locationsWithDistance.length / pageSize);
 const currentPage = Number(Astro.url.searchParams.get('page') || '1');
 const paginatedLocations = locationsWithDistance.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
-// Group cards by tag category for filtered sections
 function groupByTag(locations, tag) {
   return locations.filter(({ data }) => data.tags.includes(tag));
 }
@@ -69,15 +68,15 @@ const tagSections = ["Open", "Fast Wi-Fi", "Family-Friendly", "Vegan Options"];
             <h2 class="text-xl font-semibold text-orange-600 mb-4">{tag}</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {group.map(({ data, distance }) => (
-                <a href={`/locations/${data.slug}`} class="block bg-white rounded shadow hover:bg-gray-50 transition overflow-hidden location-card text-sm" data-tags={`Tags: ${data.tags.join(', ')}`} data-lat={data.latitude} data-lon={data.longitude}>
-                  {data.logo_url && <img src={data.logo_url} alt={`${data.name} logo`} class="w-full h-36 object-cover" />}
+                <a href={`/locations/${data.slug}`} class="block bg-white rounded shadow hover:shadow-lg transition overflow-hidden location-card text-sm w-full max-w-[360px] mx-auto" data-tags={`Tags: ${data.tags.join(', ')}`} data-lat={data.latitude} data-lon={data.longitude}>
+                  {data.logo_url && <img src={data.logo_url} alt={`${data.name} logo`} class="w-full h-28 object-cover" />}
                   <div class="p-3">
-                    <h3 class="text-lg font-semibold text-gray-900">{data.name}</h3>
+                    <h3 class="text-base font-semibold text-gray-900">{data.name}</h3>
                     <p class="text-xs text-gray-600 location-address">{data.address}</p>
-                    <p class="mt-2 text-xs text-gray-700 font-medium">Score: {data.restaurant_score}/10</p>
+                    <p class="mt-1 text-xs text-gray-700 font-medium">Score: {data.restaurant_score}/10</p>
                     <p class="text-xs text-gray-700">🧠 Best Time: {data.best_time_to_work_remotely}</p>
                     {distance !== undefined && isFinite(distance) && <p class="text-xs text-gray-500">📍 {distance.toFixed(1)} mi away</p>}
-                    <div class="mt-2 flex flex-wrap gap-1">
+                    <div class="mt-1 flex flex-wrap gap-1">
                       {data.tags.map(tag => <span class="text-[10px] bg-green-200 px-2 py-0.5 rounded-full">{tag}</span>)}
                     </div>
                   </div>
@@ -141,7 +140,8 @@ const tagSections = ["Open", "Fast Wi-Fi", "Family-Friendly", "Vegan Options"];
         filter();
       });
 
-      if (navigator.geolocation) {
+      // FIXED: Ask once, store values so we don’t reload endlessly
+      if (navigator.geolocation && !window.location.search.includes("lat") && !window.location.search.includes("lon")) {
         navigator.geolocation.getCurrentPosition(function(position) {
           const url = new URL(window.location.href);
           url.searchParams.set('lat', position.coords.latitude);
