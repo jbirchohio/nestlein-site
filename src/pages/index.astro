@@ -9,21 +9,18 @@ const groupedLocations = locations.map(loc => ({
   slug: loc.slug
 }));
 
-// 🧠 Get all unique tags
-const allTags = Array.from(
-  new Set(groupedLocations.flatMap(loc => loc.tags || []))
-);
-
 // 🎲 Pick 3 random tags
+const allTags = Array.from(new Set(groupedLocations.flatMap(loc => loc.tags || [])));
 const shuffledTags = allTags.sort(() => 0.5 - Math.random()).slice(0, 3);
 
-// 🧩 Map of tag => locations[]
+// 🃏 For each tag, pick 3 random matching locations
 const tagMap = {};
 shuffledTags.forEach(tag => {
-  tagMap[tag] = groupedLocations.filter(loc => loc.tags?.includes(tag));
+  const matching = groupedLocations.filter(loc => loc.tags?.includes(tag));
+  tagMap[tag] = matching.sort(() => 0.5 - Math.random()).slice(0, 3);
 });
 
-// Safe JSON for client
+// Safe JSON for filter script
 const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
 ---
 
