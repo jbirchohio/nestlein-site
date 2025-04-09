@@ -4,34 +4,26 @@ import { getCollection } from 'astro:content';
 
 const locations = await getCollection('locations');
 
-function haversineDistance(lat1, lon1, lat2, lon2) {
-  const toRad = angle => (angle * Math.PI) / 180;
-  const R = 6371;
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lat2 - lon1);
-  const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c * 0.621371;
-}
-
-const userLat = Number(Astro.url.searchParams.get('lat')) || null;
-const userLon = Number(Astro.url.searchParams.get('lon')) || null;
-
-const locationsWithDistance = userLat && userLon
-  ? locations.map(loc => {
-      const { latitude, longitude } = loc.data;
-      const distance = (latitude && longitude)
-        ? haversineDistance(userLat, userLon, latitude, longitude)
-        : Infinity;
-      return { ...loc, distance };
-    }).sort((a, b) => a.distance - b.distance)
-  : locations;
-
-const groupedLocations = locationsWithDistance.map(loc => ({
+const groupedLocations = locations.map(loc => ({
   ...loc.data,
   slug: loc.slug
 }));
 
+// 🧠 Get all unique tags
+const allTags = Array.from(
+  new Set(groupedLocations.flatMap(loc => loc.tags || []))
+);
+
+// 🎲 Pick 3 random tags
+const shuffledTags = allTags.sort(() => 0.5 - Math.random()).slice(0, 3);
+
+// 🧩 Map of tag => locations[]
+const tagMap = {};
+shuffledTags.forEach(tag => {
+  tagMap[tag] = groupedLocations.filter(loc => loc.tags?.includes(tag));
+});
+
+// Safe JSON for client
 const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
 ---
 
@@ -53,17 +45,46 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
       </select>
     </header>
 
-    <main class="px-4 py-6">
-      <div id="dynamic-sections"></div>
+    <main class="px-4 py-6 space-y-12">
+      {shuffledTags.map(tag => (
+        tagMap[tag]?.length > 0 && (
+          <section>
+            <h2 class="text-xl font-semibold text-orange-600 mb-4 px-2">{tag}</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {tagMap[tag].map(loc => (
+                <a href={`/locations/${loc.slug}`} class="block bg-white rounded-lg border border-orange-200 shadow hover:shadow-md transition overflow-hidden location-card text-sm w-full max-w-[250px] mx-auto"
+                   data-tags={(loc.tags || []).join(", ").toLowerCase()}
+                   data-lat={loc.latitude}
+                   data-lon={loc.longitude}>
+                  {loc.logo_url && (
+                    <img src={loc.logo_url} alt={`${loc.name} logo`} class="w-full h-24 object-cover border-b border-orange-100" />
+                  )}
+                  <div class="p-3">
+                    <h3 class="text-base font-semibold text-orange-700 mb-1">{loc.name}</h3>
+                    <p class="text-xs text-gray-600">{loc.address}</p>
+                    <p class="text-xs text-gray-700 mt-1 font-medium">⭐ {loc.restaurant_score || 0}/10</p>
+                    <p class="text-xs text-gray-700">🧠 {loc.best_time_to_work_remotely}</p>
+                    <div class="mt-2 flex flex-wrap gap-1">
+                      {(loc.tags || []).map(tag => (
+                        <span class="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">{tag}</span>
+                      ))}
+                    </div>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </section>
+        )
+      ))}
     </main>
 
-    <!-- ✅ JSON injected safely using set:html -->
+    <!-- ✅ JSON for search/filter -->
     <script type="application/json" id="location-data" set:html={safeJson}></script>
 
+    <!-- ✅ JS: search + distance filter -->
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const locations = JSON.parse(document.getElementById("location-data").textContent);
-        const container = document.getElementById("dynamic-sections");
 
         const search = document.getElementById("search");
         const distanceSelect = document.getElementById("distance-filter");
@@ -99,38 +120,6 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
             card.style.display = matchText && matchDistance ? "block" : "none";
           });
         }
-
-        // Clear and create grid
-        container.innerHTML = "";
-        const grid = document.createElement("div");
-        grid.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4";
-        container.appendChild(grid);
-
-        locations.forEach(loc => {
-          const card = document.createElement("a");
-          card.href = `/locations/${loc.slug}`;
-          card.className = "block bg-white rounded-lg border border-orange-200 shadow hover:shadow-md transition overflow-hidden location-card text-sm w-full max-w-[250px] mx-auto";
-          card.dataset.tags = (loc.tags || []).join(", ").toLowerCase();
-          card.dataset.lat = loc.latitude;
-          card.dataset.lon = loc.longitude;
-
-          const content = document.createElement("div");
-          content.className = "p-3";
-          content.innerHTML = `
-            <h3 class="text-base font-semibold text-orange-700 mb-1">${loc.name}</h3>
-            <p class="text-xs text-gray-600">${loc.address || ""}</p>
-            <p class="text-xs text-gray-700 mt-1 font-medium">⭐ ${loc.restaurant_score || 0}/10</p>
-            <p class="text-xs text-gray-700">🧠 ${loc.best_time_to_work_remotely || ""}</p>
-            <div class="mt-2 flex flex-wrap gap-1">
-              ${(loc.tags || []).map(tag => `
-                <span class="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">${tag}</span>
-              `).join("")}
-            </div>
-          `;
-
-          card.appendChild(content);
-          grid.appendChild(card);
-        });
 
         search.addEventListener("input", filter);
         distanceSelect.addEventListener("change", filter);
