@@ -57,10 +57,12 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
       <div id="dynamic-sections"></div>
     </main>
 
-    <!-- ✅ Proper JSON injection (inline + parsed) -->
-    <script is:inline type="application/json" id="location-data">
-      {Astro.raw(safeJson)}
-    </script>
+    <!-- ✅ Proper JSON injection -->
+    {() => (
+      <script is:inline type="application/json" id="location-data">
+        {Astro.raw(safeJson)}
+      </script>
+    )}
 
     <!-- ✅ Frontend logic -->
     <script>
