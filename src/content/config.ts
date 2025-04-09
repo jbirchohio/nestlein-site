@@ -1,7 +1,7 @@
 import { defineCollection, z } from "astro:content";
 
 const locations = defineCollection({
-  type: "data",
+  type: "content",
   schema: z.object({
     name: z.string(),
     address: z.string(),
