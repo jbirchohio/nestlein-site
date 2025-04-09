@@ -2,15 +2,16 @@
   "name": "nestlein-site",
   "type": "module",
   "scripts": {
-  "dev": "astro dev",
-  "build": "npm run copy-locations && astro build",
-  "copy-locations": "node copy-locations.js",
-  "preview": "astro preview",
-  "postinstall": "chmod +x ./node_modules/.bin/astro"
-},
+    "dev": "astro dev",
+    "build": "npm run copy-locations && astro build",
+    "copy-locations": "node copy-locations.js",
+    "preview": "astro preview",
+    "postinstall": "chmod +x ./node_modules/.bin/astro"
+  },
   "dependencies": {
     "@astrojs/tailwind": "^6.0.2",
-    "astro": "^3.6.5"
+    "astro": "^3.6.5",
+    "js-yaml": "^4.1.0"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.0",
