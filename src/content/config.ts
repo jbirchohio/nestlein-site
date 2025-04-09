@@ -9,7 +9,6 @@ const locations = defineCollection({
     best_time_to_work_remotely: z.string().optional(),
     restaurant_score: z.number().optional(),
     tags: z.array(z.string()),
-    slug: z.string(),
     logo_url: z.string().optional(),
     remote_work_features: z.object({
       wi_fi_quality: z.string().optional(),
