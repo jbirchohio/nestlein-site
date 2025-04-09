@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "npm run copy-locations && astro build",
-    "copy-locations": "node copy-locations.js",
+    "copy-locations": "node copy-locations.cjs",
     "preview": "astro preview",
     "postinstall": "chmod +x ./node_modules/.bin/astro"
   },

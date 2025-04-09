@@ -1,29 +1,28 @@
 ---
-name: A Walk In The Park Cafe
-address: 1491 Aster Ave, Akron, OH 44301
-phone_number: (330) 536-9255
-website_url: http://awalkintheparkcafe.com/?ref=nestlein
+website_url: "http://awalkintheparkcafe.com/?ref=nestlein"
+logo_url: "https://lh3.googleusercontent.com/gps-cs-s/AB5caB8hm2wKRttrSmmwPaETxsOJOlATnqnrL8QNc1AIMR-Q7Sn9urM8ZyuBysMZNVRF0AX0oGtHir9yeMDdBwO5X9h5q65QC2neKWqq0xk2Dl75YuKbHNnQBJekHVwKYXT22bJSRkn62g=w408-h544-k-no"
+address: "1491 Aster Ave, Akron, OH 44301"
+phone_number: "(330) 536-9255"
+hours_of_operation: "8 AM to 2 PM, Monday through Sunday"
 restaurant_score: 4.4
-best_time_to_work_remotely: 'Weekday mornings before 11 AM  --- ##Remote Work Features##'
-slug: a-walk-in-the-park-cafe
-logo_url: >-
-  https://lh3.googleusercontent.com/gps-cs-s/AB5caB8hm2wKRttrSmmwPaETxsOJOlATnqnrL8QNc1AIMR-Q7Sn9urM8ZyuBysMZNVRF0AX0oGtHir9yeMDdBwO5X9h5q65QC2neKWqq0xk2Dl75YuKbHNnQBJekHVwKYXT22bJSRkn62g=w408-h544-k-no
-tags:
-  - Black-Owned
-  - Family-Friendly
-  - Vegan Options
-  - Vegetarian Options
-  - Good for Groups
-remote_work_features:
-  wi_fi_quality: Unknown
-  outlet_access: Unknown
-  noise_level: Unknown
-  seating_comfort: Unknown
-  natural_light: Unknown
-  stay_duration_friendliness: Not specified
-  food_drink_options: >-
-    Coffee, tea, vegan options, vegetarian options, biscuits and gravy,
-    breakfast burrito, pancake, quesadilla
-  bathroom_access: 'Yes'
-  parking_availability: Free parking lot, free street parking
+best_time_to_work_remotely: "Weekday mornings before 11 AM  --- ##Remote Work Features##"
+tags: [
+    "Black-Owned",
+    "Family-Friendly",
+    "Vegan Options",
+    "Vegetarian Options",
+    "Good for Groups"
+  ]
+name: "A Walk In The Park Cafe"
+remote_work_features: {
+    "wi_fi_quality": "Unknown",
+    "outlet_access": "Unknown",
+    "noise_level": "Unknown",
+    "seating_comfort": "Unknown",
+    "natural_light": "Unknown",
+    "stay_duration_friendliness": "Not specified",
+    "food_drink_options": "Coffee, tea, vegan options, vegetarian options, biscuits and gravy, breakfast burrito, pancake, quesadilla",
+    "bathroom_access": "Yes",
+    "parking_availability": "Free parking lot, free street parking"
+  }
 ---
