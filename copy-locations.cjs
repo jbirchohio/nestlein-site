@@ -41,4 +41,4 @@ for (const file of files) {
   }
 }
 
-console.log('✅ All JSON files converted and copied to src/content/locations');
+console.log('✅ All JSON files converted and copied to src/content/locations'); 
