@@ -1,6 +1,6 @@
 ---
-import "../styles/tailwind.css";
 import { getCollection } from 'astro:content';
+import "../styles/tailwind.css";
 
 const locations = await getCollection('locations');
 
@@ -35,6 +35,12 @@ const groupedLocations = locationsWithDistance.map(loc => ({
 const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
 ---
 
+{() => (
+  <script is:inline type="application/json" id="location-data">
+    {Astro.raw(safeJson)}
+  </script>
+)}
+
 <html>
   <head>
     <title>NestleIn</title>
@@ -57,14 +63,6 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
       <div id="dynamic-sections"></div>
     </main>
 
-    <!-- ✅ Proper JSON injection -->
-    {() => (
-      <script is:inline type="application/json" id="location-data">
-        {Astro.raw(safeJson)}
-      </script>
-    )}
-
-    <!-- ✅ Frontend logic -->
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const locations = JSON.parse(document.getElementById("location-data").textContent);
