@@ -1,0 +1,24 @@
+---
+// src/components/LocationCard.astro
+export interface Props {
+  location: any;
+  showDistance?: boolean;
+}
+
+const { location, showDistance = true } = Astro.props;
+---
+
+<a href={`/locations/${location.slug}`} class="block bg-white rounded-xl shadow hover:shadow-md transition p-4 border border-orange-100 w-full max-w-sm mx-auto">
+  <h3 class="text-lg font-semibold text-orange-800 mb-1">{location.name}</h3>
+  <p class="text-sm text-gray-500">{location.address || ""}</p>
+  {showDistance && location.distance && isFinite(location.distance) && (
+    <p class="text-xs text-gray-600 mt-1">📍 {location.distance.toFixed(1)} mi away</p>
+  )}
+  <p class="text-sm mt-1">⭐ {location.restaurant_score || 0}/10</p>
+  <p class="text-sm">🧠 {location.best_time_to_work_remotely || "No info"}</p>
+  <div class="mt-2 flex flex-wrap gap-1">
+    {(location.tags || []).map(tag => (
+      <span class="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">{tag}</span>
+    ))}
+  </div>
+</a>
