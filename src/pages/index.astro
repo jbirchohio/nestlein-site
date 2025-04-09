@@ -57,72 +57,106 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
           return R * c * 0.621371;
         }
 
-        // 👇 Render 3 random tags with 3 random cards per tag
         function renderSections() {
-  console.log("🚀 Starting renderSections()");
-  sectionContainer.innerHTML = "";
+          sectionContainer.innerHTML = "";
 
-  const allTags = [...new Set(locations.flatMap(l => l.tags || []))];
-  console.log("📦 All tags found:", allTags);
+          const allTags = [...new Set(locations.flatMap(l => l.tags || []))];
+          const shuffledTags = allTags.sort(() => 0.5 - Math.random()).slice(0, 3);
 
-  const shuffledTags = allTags.sort(() => 0.5 - Math.random()).slice(0, 3);
-  console.log("🎲 Chosen tags for this render:", shuffledTags);
+          shuffledTags.forEach(tag => {
+            const tagLocations = locations.filter(l => (l.tags || []).includes(tag));
+            const shuffledCards = tagLocations.sort(() => 0.5 - Math.random()).slice(0, 3);
 
-  shuffledTags.forEach(tag => {
-    const tagLocations = locations.filter(l => (l.tags || []).includes(tag));
-    console.log(`📍 Locations found for tag "${tag}":`, tagLocations.length);
+            if (shuffledCards.length === 0) return;
 
-    const shuffledCards = tagLocations.sort(() => 0.5 - Math.random()).slice(0, 3);
+            const section = document.createElement("section");
+            const header = document.createElement("h2");
+            header.className = "text-xl font-semibold text-orange-600 mb-4 px-2";
+            header.textContent = tag;
+            section.appendChild(header);
 
-    if (shuffledCards.length === 0) {
-      console.warn(`⚠️ No cards to render for tag "${tag}". Skipping section.`);
-      return;
-    }
+            const grid = document.createElement("div");
+            grid.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4";
 
-    const section = document.createElement("section");
-    const header = document.createElement("h2");
-    header.className = "text-xl font-semibold text-orange-600 mb-4 px-2";
-    header.textContent = tag;
-    section.appendChild(header);
+            shuffledCards.forEach(loc => {
+              if (!loc.latitude || !loc.longitude) return;
 
-    const grid = document.createElement("div");
-    grid.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4";
+              const card = document.createElement("a");
+              card.href = `/locations/${loc.slug}`;
+              card.className = "block bg-white rounded-lg border border-orange-200 shadow hover:shadow-md transition overflow-hidden location-card text-sm w-full max-w-[250px] mx-auto";
+              card.dataset.tags = (loc.tags || []).join(", ").toLowerCase();
+              card.dataset.lat = loc.latitude;
+              card.dataset.lon = loc.longitude;
 
-    shuffledCards.forEach(loc => {
-      if (!loc.latitude || !loc.longitude) {
-        console.warn(`❌ Skipping "${loc.name}" - missing lat/lon`);
-        return;
-      }
+              const content = document.createElement("div");
+              content.className = "p-3";
+              content.innerHTML = `
+                <h3 class="text-base font-semibold text-orange-700 mb-1">${loc.name}</h3>
+                <p class="text-xs text-gray-600">${loc.address || ""}</p>
+                <p class="text-xs text-gray-700 mt-1 font-medium">⭐ ${loc.restaurant_score || 0}/10</p>
+                <p class="text-xs text-gray-700">🧠 ${loc.best_time_to_work_remotely || ""}</p>
+                <div class="mt-2 flex flex-wrap gap-1">
+                  ${(loc.tags || []).map(tag => `<span class="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">${tag}</span>`).join("")}
+                </div>
+              `;
 
-      const card = document.createElement("a");
-      card.href = `/locations/${loc.slug}`;
-      card.className = "block bg-white rounded-lg border border-orange-200 shadow hover:shadow-md transition overflow-hidden location-card text-sm w-full max-w-[250px] mx-auto";
-      card.dataset.tags = (loc.tags || []).join(", ").toLowerCase();
-      card.dataset.lat = loc.latitude;
-      card.dataset.lon = loc.longitude;
+              card.appendChild(content);
+              grid.appendChild(card);
+            });
 
-      const content = document.createElement("div");
-      content.className = "p-3";
-      content.innerHTML = `
-        <h3 class="text-base font-semibold text-orange-700 mb-1">${loc.name}</h3>
-        <p class="text-xs text-gray-600">${loc.address || ""}</p>
-        <p class="text-xs text-gray-700 mt-1 font-medium">⭐ ${loc.restaurant_score || 0}/10</p>
-        <p class="text-xs text-gray-700">🧠 ${loc.best_time_to_work_remotely || ""}</p>
-        <div class="mt-2 flex flex-wrap gap-1">
-          ${(loc.tags || []).map(tag => `<span class="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">${tag}</span>`).join("")}
-        </div>
-      `;
+            section.appendChild(grid);
+            sectionContainer.appendChild(section);
+          });
 
-      card.appendChild(content);
-      grid.appendChild(card);
-    });
+          filter(); // apply filtering immediately after rendering
+        }
 
-    section.appendChild(grid);
-    sectionContainer.appendChild(section);
-  });
+        function filter() {
+          const q = search.value.toLowerCase();
+          const maxDistance = parseInt(distanceSelect.value);
 
-  console.log("✅ Finished renderSections()");
-  filter();
-}</script>
+          const url = new URL(window.location.href);
+          let lat = parseFloat(url.searchParams.get("lat"));
+          let lon = parseFloat(url.searchParams.get("lon"));
+
+          if (!lat || !lon) {
+            lat = userLat;
+            lon = userLon;
+          }
+
+          const useDistance = lat && lon;
+
+          document.querySelectorAll(".location-card").forEach(card => {
+            const name = card.querySelector("h3")?.textContent?.toLowerCase() || "";
+            const tags = card.dataset.tags || "";
+            const cardLat = parseFloat(card.dataset.lat);
+            const cardLon = parseFloat(card.dataset.lon);
+
+            const matchText = name.includes(q) || tags.includes(q);
+
+            let matchDistance = true;
+            if (useDistance && cardLat && cardLon) {
+              const dist = haversine(lat, lon, cardLat, cardLon);
+              matchDistance = dist <= maxDistance;
+            }
+
+            card.style.display = matchText && matchDistance ? "block" : "none";
+          });
+        }
+
+        search.addEventListener("input", filter);
+        distanceSelect.addEventListener("change", filter);
+
+        if (navigator.geolocation && !window.location.search.includes("lat")) {
+          navigator.geolocation.getCurrentPosition(pos => {
+            userLat = pos.coords.latitude;
+            userLon = pos.coords.longitude;
+            filter();
+          });
+        }
+
+        renderSections();
+      });
+    </script>
   </body>
 </html>
