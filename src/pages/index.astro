@@ -62,10 +62,12 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
 
           const allTags = [...new Set(locations.flatMap(l => l.tags || []))];
           const shuffledTags = allTags.sort(() => 0.5 - Math.random()).slice(0, 3);
+          console.log("🎲 Random tags selected:", shuffledTags);
 
           shuffledTags.forEach(tag => {
             const tagLocations = locations.filter(l => (l.tags || []).includes(tag));
             const shuffledCards = tagLocations.sort(() => 0.5 - Math.random()).slice(0, 3);
+            console.log(`📍 "${tag}" → ${shuffledCards.length} cards`);
 
             if (shuffledCards.length === 0) return;
 
@@ -79,7 +81,10 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
             grid.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4";
 
             shuffledCards.forEach(loc => {
-              if (!loc.latitude || !loc.longitude) return;
+              if (!loc.latitude || !loc.longitude) {
+                console.warn(`⛔ Skipping "${loc.name}" — no lat/lon`);
+                return;
+              }
 
               const card = document.createElement("a");
               card.href = `/locations/${loc.slug}`;
@@ -108,7 +113,8 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
             sectionContainer.appendChild(section);
           });
 
-          filter(); // apply filtering immediately after rendering
+          console.log("✅ Sections rendered.");
+          filter();
         }
 
         function filter() {
@@ -124,18 +130,26 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
             lon = userLon;
           }
 
-          const useDistance = lat && lon;
+          if (!lat || !lon) {
+            console.warn("📍 No usable lat/lon — skipping distance filtering");
+            document.querySelectorAll(".location-card").forEach(card => {
+              const name = card.querySelector("h3")?.textContent?.toLowerCase() || "";
+              const tags = card.dataset.tags || "";
+              const matchText = name.includes(q) || tags.includes(q);
+              card.style.display = matchText ? "block" : "none";
+            });
+            return;
+          }
 
           document.querySelectorAll(".location-card").forEach(card => {
             const name = card.querySelector("h3")?.textContent?.toLowerCase() || "";
             const tags = card.dataset.tags || "";
             const cardLat = parseFloat(card.dataset.lat);
             const cardLon = parseFloat(card.dataset.lon);
-
             const matchText = name.includes(q) || tags.includes(q);
 
             let matchDistance = true;
-            if (useDistance && cardLat && cardLon) {
+            if (cardLat && cardLon) {
               const dist = haversine(lat, lon, cardLat, cardLon);
               matchDistance = dist <= maxDistance;
             }
@@ -151,6 +165,7 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
           navigator.geolocation.getCurrentPosition(pos => {
             userLat = pos.coords.latitude;
             userLon = pos.coords.longitude;
+            console.log("📍 Location acquired:", userLat, userLon);
             filter();
           });
         }
