@@ -68,11 +68,11 @@ const groupedLocations = locationsWithDistance.map(loc => ({
       </div>
     </main>
 
-    <!-- ✅ Inject JSON safely -->
-    {/** This is in Astro context, not raw HTML */}
-<script type="application/json" id="location-data" is:inline>
+   {/** Astro script block, properly evaluated */}
+<script is:inline type="application/json" id="location-data">
   {Astro.raw(JSON.stringify(groupedLocations).replace(/</g, '\\u003c'))}
 </script>
+
 
     <!-- ✅ Frontend logic -->
     <script>
