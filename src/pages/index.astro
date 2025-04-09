@@ -64,9 +64,9 @@ const safeSerializedLocations = JSON.stringify(groupedLocations).replace(/</g, '
       </div>
     </main>
 
-    <script type="application/json" id="location-data">
-      {safeSerializedLocations}
-    </script>
+<script type="application/json" id="location-data">
+  {JSON.stringify(groupedLocations).replace(/</g, '\\u003c')}
+</script>
 
     <script>
       const allTags = ["Open", "Fast Wi-Fi", "Family-Friendly", "Vegan Options", "Pet-Friendly", "Study Spot"];
