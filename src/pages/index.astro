@@ -33,7 +33,8 @@ const totalPages = Math.ceil(locationsWithDistance.length / pageSize);
 const currentPage = Number(Astro.url.searchParams.get('page') || '1');
 const paginatedLocations = locationsWithDistance.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
-const groupedLocations = paginatedLocations.map(loc => loc.data);
+// 👇 Change made here: send *ALL* locations to client for tag rotation
+const groupedLocations = locations.map(loc => loc.data); 
 const serializedLocations = JSON.stringify(groupedLocations);
 ---
 <html>
@@ -73,6 +74,7 @@ const serializedLocations = JSON.stringify(groupedLocations);
 
       const tagMap = {};
       locations.forEach(data => {
+        if (!data.tags) return;
         data.tags.forEach(tag => {
           if (!tagMap[tag]) tagMap[tag] = [];
           tagMap[tag].push(data);
@@ -98,7 +100,7 @@ const serializedLocations = JSON.stringify(groupedLocations);
           const card = document.createElement('a');
           card.href = `/locations/${data.slug}`;
           card.className = 'block bg-white rounded-lg border border-orange-200 shadow hover:shadow-md transition overflow-hidden location-card text-sm w-full max-w-[250px] mx-auto';
-          card.dataset.tags = `Tags: ${data.tags.join(', ')}`;
+          card.dataset.tags = `Tags: ${data.tags?.join(', ')}`;
           card.dataset.lat = data.latitude;
           card.dataset.lon = data.longitude;
 
@@ -119,7 +121,7 @@ const serializedLocations = JSON.stringify(groupedLocations);
             <p class="mt-1 text-xs text-gray-700 font-medium">⭐ ${data.restaurant_score}/10</p>
             <p class="text-xs text-gray-700">🧠 ${data.best_time_to_work_remotely}</p>
             <div class="mt-2 flex flex-wrap gap-1">
-              ${data.tags.map(tag => `<span class="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">${tag}</span>`).join('')}
+              ${data.tags?.map(tag => `<span class="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">${tag}</span>`).join('') || ''}
             </div>
           `;
 
