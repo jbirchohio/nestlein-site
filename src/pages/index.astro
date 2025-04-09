@@ -9,18 +9,6 @@ const groupedLocations = locations.map(loc => ({
   slug: loc.slug
 }));
 
-// 🎲 Pick 3 random tags
-const allTags = Array.from(new Set(groupedLocations.flatMap(loc => loc.tags || [])));
-const shuffledTags = allTags.sort(() => 0.5 - Math.random()).slice(0, 3);
-
-// 🃏 For each tag, pick 3 random matching locations
-const tagMap = {};
-shuffledTags.forEach(tag => {
-  const matching = groupedLocations.filter(loc => loc.tags?.includes(tag));
-  tagMap[tag] = matching.sort(() => 0.5 - Math.random()).slice(0, 3);
-});
-
-// Safe JSON for filter script
 const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
 ---
 
@@ -43,49 +31,72 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
     </header>
 
     <main class="px-4 py-6 space-y-12">
-      {shuffledTags.map(tag => (
-        tagMap[tag]?.length > 0 && (
-          <section>
-            <h2 class="text-xl font-semibold text-orange-600 mb-4 px-2">{tag}</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {tagMap[tag].map(loc => (
-                <a href={`/locations/${loc.slug}`} class="block bg-white rounded-lg border border-orange-200 shadow hover:shadow-md transition overflow-hidden location-card text-sm w-full max-w-[250px] mx-auto"
-                   data-tags={(loc.tags || []).join(", ").toLowerCase()}
-                   data-lat={loc.latitude}
-                   data-lon={loc.longitude}>
-                  {loc.logo_url && (
-                    <img src={loc.logo_url} alt={`${loc.name} logo`} class="w-full h-24 object-cover border-b border-orange-100" />
-                  )}
-                  <div class="p-3">
-                    <h3 class="text-base font-semibold text-orange-700 mb-1">{loc.name}</h3>
-                    <p class="text-xs text-gray-600">{loc.address}</p>
-                    <p class="text-xs text-gray-700 mt-1 font-medium">⭐ {loc.restaurant_score || 0}/10</p>
-                    <p class="text-xs text-gray-700">🧠 {loc.best_time_to_work_remotely}</p>
-                    <div class="mt-2 flex flex-wrap gap-1">
-                      {(loc.tags || []).map(tag => (
-                        <span class="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">{tag}</span>
-                      ))}
-                    </div>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </section>
-        )
-      ))}
+      <div id="dynamic-sections"></div>
     </main>
 
-    <!-- ✅ JSON for search/filter -->
+    <!-- ✅ Inject location data -->
     <script type="application/json" id="location-data" set:html={safeJson}></script>
 
-    <!-- ✅ JS: search + distance filter -->
+    <!-- ✅ Client-side JS to render 3 random tag sections with 3 random cards each -->
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const locations = JSON.parse(document.getElementById("location-data").textContent);
-
+        const container = document.getElementById("dynamic-sections");
         const search = document.getElementById("search");
         const distanceSelect = document.getElementById("distance-filter");
 
+        // 🎲 Step 1: Get unique tags and shuffle them
+        const allTags = Array.from(new Set(locations.flatMap(loc => loc.tags || [])));
+        const shuffledTags = allTags.sort(() => 0.5 - Math.random()).slice(0, 3);
+
+        // 🧩 Step 2: Build and render sections
+        container.innerHTML = '';
+        shuffledTags.forEach(tag => {
+          const matches = locations.filter(loc => loc.tags?.includes(tag));
+          const randomCards = matches.sort(() => 0.5 - Math.random()).slice(0, 3);
+
+          if (randomCards.length === 0) return;
+
+          const section = document.createElement('section');
+          const title = document.createElement('h2');
+          title.className = "text-xl font-semibold text-orange-600 mb-4 px-2";
+          title.textContent = tag;
+
+          const grid = document.createElement('div');
+          grid.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4";
+
+          randomCards.forEach(loc => {
+            const card = document.createElement("a");
+            card.href = `/locations/${loc.slug}`;
+            card.className = "block bg-white rounded-lg border border-orange-200 shadow hover:shadow-md transition overflow-hidden location-card text-sm w-full max-w-[250px] mx-auto";
+            card.dataset.tags = (loc.tags || []).join(", ").toLowerCase();
+            card.dataset.lat = loc.latitude;
+            card.dataset.lon = loc.longitude;
+
+            const content = document.createElement("div");
+            content.className = "p-3";
+            content.innerHTML = `
+              <h3 class="text-base font-semibold text-orange-700 mb-1">${loc.name}</h3>
+              <p class="text-xs text-gray-600">${loc.address || ""}</p>
+              <p class="text-xs text-gray-700 mt-1 font-medium">⭐ ${loc.restaurant_score || 0}/10</p>
+              <p class="text-xs text-gray-700">🧠 ${loc.best_time_to_work_remotely || ""}</p>
+              <div class="mt-2 flex flex-wrap gap-1">
+                ${(loc.tags || []).map(tag => `
+                  <span class="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">${tag}</span>
+                `).join("")}
+              </div>
+            `;
+
+            card.appendChild(content);
+            grid.appendChild(card);
+          });
+
+          section.appendChild(title);
+          section.appendChild(grid);
+          container.appendChild(section);
+        });
+
+        // 🔍 Distance and search filter
         function haversine(lat1, lon1, lat2, lon2) {
           const toRad = angle => angle * Math.PI / 180;
           const R = 6371;
@@ -122,6 +133,7 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
         distanceSelect.addEventListener("change", filter);
         filter();
 
+        // 🌍 Auto-locate
         if (navigator.geolocation && !window.location.search.includes("lat")) {
           navigator.geolocation.getCurrentPosition(pos => {
             const url = new URL(window.location.href);
