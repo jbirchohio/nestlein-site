@@ -47,9 +47,8 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
       <div id="dynamic-sections"></div>
     </main>
 
-    <script type="application/json" id="location-data">
-      {safeJson}
-    </script>
+ <script type="application/json" id="location-data" set:html={safeJson}></script>
+
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
