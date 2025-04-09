@@ -24,9 +24,9 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
       <input id="search" placeholder="Search by name or tag..." class="border border-orange-300 px-4 py-2 w-full max-w-md rounded-full shadow-sm focus:ring-2 focus:ring-orange-400">
       <select id="distance-filter" class="mt-2 border border-orange-300 px-3 py-1 rounded-full text-sm">
         <option value="5">Within 5 mi</option>
-        <option value="10" selected>Within 10 mi</option>
+        <option value="10">Within 10 mi</option>
         <option value="25">Within 25 mi</option>
-        <option value="50">Within 50 mi</option>
+        <option value="50" selected>Within 50 mi</option>
       </select>
     </header>
 
@@ -51,7 +51,7 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
           const toRad = angle => angle * Math.PI / 180;
           const R = 6371;
           const dLat = toRad(lat2 - lat1);
-          const dLon = toRad(lat2 - lon1);
+          const dLon = toRad(lon2 - lon1);
           const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
           const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
           return R * c * 0.621371;
@@ -95,9 +95,21 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
 
               const content = document.createElement("div");
               content.className = "p-3";
+
+              // 🧠 Optional distance display (disabled distance filter = still useful)
+              let distText = "";
+              const url = new URL(window.location.href);
+              let lat = parseFloat(url.searchParams.get("lat")) || userLat;
+              let lon = parseFloat(url.searchParams.get("lon")) || userLon;
+              if (lat && lon) {
+                const dist = haversine(lat, lon, loc.latitude, loc.longitude);
+                distText = `<p class="text-xs text-gray-500">📍 ${dist.toFixed(1)} mi away</p>`;
+              }
+
               content.innerHTML = `
                 <h3 class="text-base font-semibold text-orange-700 mb-1">${loc.name}</h3>
                 <p class="text-xs text-gray-600">${loc.address || ""}</p>
+                ${distText}
                 <p class="text-xs text-gray-700 mt-1 font-medium">⭐ ${loc.restaurant_score || 0}/10</p>
                 <p class="text-xs text-gray-700">🧠 ${loc.best_time_to_work_remotely || ""}</p>
                 <div class="mt-2 flex flex-wrap gap-1">
@@ -114,47 +126,18 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
           });
 
           console.log("✅ Sections rendered.");
-          filter();
+          filter(); // still apply filter, but distance check is disabled
         }
 
         function filter() {
           const q = search.value.toLowerCase();
-          const maxDistance = parseInt(distanceSelect.value);
 
-          const url = new URL(window.location.href);
-          let lat = parseFloat(url.searchParams.get("lat"));
-          let lon = parseFloat(url.searchParams.get("lon"));
-
-          if (!lat || !lon) {
-            lat = userLat;
-            lon = userLon;
-          }
-
-          if (!lat || !lon) {
-            console.warn("📍 No usable lat/lon — skipping distance filtering");
-            document.querySelectorAll(".location-card").forEach(card => {
-              const name = card.querySelector("h3")?.textContent?.toLowerCase() || "";
-              const tags = card.dataset.tags || "";
-              const matchText = name.includes(q) || tags.includes(q);
-              card.style.display = matchText ? "block" : "none";
-            });
-            return;
-          }
-
+          // 👇 Temporarily ignore distance logic
           document.querySelectorAll(".location-card").forEach(card => {
             const name = card.querySelector("h3")?.textContent?.toLowerCase() || "";
             const tags = card.dataset.tags || "";
-            const cardLat = parseFloat(card.dataset.lat);
-            const cardLon = parseFloat(card.dataset.lon);
             const matchText = name.includes(q) || tags.includes(q);
-
-            let matchDistance = true;
-            if (cardLat && cardLon) {
-              const dist = haversine(lat, lon, cardLat, cardLon);
-              matchDistance = dist <= maxDistance;
-            }
-
-            card.style.display = matchText && matchDistance ? "block" : "none";
+            card.style.display = matchText ? "block" : "none";
           });
         }
 
@@ -165,7 +148,7 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
           navigator.geolocation.getCurrentPosition(pos => {
             userLat = pos.coords.latitude;
             userLon = pos.coords.longitude;
-            console.log("📍 Location acquired:", userLat, userLon);
+            console.log("📍 Got user location:", userLat, userLon);
             filter();
           });
         }
