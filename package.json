@@ -10,7 +10,10 @@
     "postinstall": "chmod +x ./node_modules/.bin/astro"
   },
   "dependencies": {
+    "@astrojs/react": "^4.2.3",
     "@astrojs/tailwind": "^6.0.2",
+    "@iconify-icons/lucide": "^1.2.135",
+    "@iconify/react": "^5.2.1",
     "astro": "^3.6.5",
     "gray-matter": "^4.0.3",
     "js-yaml": "^4.1.0",
