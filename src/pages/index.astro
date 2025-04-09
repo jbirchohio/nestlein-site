@@ -63,15 +63,17 @@ const groupedLocations = locations.map(loc => loc.data);
       </div>
     </main>
 
-    <!-- ✅ Safe JSON injection using Astro.raw -->
-    <script type="application/json" id="location-data">
-      {Astro.raw(JSON.stringify(groupedLocations))}
-    </script>
+ <!-- ✅ Safely inject location data before any client script runs -->
+<script type="application/json" id="location-data">
+  {Astro.raw(JSON.stringify(groupedLocations))}
+</script>
 
-    <script>
+<!-- ✅ Client-side logic wrapped in DOMContentLoaded to prevent race conditions -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    try {
       const allTags = ["Open", "Fast Wi-Fi", "Family-Friendly", "Vegan Options", "Pet-Friendly", "Study Spot"];
       const locations = JSON.parse(document.getElementById('location-data').textContent);
-
       console.log("✅ Parsed location data:", locations);
 
       const tagMap = {};
@@ -83,17 +85,12 @@ const groupedLocations = locations.map(loc => loc.data);
         });
       });
 
-      console.log("🧠 Tag map built:", tagMap);
-
       const availableTags = allTags.filter(tag => tagMap[tag]?.length);
       const shuffledTags = availableTags.length > 0
         ? availableTags.sort(() => 0.5 - Math.random()).slice(0, 3)
         : Object.keys(tagMap).slice(0, 3);
 
-      console.log("🎲 Shuffled tags used:", shuffledTags);
-
       const container = document.getElementById('dynamic-sections');
-
       shuffledTags.forEach(tag => {
         const group = tagMap[tag] || [];
         if (group.length === 0) return;
@@ -143,9 +140,8 @@ const groupedLocations = locations.map(loc => loc.data);
         section.appendChild(grid);
         container.appendChild(section);
       });
-    </script>
 
-    <script>
+      // Enable filtering
       const search = document.getElementById('search');
       const distanceSelect = document.getElementById('distance-filter');
 
@@ -192,6 +188,12 @@ const groupedLocations = locations.map(loc => loc.data);
           window.location.href = url.toString();
         });
       }
-    </script>
+    } catch (err) {
+      console.error("🔥 Critical client error:", err);
+      document.body.innerHTML += `<pre style="color:red;">🔥 ${err.message}</pre>`;
+    }
+  });
+</script>
+
   </body>
 </html>
