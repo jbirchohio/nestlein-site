@@ -1,6 +1,6 @@
 ---
-import { getCollection } from 'astro:content';
 import "../styles/tailwind.css";
+import { getCollection } from 'astro:content';
 
 const locations = await getCollection('locations');
 
@@ -35,8 +35,6 @@ const groupedLocations = locationsWithDistance.map(loc => ({
 const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
 ---
 
-<script type="application/json" id="location-data" set:html={safeJson}></script>
-
 <html>
   <head>
     <title>NestleIn</title>
@@ -58,6 +56,9 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
     <main class="px-4 py-6">
       <div id="dynamic-sections"></div>
     </main>
+
+    <!-- ✅ JSON injected safely using set:html -->
+    <script type="application/json" id="location-data" set:html={safeJson}></script>
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
@@ -99,6 +100,12 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
           });
         }
 
+        // Clear and create grid
+        container.innerHTML = "";
+        const grid = document.createElement("div");
+        grid.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4";
+        container.appendChild(grid);
+
         locations.forEach(loc => {
           const card = document.createElement("a");
           card.href = `/locations/${loc.slug}`;
@@ -115,12 +122,14 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
             <p class="text-xs text-gray-700 mt-1 font-medium">⭐ ${loc.restaurant_score || 0}/10</p>
             <p class="text-xs text-gray-700">🧠 ${loc.best_time_to_work_remotely || ""}</p>
             <div class="mt-2 flex flex-wrap gap-1">
-              ${(loc.tags || []).map(tag => `<span class="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">${tag}</span>`).join("")}
+              ${(loc.tags || []).map(tag => `
+                <span class="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">${tag}</span>
+              `).join("")}
             </div>
           `;
 
           card.appendChild(content);
-          container.appendChild(card);
+          grid.appendChild(card);
         });
 
         search.addEventListener("input", filter);
