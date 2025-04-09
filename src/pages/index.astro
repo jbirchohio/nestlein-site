@@ -33,9 +33,9 @@ const totalPages = Math.ceil(locationsWithDistance.length / pageSize);
 const currentPage = Number(Astro.url.searchParams.get('page') || '1');
 const paginatedLocations = locationsWithDistance.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
-// 👇 Change made here: send *ALL* locations to client for tag rotation
-const groupedLocations = locations.map(loc => loc.data); 
-const serializedLocations = JSON.stringify(groupedLocations);
+// 👇 Use ALL locations for client-side filtering
+const groupedLocations = locations.map(loc => loc.data);
+const safeSerializedLocations = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
 ---
 <html>
   <head>
@@ -65,12 +65,14 @@ const serializedLocations = JSON.stringify(groupedLocations);
     </main>
 
     <script type="application/json" id="location-data">
-      {serializedLocations}
+      {safeSerializedLocations}
     </script>
 
     <script>
       const allTags = ["Open", "Fast Wi-Fi", "Family-Friendly", "Vegan Options", "Pet-Friendly", "Study Spot"];
       const locations = JSON.parse(document.getElementById('location-data').textContent);
+
+      console.log("✅ Parsed location data:", locations);
 
       const tagMap = {};
       locations.forEach(data => {
@@ -81,7 +83,15 @@ const serializedLocations = JSON.stringify(groupedLocations);
         });
       });
 
-      const shuffledTags = allTags.sort(() => 0.5 - Math.random()).slice(0, 3);
+      console.log("🧠 Tag map built:", tagMap);
+
+      const availableTags = allTags.filter(tag => tagMap[tag]?.length);
+      const shuffledTags = availableTags.length > 0
+        ? availableTags.sort(() => 0.5 - Math.random()).slice(0, 3)
+        : Object.keys(tagMap).slice(0, 3); // fallback
+
+      console.log("🎲 Shuffled tags used:", shuffledTags);
+
       const container = document.getElementById('dynamic-sections');
 
       shuffledTags.forEach(tag => {
@@ -143,7 +153,7 @@ const serializedLocations = JSON.stringify(groupedLocations);
         const toRad = angle => angle * Math.PI / 180;
         const R = 6371;
         const dLat = toRad(lat2 - lat1);
-        const dLon = toRad(lon2 - lon1);
+        const dLon = toRad(lat2 - lon2);
         const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return R * c * 0.621371;
