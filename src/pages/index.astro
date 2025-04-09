@@ -33,9 +33,8 @@ const totalPages = Math.ceil(locationsWithDistance.length / pageSize);
 const currentPage = Number(Astro.url.searchParams.get('page') || '1');
 const paginatedLocations = locationsWithDistance.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
-// 👇 Use ALL locations for client-side filtering
+// 👇 Send all data for filtering client-side
 const groupedLocations = locations.map(loc => loc.data);
-const safeSerializedLocations = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
 ---
 <html>
   <head>
@@ -64,10 +63,10 @@ const safeSerializedLocations = JSON.stringify(groupedLocations).replace(/</g, '
       </div>
     </main>
 
-<script type="application/json" id="location-data">
-  {Astro.raw(JSON.stringify(groupedLocations))}
-</script>
-
+    <!-- ✅ Safe JSON injection using Astro.raw -->
+    <script type="application/json" id="location-data">
+      {Astro.raw(JSON.stringify(groupedLocations))}
+    </script>
 
     <script>
       const allTags = ["Open", "Fast Wi-Fi", "Family-Friendly", "Vegan Options", "Pet-Friendly", "Study Spot"];
@@ -89,7 +88,7 @@ const safeSerializedLocations = JSON.stringify(groupedLocations).replace(/</g, '
       const availableTags = allTags.filter(tag => tagMap[tag]?.length);
       const shuffledTags = availableTags.length > 0
         ? availableTags.sort(() => 0.5 - Math.random()).slice(0, 3)
-        : Object.keys(tagMap).slice(0, 3); // fallback
+        : Object.keys(tagMap).slice(0, 3);
 
       console.log("🎲 Shuffled tags used:", shuffledTags);
 
@@ -154,7 +153,7 @@ const safeSerializedLocations = JSON.stringify(groupedLocations).replace(/</g, '
         const toRad = angle => angle * Math.PI / 180;
         const R = 6371;
         const dLat = toRad(lat2 - lat1);
-        const dLon = toRad(lat2 - lon2);
+        const dLon = toRad(lon2 - lon1);
         const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return R * c * 0.621371;
