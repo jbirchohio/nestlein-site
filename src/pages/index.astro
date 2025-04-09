@@ -34,69 +34,19 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
       <div id="dynamic-sections"></div>
     </main>
 
-    <!-- ✅ Inject location data -->
     <script type="application/json" id="location-data" set:html={safeJson}></script>
 
-    <!-- ✅ Client-side JS to render 3 random tag sections with 3 random cards each -->
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const locations = JSON.parse(document.getElementById("location-data").textContent);
-        const container = document.getElementById("dynamic-sections");
+        const sectionContainer = document.getElementById("dynamic-sections");
+
         const search = document.getElementById("search");
         const distanceSelect = document.getElementById("distance-filter");
 
-        // 🎲 Step 1: Get unique tags and shuffle them
-        const allTags = Array.from(new Set(locations.flatMap(loc => loc.tags || [])));
-        const shuffledTags = allTags.sort(() => 0.5 - Math.random()).slice(0, 3);
+        let userLat = null;
+        let userLon = null;
 
-        // 🧩 Step 2: Build and render sections
-        container.innerHTML = '';
-        shuffledTags.forEach(tag => {
-          const matches = locations.filter(loc => loc.tags?.includes(tag));
-          const randomCards = matches.sort(() => 0.5 - Math.random()).slice(0, 3);
-
-          if (randomCards.length === 0) return;
-
-          const section = document.createElement('section');
-          const title = document.createElement('h2');
-          title.className = "text-xl font-semibold text-orange-600 mb-4 px-2";
-          title.textContent = tag;
-
-          const grid = document.createElement('div');
-          grid.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4";
-
-          randomCards.forEach(loc => {
-            const card = document.createElement("a");
-            card.href = `/locations/${loc.slug}`;
-            card.className = "block bg-white rounded-lg border border-orange-200 shadow hover:shadow-md transition overflow-hidden location-card text-sm w-full max-w-[250px] mx-auto";
-            card.dataset.tags = (loc.tags || []).join(", ").toLowerCase();
-            card.dataset.lat = loc.latitude;
-            card.dataset.lon = loc.longitude;
-
-            const content = document.createElement("div");
-            content.className = "p-3";
-            content.innerHTML = `
-              <h3 class="text-base font-semibold text-orange-700 mb-1">${loc.name}</h3>
-              <p class="text-xs text-gray-600">${loc.address || ""}</p>
-              <p class="text-xs text-gray-700 mt-1 font-medium">⭐ ${loc.restaurant_score || 0}/10</p>
-              <p class="text-xs text-gray-700">🧠 ${loc.best_time_to_work_remotely || ""}</p>
-              <div class="mt-2 flex flex-wrap gap-1">
-                ${(loc.tags || []).map(tag => `
-                  <span class="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">${tag}</span>
-                `).join("")}
-              </div>
-            `;
-
-            card.appendChild(content);
-            grid.appendChild(card);
-          });
-
-          section.appendChild(title);
-          section.appendChild(grid);
-          container.appendChild(section);
-        });
-
-        // 🔍 Distance and search filter
         function haversine(lat1, lon1, lat2, lon2) {
           const toRad = angle => angle * Math.PI / 180;
           const R = 6371;
@@ -107,12 +57,74 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
           return R * c * 0.621371;
         }
 
+        // 👇 Render 3 random tags with 3 random cards per tag
+        function renderSections() {
+          sectionContainer.innerHTML = "";
+
+          const allTags = [...new Set(locations.flatMap(l => l.tags || []))];
+          const shuffledTags = allTags.sort(() => 0.5 - Math.random()).slice(0, 3);
+
+          shuffledTags.forEach(tag => {
+            const tagLocations = locations.filter(l => (l.tags || []).includes(tag));
+            const shuffledCards = tagLocations.sort(() => 0.5 - Math.random()).slice(0, 3);
+
+            if (shuffledCards.length === 0) return;
+
+            const section = document.createElement("section");
+            const header = document.createElement("h2");
+            header.className = "text-xl font-semibold text-orange-600 mb-4 px-2";
+            header.textContent = tag;
+            section.appendChild(header);
+
+            const grid = document.createElement("div");
+            grid.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4";
+
+            shuffledCards.forEach(loc => {
+              const card = document.createElement("a");
+              card.href = `/locations/${loc.slug}`;
+              card.className = "block bg-white rounded-lg border border-orange-200 shadow hover:shadow-md transition overflow-hidden location-card text-sm w-full max-w-[250px] mx-auto";
+              card.dataset.tags = (loc.tags || []).join(", ").toLowerCase();
+              card.dataset.lat = loc.latitude;
+              card.dataset.lon = loc.longitude;
+
+              const content = document.createElement("div");
+              content.className = "p-3";
+              content.innerHTML = `
+                <h3 class="text-base font-semibold text-orange-700 mb-1">${loc.name}</h3>
+                <p class="text-xs text-gray-600">${loc.address || ""}</p>
+                <p class="text-xs text-gray-700 mt-1 font-medium">⭐ ${loc.restaurant_score || 0}/10</p>
+                <p class="text-xs text-gray-700">🧠 ${loc.best_time_to_work_remotely || ""}</p>
+                <div class="mt-2 flex flex-wrap gap-1">
+                  ${(loc.tags || []).map(tag => `<span class="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">${tag}</span>`).join("")}
+                </div>
+              `;
+
+              card.appendChild(content);
+              grid.appendChild(card);
+            });
+
+            section.appendChild(grid);
+            sectionContainer.appendChild(section);
+          });
+
+          filter(); // 👈 apply filter after rendering
+        }
+
+        // 👇 Filter by search and distance
         function filter() {
           const q = search.value.toLowerCase();
           const maxDistance = parseInt(distanceSelect.value);
+
           const url = new URL(window.location.href);
-          const lat = parseFloat(url.searchParams.get("lat"));
-          const lon = parseFloat(url.searchParams.get("lon"));
+          let lat = parseFloat(url.searchParams.get("lat"));
+          let lon = parseFloat(url.searchParams.get("lon"));
+
+          if (!lat || !lon) {
+            lat = userLat;
+            lon = userLon;
+          }
+
+          const useDistance = lat && lon;
 
           document.querySelectorAll(".location-card").forEach(card => {
             const name = card.querySelector("h3")?.textContent?.toLowerCase() || "";
@@ -121,9 +133,12 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
             const cardLon = parseFloat(card.dataset.lon);
 
             const matchText = name.includes(q) || tags.includes(q);
-            const matchDistance = (lat && lon && cardLat && cardLon)
-              ? haversine(lat, lon, cardLat, cardLon) <= maxDistance
-              : true;
+
+            let matchDistance = true;
+            if (useDistance && cardLat && cardLon) {
+              const dist = haversine(lat, lon, cardLat, cardLon);
+              matchDistance = dist <= maxDistance;
+            }
 
             card.style.display = matchText && matchDistance ? "block" : "none";
           });
@@ -131,17 +146,17 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
 
         search.addEventListener("input", filter);
         distanceSelect.addEventListener("change", filter);
-        filter();
 
-        // 🌍 Auto-locate
+        // 👇 Geolocation fallback
         if (navigator.geolocation && !window.location.search.includes("lat")) {
           navigator.geolocation.getCurrentPosition(pos => {
-            const url = new URL(window.location.href);
-            url.searchParams.set("lat", pos.coords.latitude);
-            url.searchParams.set("lon", pos.coords.longitude);
-            window.location.href = url.toString();
+            userLat = pos.coords.latitude;
+            userLon = pos.coords.longitude;
+            filter();
           });
         }
+
+        renderSections(); // 👈 GO TIME
       });
     </script>
   </body>
