@@ -1,6 +1,6 @@
 ---
-import { getCollection } from 'astro:content';
 import "../styles/tailwind.css";
+import { getCollection } from 'astro:content';
 
 const locations = await getCollection('locations');
 
@@ -11,7 +11,7 @@ function haversineDistance(lat1, lon1, lat2, lon2) {
   const dLon = toRad(lat2 - lon1);
   const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c * 0.621371; // miles
+  return R * c * 0.621371;
 }
 
 const userLat = Number(Astro.url.searchParams.get('lat')) || null;
@@ -27,7 +27,6 @@ const locationsWithDistance = userLat && userLon
     }).sort((a, b) => a.distance - b.distance)
   : locations;
 
-// Include slug for linking
 const groupedLocations = locationsWithDistance.map(loc => ({
   ...loc.data,
   slug: loc.slug
@@ -42,6 +41,7 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
   </head>
   <body class="bg-gradient-to-b from-orange-50 to-white font-sans">
+
     <header class="sticky top-0 bg-white shadow z-10 p-6 flex flex-col items-center gap-2">
       <div class="text-3xl font-extrabold text-orange-600 tracking-wide">NestleIn</div>
       <input id="search" placeholder="Search by name or tag..." class="border border-orange-300 px-4 py-2 w-full max-w-md rounded-full shadow-sm focus:ring-2 focus:ring-orange-400">
@@ -57,86 +57,80 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
       <div id="dynamic-sections"></div>
     </main>
 
-    <!-- ✅ Proper JSON injection -->
-    <script type="application/json" id="location-data" is:inline>
+    <!-- ✅ Proper JSON injection (inline + parsed) -->
+    <script is:inline type="application/json" id="location-data">
       {Astro.raw(safeJson)}
     </script>
 
-    <!-- ✅ Your JS that reads the JSON -->
+    <!-- ✅ Frontend logic -->
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        try {
-          const locations = JSON.parse(document.getElementById("location-data").textContent);
-          const container = document.getElementById("dynamic-sections");
+        const locations = JSON.parse(document.getElementById("location-data").textContent);
+        const container = document.getElementById("dynamic-sections");
 
-          locations.forEach(t => {
-            const e = document.createElement("a");
-            e.href = `/locations/${t.slug}`;
-            e.className = "block bg-white rounded-lg border border-orange-200 shadow hover:shadow-md transition overflow-hidden location-card text-sm w-full max-w-[250px] mx-auto";
-            e.dataset.tags = (t.tags || []).join(", ").toLowerCase();
-            e.dataset.lat = t.latitude;
-            e.dataset.lon = t.longitude;
+        const search = document.getElementById("search");
+        const distanceSelect = document.getElementById("distance-filter");
 
-            const s = document.createElement("div");
-            s.className = "p-3";
-            s.innerHTML = `
-              <h3 class="text-base font-semibold text-orange-700 mb-1">${t.name}</h3>
-              <p class="text-xs text-gray-600">${t.address || ""}</p>
-              <p class="text-xs text-gray-700 mt-1 font-medium">⭐ ${t.restaurant_score || 0}/10</p>
-              <p class="text-xs text-gray-700">🧠 ${t.best_time_to_work_remotely || ""}</p>
-              <div class="mt-2 flex flex-wrap gap-1">
-                ${(t.tags || []).map(r => `<span class="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">${r}</span>`).join("")}
-              </div>
-            `;
-            e.appendChild(s);
-            container.appendChild(e);
-          });
-
-          // Filtering
-          const search = document.getElementById("search");
-          const distanceSelect = document.getElementById("distance-filter");
-
-          function haversine(lat1, lon1, lat2, lon2) {
-            const toRad = angle => angle * Math.PI / 180;
-            const R = 6371;
-            const dLat = toRad(lat2 - lat1);
-            const dLon = toRad(lon2 - lon1);
-            const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            return R * c * 0.621371;
-          }
-
-          function filter() {
-            const q = search.value.toLowerCase();
-            const maxDistance = parseInt(distanceSelect.value);
-            const url = new URL(window.location.href);
-            const lat = parseFloat(url.searchParams.get("lat"));
-            const lon = parseFloat(url.searchParams.get("lon"));
-
-            document.querySelectorAll(".location-card").forEach(card => {
-              const name = card.querySelector("h3")?.textContent?.toLowerCase() || "";
-              const tags = card.dataset.tags || "";
-              const cardLat = parseFloat(card.dataset.lat);
-              const cardLon = parseFloat(card.dataset.lon);
-
-              const matchText = name.includes(q) || tags.includes(q);
-              const matchDistance = (lat && lon && cardLat && cardLon)
-                ? haversine(lat, lon, cardLat, cardLon) <= maxDistance
-                : true;
-
-              card.style.display = matchText && matchDistance ? "block" : "none";
-            });
-          }
-
-          search.addEventListener("input", filter);
-          distanceSelect.addEventListener("change", filter);
-          filter();
-        } catch (e) {
-          console.error("🔥 JSON Failed:", e);
-          document.body.innerHTML += `<pre style="color:red;">🔥 ${e.message}</pre>`;
+        function haversine(lat1, lon1, lat2, lon2) {
+          const toRad = angle => angle * Math.PI / 180;
+          const R = 6371;
+          const dLat = toRad(lat2 - lat1);
+          const dLon = toRad(lat2 - lon1);
+          const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+          const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+          return R * c * 0.621371;
         }
 
-        // Ask for location if not present
+        function filter() {
+          const q = search.value.toLowerCase();
+          const maxDistance = parseInt(distanceSelect.value);
+          const url = new URL(window.location.href);
+          const lat = parseFloat(url.searchParams.get("lat"));
+          const lon = parseFloat(url.searchParams.get("lon"));
+
+          document.querySelectorAll(".location-card").forEach(card => {
+            const name = card.querySelector("h3")?.textContent?.toLowerCase() || "";
+            const tags = card.dataset.tags || "";
+            const cardLat = parseFloat(card.dataset.lat);
+            const cardLon = parseFloat(card.dataset.lon);
+
+            const matchText = name.includes(q) || tags.includes(q);
+            const matchDistance = (lat && lon && cardLat && cardLon)
+              ? haversine(lat, lon, cardLat, cardLon) <= maxDistance
+              : true;
+
+            card.style.display = matchText && matchDistance ? "block" : "none";
+          });
+        }
+
+        locations.forEach(loc => {
+          const card = document.createElement("a");
+          card.href = `/locations/${loc.slug}`;
+          card.className = "block bg-white rounded-lg border border-orange-200 shadow hover:shadow-md transition overflow-hidden location-card text-sm w-full max-w-[250px] mx-auto";
+          card.dataset.tags = (loc.tags || []).join(", ").toLowerCase();
+          card.dataset.lat = loc.latitude;
+          card.dataset.lon = loc.longitude;
+
+          const content = document.createElement("div");
+          content.className = "p-3";
+          content.innerHTML = `
+            <h3 class="text-base font-semibold text-orange-700 mb-1">${loc.name}</h3>
+            <p class="text-xs text-gray-600">${loc.address || ""}</p>
+            <p class="text-xs text-gray-700 mt-1 font-medium">⭐ ${loc.restaurant_score || 0}/10</p>
+            <p class="text-xs text-gray-700">🧠 ${loc.best_time_to_work_remotely || ""}</p>
+            <div class="mt-2 flex flex-wrap gap-1">
+              ${(loc.tags || []).map(tag => `<span class="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">${tag}</span>`).join("")}
+            </div>
+          `;
+
+          card.appendChild(content);
+          container.appendChild(card);
+        });
+
+        search.addEventListener("input", filter);
+        distanceSelect.addEventListener("change", filter);
+        filter();
+
         if (navigator.geolocation && !window.location.search.includes("lat")) {
           navigator.geolocation.getCurrentPosition(pos => {
             const url = new URL(window.location.href);
