@@ -12,20 +12,16 @@ const groupedLocations = locations.map(loc => ({
 const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
 ---
 
-<html lang="en">
+<html>
   <head>
-    <meta charset="UTF-8">
     <title>NestleIn</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- High-End Font Combo -->
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@500&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
   </head>
 
-  <body class="bg-gradient-to-tr from-orange-50 via-white to-orange-100 font-sans min-h-screen text-gray-800">
-    
+  <body class="bg-orange-50 font-sans">
     <!-- Header -->
-    <header class="sticky top-0 z-50 backdrop-blur bg-white/90 shadow-md p-4 flex flex-col md:flex-row items-center justify-between gap-2 border-b border-orange-100">
+    <header class="sticky top-0 z-50 bg-white shadow-sm p-4 flex flex-col md:flex-row items-center justify-between gap-2">
       <div class="text-2xl font-bold text-orange-600">NestleIn</div>
       <input id="search" placeholder="Search spots or tags..." class="border border-orange-300 px-4 py-2 rounded-full shadow-sm focus:ring-2 focus:ring-orange-400 w-full max-w-sm">
       <select id="distance-filter" class="border border-orange-300 px-3 py-2 rounded-full text-sm">
@@ -37,90 +33,78 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
     </header>
 
     <!-- Hero Section -->
-    <section class="bg-gradient-to-br from-orange-100/60 to-white py-20 text-center px-4 rounded-lg shadow-inner">
-      <h1 class="text-5xl font-serif text-orange-700 font-medium leading-tight mb-4">Work Remotely. <span class="italic">Nest</span> Comfortably.</h1>
-      <p class="text-gray-600 text-lg max-w-2xl mx-auto mb-6">Find the perfect hideaway with outlets, caffeine, and calm.</p>
-      <div class="flex flex-wrap justify-center gap-2">
-        <span class="bg-white border border-orange-200 shadow-sm text-orange-600 px-4 py-1 rounded-full text-sm">✨ Cozy Corners</span>
-        <span class="bg-white border border-orange-200 shadow-sm text-orange-600 px-4 py-1 rounded-full text-sm">🔌 Lots of Outlets</span>
-        <span class="bg-white border border-orange-200 shadow-sm text-orange-600 px-4 py-1 rounded-full text-sm">☕ Top Coffee</span>
+    <section class="bg-gradient-to-r from-orange-100 to-orange-50 py-16 text-center">
+      <h1 class="text-4xl font-extrabold text-orange-700 mb-2">Work Remotely. Nest Comfortably.</h1>
+      <p class="text-gray-700 text-lg max-w-xl mx-auto">Discover the best spots with Wi-Fi, vibes, and space to get things done.</p>
+      <div class="mt-6 flex flex-wrap justify-center gap-2">
+        <span class="bg-white border border-orange-300 text-orange-600 px-4 py-1 rounded-full text-sm">✨ Cozy Corners</span>
+        <span class="bg-white border border-orange-300 text-orange-600 px-4 py-1 rounded-full text-sm">🔌 Lots of Outlets</span>
+        <span class="bg-white border border-orange-300 text-orange-600 px-4 py-1 rounded-full text-sm">☕ Top Coffee</span>
       </div>
     </section>
 
     <!-- Main Content -->
-    <main class="px-4 py-16 space-y-12">
+    <main class="px-4 py-10 space-y-12">
       <div id="dynamic-sections"></div>
     </main>
 
-    <!-- Footer -->
-    <footer class="text-center text-sm text-gray-400 py-10">
-      Built with ☕ and curiosity · NestleIn © 2025
-    </footer>
-
-    <!-- Embedded Location Data -->
     <script type="application/json" id="location-data" set:html={safeJson}></script>
 
-    <!-- Styles for subtle animation -->
-    <style>
-      .card-hover {
-        transition: all 0.2s ease-in-out;
-      }
-      .card-hover:hover {
-        transform: translateY(-4px) scale(1.01);
-      }
-    </style>
+    <script type="module">
+      import Fuse from 'fuse.js';
 
-    <!-- Script -->
-    <script>
       document.addEventListener("DOMContentLoaded", () => {
         const locations = JSON.parse(document.getElementById("location-data").textContent);
         const sectionContainer = document.getElementById("dynamic-sections");
         const search = document.getElementById("search");
         const distanceSelect = document.getElementById("distance-filter");
 
+        // Save/load filters from localStorage
         const savedDistance = localStorage.getItem("nestlein-distance");
         if (savedDistance) distanceSelect.value = savedDistance;
 
         const savedSearch = localStorage.getItem("nestlein-search");
         if (savedSearch) search.value = savedSearch;
 
-        function renderCards() {
-          sectionContainer.innerHTML = "";
+        // Fuse.js config
+        const fuse = new Fuse(locations, {
+          keys: ['name', 'tags', 'address'],
+          threshold: 0.35,
+          includeScore: true,
+        });
 
-          const filtered = locations.map(loc => `
-            <a href="/locations/${loc.slug}" class="block bg-white rounded-2xl shadow-lg hover:shadow-xl transition duration-200 p-5 border border-orange-100 w-full max-w-sm mx-auto location-card card-hover" data-tags="${(loc.tags || []).join(', ').toLowerCase()}" data-lat="${loc.latitude}" data-lon="${loc.longitude}">
-              ${loc.logo_url ? `<img src="${loc.logo_url}" alt="${loc.name}" class="w-full h-40 object-cover rounded-lg mb-4 shadow-sm">` : ""}
+        function renderCards(data) {
+          const html = data.map(loc => `
+            <a href="/locations/${loc.slug}" class="block bg-white rounded-xl shadow hover:shadow-md transition p-4 border border-orange-100 w-full max-w-sm mx-auto location-card" data-tags="${(loc.tags || []).join(', ').toLowerCase()}" data-lat="${loc.latitude}" data-lon="${loc.longitude}">
+              ${loc.logo_url ? `<img src="${loc.logo_url}" alt="${loc.name}" class="w-full h-40 object-cover rounded-md mb-3">` : ""}
               <h3 class="text-lg font-semibold text-orange-800 mb-1">${loc.name}</h3>
               <p class="text-sm text-gray-500">${loc.address || ""}</p>
               <p class="text-sm mt-1">⭐ ${loc.restaurant_score || 0}/10</p>
               <p class="text-sm">🧠 ${loc.best_time_to_work_remotely || ""}</p>
               <div class="mt-2 flex flex-wrap gap-1">
-                ${(loc.tags || []).map(t => `<span class="text-xs bg-orange-50 text-orange-700 px-2 py-1 rounded-full border border-orange-200 shadow-sm">${t}</span>`).join("")}
+                ${(loc.tags || []).map(t => `<span class="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">${t}</span>`).join("")}
               </div>
             </a>
           `).join("");
 
-          sectionContainer.innerHTML = `<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">${filtered}</div>`;
+          sectionContainer.innerHTML = `<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">${html}</div>`;
         }
 
         function filter() {
-          const q = search.value.toLowerCase();
+          const query = search.value.trim();
           const maxDistance = parseInt(distanceSelect.value);
+          localStorage.setItem("nestlein-search", query);
           localStorage.setItem("nestlein-distance", distanceSelect.value);
-          localStorage.setItem("nestlein-search", search.value);
 
-          document.querySelectorAll(".location-card").forEach(card => {
-            const name = card.querySelector("h3")?.textContent?.toLowerCase() || "";
-            const tags = card.dataset.tags || "";
-            const matchText = name.includes(q) || tags.includes(q);
-            card.style.display = matchText ? "block" : "none";
-          });
+          let resultList = query ? fuse.search(query).map(r => r.item) : locations;
+
+          renderCards(resultList);
         }
 
         search.addEventListener("input", filter);
         distanceSelect.addEventListener("change", filter);
 
-        renderCards();
+        renderCards(locations); // Initial render
       });
     </script>
   </body>
