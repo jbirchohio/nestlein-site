@@ -37,11 +37,7 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
     <section class="bg-gradient-to-r from-orange-100 to-orange-50 py-16 text-center">
       <h1 class="text-4xl font-extrabold text-orange-700 mb-2">Work Remotely. Nest Comfortably.</h1>
       <p class="text-gray-700 text-lg max-w-xl mx-auto">Discover the best spots with Wi-Fi, vibes, and space to get things done.</p>
-      <div class="mt-6 flex flex-wrap justify-center gap-2">
-        <span class="bg-white border border-orange-300 text-orange-600 px-4 py-1 rounded-full text-sm">✨ Cozy Corners</span>
-        <span class="bg-white border border-orange-300 text-orange-600 px-4 py-1 rounded-full text-sm">🔌 Lots of Outlets</span>
-        <span class="bg-white border border-orange-300 text-orange-600 px-4 py-1 rounded-full text-sm">☕ Top Coffee</span>
-      </div>
+      <div id="tag-pills" class="mt-6 flex flex-wrap justify-center gap-2 transition-all duration-500 opacity-0 translate-y-2"></div>
     </section>
 
     <!-- Main Content -->
@@ -49,21 +45,22 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
       <div id="dynamic-sections"></div>
     </main>
 
-    <!-- Load Location Data -->
+    <!-- Location JSON -->
     <script type="application/json" id="location-data" set:html={safeJson}></script>
 
-    <!-- Load Fuse.js from CDN -->
+    <!-- Fuse.js from CDN -->
     <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.1.0/dist/fuse.min.js"></script>
 
-    <!-- Client-side logic -->
+    <!-- Main client script -->
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const locations = JSON.parse(document.getElementById("location-data").textContent);
         const sectionContainer = document.getElementById("dynamic-sections");
         const search = document.getElementById("search");
         const distanceSelect = document.getElementById("distance-filter");
+        const pillContainer = document.getElementById("tag-pills");
 
-        // Load saved filters
+        // Restore saved filters
         const savedDistance = localStorage.getItem("nestlein-distance");
         if (savedDistance) distanceSelect.value = savedDistance;
 
@@ -126,10 +123,55 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
           return R * c * 0.621371;
         }
 
+        // 🔄 Generate dynamic tag pills
+        const tagSet = new Set();
+        locations.forEach(loc => (loc.tags || []).forEach(tag => tagSet.add(tag)));
+        const allTags = Array.from(tagSet);
+        const randomTags = allTags.sort(() => 0.5 - Math.random()).slice(0, 3);
+
+        pillContainer.innerHTML = randomTags.map(tag => `
+          <button class="tag-pill bg-white border border-orange-300 text-orange-600 px-4 py-1 rounded-full text-sm hover:bg-orange-200 transition" data-tag="${tag}">
+            ${tag}
+          </button>
+        `).join("");
+
+        setTimeout(() => {
+          pillContainer.classList.remove("opacity-0", "translate-y-2");
+        }, 100);
+
+        // 🔁 Tag pill logic
+        let activeTag = null;
+
+        pillContainer.querySelectorAll(".tag-pill").forEach(button => {
+          button.addEventListener("click", () => {
+            const tag = button.getAttribute("data-tag");
+
+            if (activeTag === tag) {
+              activeTag = null;
+              search.value = "";
+            } else {
+              activeTag = tag;
+              search.value = tag;
+            }
+
+            pillContainer.querySelectorAll(".tag-pill").forEach(btn => {
+              btn.classList.remove("bg-orange-600", "text-white", "shadow");
+              btn.classList.add("bg-white", "text-orange-600", "border-orange-300");
+            });
+
+            if (activeTag) {
+              button.classList.remove("bg-white", "text-orange-600", "border-orange-300");
+              button.classList.add("bg-orange-600", "text-white", "shadow");
+            }
+
+            filter();
+          });
+        });
+
         search.addEventListener("input", filter);
         distanceSelect.addEventListener("change", filter);
 
-        filter(); // Initial render
+        filter(); // First render
       });
     </script>
   </body>
