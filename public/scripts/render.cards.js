@@ -1,6 +1,6 @@
 import Fuse from "https://cdn.jsdelivr.net/npm/fuse.js@7.1.0/+esm";
 
-// Helper to escape HTML characters
+// Helper function to escape HTML
 function escapeHTML(str) {
   if (!str) return '';
   return str.replace(/&/g, '&amp;')
@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function getOpenStatus(str, day, now) {
     if (!str || !coversDay(str.toLowerCase(), day.toLowerCase())) return { status: 'unknown', text: 'Unknown' };
-    const m = str.match(/(\\d{1,2})(?::(\\d{2}))?\\s*(AM|PM)?\\s*to\\s*(\\d{1,2})(?::(\\d{2}))?\\s*(AM|PM)?/i);
+    const m = str.match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?\s*to\s*(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?/i);
     if (!m) return { status: 'unknown', text: 'Unknown' };
     const to24 = (h, m, p) => (p?.toUpperCase() === 'PM' && h !== 12 ? h + 12 : h === 12 && p?.toUpperCase() === 'AM' ? 0 : h) + m / 60;
     const [_, h1, m1 = '0', ampm1, h2, m2 = '0', ampm2] = m;
