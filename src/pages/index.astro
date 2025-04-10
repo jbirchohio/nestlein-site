@@ -1,4 +1,5 @@
 ---
+// 🧠 Astro content loading
 import "../styles/tailwind.css";
 import { getCollection } from 'astro:content';
 
@@ -45,11 +46,10 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
       <div id="dynamic-sections"></div>
     </main>
 
-    <!-- Location JSON -->
+    <!-- Data + Fuse -->
     <script type="application/json" id="location-data" set:html={safeJson}></script>
     <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.1.0/dist/fuse.min.js"></script>
 
-    <!-- Client script -->
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const locations = JSON.parse(document.getElementById("location-data").textContent);
@@ -60,7 +60,6 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
 
         const savedDistance = localStorage.getItem("nestlein-distance");
         if (savedDistance) distanceSelect.value = savedDistance;
-
         const savedSearch = localStorage.getItem("nestlein-search");
         if (savedSearch) search.value = savedSearch;
 
@@ -79,23 +78,25 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
             const status = getOpenStatus(loc.hours_of_operation, currentDay, currentTime);
 
             return `
-              <a href="/locations/${loc.slug}" class="relative block bg-white rounded-xl shadow hover:shadow-md transition p-4 border border-orange-100 w-full max-w-sm mx-auto location-card" data-tags="${(loc.tags || []).join(', ').toLowerCase()}" data-lat="${loc.latitude}" data-lon="${loc.longitude}">
-                ${loc.logo_url ? `
-                  <div class="relative mb-3">
-                    <img src="${loc.logo_url}" alt="${loc.name}" class="w-full h-40 object-cover rounded-md">
-                    <div class="absolute bottom-2 right-2 bg-white/90 text-xs font-semibold rounded-full px-3 py-0.5 shadow border ${
-                      status.status === 'open' ? 'text-green-600 border-green-300' : 'text-red-600 border-red-300'
-                    }">
-                      ${status.status === 'open' ? '🟢' : '🔴'} ${status.text}
+              <a href="/locations/${loc.slug}" class="group relative block bg-white rounded-xl shadow hover:shadow-lg transition border border-orange-100 w-full max-w-sm mx-auto overflow-hidden">
+                <div class="relative">
+                  <img src="${loc.logo_url}" alt="${loc.name}" class="w-full h-40 object-cover rounded-t-md">
+                  <div class="absolute bottom-2 right-2 bg-white/90 text-xs font-semibold rounded-full px-3 py-0.5 shadow border ${
+                    status.status === 'open' ? 'text-green-600 border-green-300' : 'text-red-600 border-red-300'
+                  }">
+                    ${status.status === 'open' ? '🟢' : '🔴'} ${status.text}
+                  </div>
+                </div>
+                <div class="p-4">
+                  <h3 class="text-lg font-semibold text-orange-800">${loc.name}</h3>
+                  <div class="transition-all duration-300 opacity-0 max-h-0 group-hover:opacity-100 group-hover:max-h-96 overflow-hidden space-y-1 mt-2">
+                    <p class="text-sm text-gray-500">${loc.address || ""}</p>
+                    <p class="text-sm">⭐ ${loc.restaurant_score || 0}/10</p>
+                    <p class="text-sm">🧠 ${loc.best_time_to_work_remotely || ""}</p>
+                    <div class="flex flex-wrap gap-1 mt-2">
+                      ${(loc.tags || []).map(t => `<span class="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">${t}</span>`).join("")}
                     </div>
-                  </div>` : ""
-                }
-                <h3 class="text-lg font-semibold text-orange-800 mb-1">${loc.name}</h3>
-                <p class="text-sm text-gray-500">${loc.address || ""}</p>
-                <p class="text-sm mt-1">⭐ ${loc.restaurant_score || 0}/10</p>
-                <p class="text-sm">🧠 ${loc.best_time_to_work_remotely || ""}</p>
-                <div class="mt-2 flex flex-wrap gap-1">
-                  ${(loc.tags || []).map(t => `<span class="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">${t}</span>`).join("")}
+                  </div>
                 </div>
               </a>
             `;
@@ -105,40 +106,28 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
         }
 
         function getOpenStatus(hoursStr, day, nowDecimal) {
-          if (!hoursStr || !isDayCovered(hoursStr, day)) {
-            return { status: 'unknown', text: 'Unknown hours' };
-          }
-
+          if (!hoursStr || !isDayCovered(hoursStr, day)) return { status: 'unknown', text: 'Unknown hours' };
           const match = hoursStr.match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?\s*(?:to|-)\s*(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?/i);
           if (!match) return { status: 'unknown', text: 'Unknown hours' };
-
           const [_, h1, m1 = '0', ampm1 = '', h2, m2 = '0', ampm2 = ''] = match;
-
-          const openTime = to24Hour(parseInt(h1), parseInt(m1), ampm1);
-          const closeTime = to24Hour(parseInt(h2), parseInt(m2), ampm2);
-
-          if (nowDecimal >= openTime && nowDecimal <= closeTime) {
-            const displayClose = formatTime(closeTime);
-            return { status: 'open', text: `Open until ${displayClose}` };
-          } else {
-            const displayOpen = formatTime(openTime);
-            return { status: 'closed', text: `Opens at ${displayOpen}` };
-          }
+          const open = to24Hour(+h1, +m1, ampm1);
+          const close = to24Hour(+h2, +m2, ampm2);
+          return nowDecimal >= open && nowDecimal <= close
+            ? { status: 'open', text: `Open until ${formatTime(close)}` }
+            : { status: 'closed', text: `Opens at ${formatTime(open)}` };
         }
 
         function isDayCovered(str, day) {
           const lc = str.toLowerCase();
           const weekdays = ['monday','tuesday','wednesday','thursday','friday'];
           const weekends = ['saturday','sunday'];
-
-          if (lc.includes('daily') || lc.includes('every day') || lc.includes('monday through sunday') || lc.includes('monday - sunday')) return true;
-          if (lc.includes(day.toLowerCase())) return true;
-          if (lc.includes('weekdays') && weekdays.includes(day.toLowerCase())) return true;
-          if (lc.includes('weekends') && weekends.includes(day.toLowerCase())) return true;
-          if (lc.includes('mon–fri') && weekdays.includes(day.toLowerCase())) return true;
-          if (lc.includes('fri–sun') && ['friday','saturday','sunday'].includes(day.toLowerCase())) return true;
-
-          return false;
+          return lc.includes(day.toLowerCase()) ||
+                 lc.includes('every day') || lc.includes('daily') ||
+                 lc.includes('monday through sunday') || lc.includes('monday - sunday') ||
+                 (lc.includes('weekdays') && weekdays.includes(day.toLowerCase())) ||
+                 (lc.includes('weekends') && weekends.includes(day.toLowerCase())) ||
+                 (lc.includes('mon–fri') && weekdays.includes(day.toLowerCase())) ||
+                 (lc.includes('fri–sun') && ['friday','saturday','sunday'].includes(day.toLowerCase()));
         }
 
         function to24Hour(hour, minute, ampm) {
@@ -148,11 +137,11 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
         }
 
         function formatTime(decimalTime) {
-          const hours = Math.floor(decimalTime);
-          const minutes = Math.round((decimalTime - hours) * 60);
-          const ampm = hours >= 12 ? 'PM' : 'AM';
-          const displayHour = ((hours + 11) % 12 + 1);
-          return `${displayHour}${minutes > 0 ? ':' + String(minutes).padStart(2, '0') : ''} ${ampm}`;
+          const h = Math.floor(decimalTime);
+          const m = Math.round((decimalTime - h) * 60);
+          const ampm = h >= 12 ? 'PM' : 'AM';
+          const displayHour = ((h + 11) % 12 + 1);
+          return `${displayHour}${m > 0 ? ':' + String(m).padStart(2, '0') : ''} ${ampm}`;
         }
 
         function filter() {
@@ -208,25 +197,16 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
         pillContainer.querySelectorAll(".tag-pill").forEach(button => {
           button.addEventListener("click", () => {
             const tag = button.getAttribute("data-tag");
-
-            if (activeTag === tag) {
-              activeTag = null;
-              search.value = "";
-            } else {
-              activeTag = tag;
-              search.value = tag;
-            }
-
+            activeTag = activeTag === tag ? null : tag;
+            search.value = activeTag || "";
             pillContainer.querySelectorAll(".tag-pill").forEach(btn => {
               btn.classList.remove("bg-orange-600", "text-white", "shadow");
               btn.classList.add("bg-white", "text-orange-600", "border-orange-300");
             });
-
             if (activeTag) {
               button.classList.remove("bg-white", "text-orange-600", "border-orange-300");
               button.classList.add("bg-orange-600", "text-white", "shadow");
             }
-
             filter();
           });
         });
