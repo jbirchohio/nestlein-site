@@ -2,7 +2,6 @@
 import { getCollection } from 'astro:content';
 
 const locations = await getCollection('locations');
-
 const groupedLocations = locations.map(loc => ({
   ...loc.data,
   slug: loc.slug,
@@ -15,6 +14,7 @@ function getOpenStatus(hours) {
   const time = now.getHours() + now.getMinutes() / 60;
 
   if (!hours || !coversDay(hours.toLowerCase(), day.toLowerCase())) return { status: 'unknown', text: 'Unknown' };
+
   const m = hours.match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?\s*to\s*(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?/i);
   if (!m) return { status: 'unknown', text: 'Unknown' };
 
@@ -41,16 +41,16 @@ function formatTime(decimal) {
   const hr = ((h + 11) % 12 + 1);
   return `${hr}${m > 0 ? ':' + m.toString().padStart(2, '0') : ''} ${ampm}`;
 }
+
+const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
 ---
 
-<html>
+<html lang="en">
   <head>
     <title>NestleIn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/styles/tailwind.css">
-<script src="https://cdn.jsdelivr.net/npm/fuse.js@7.1.0/dist/fuse.min.js"></script>
-
   </head>
   <body class="bg-orange-50 font-sans">
     <!-- Header -->
@@ -78,15 +78,7 @@ function formatTime(decimal) {
       <div id="dynamic-sections" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
     </main>
 
-    <!-- JSON & Render Script -->
-    <script type="application/json" id="location-data" set:html={JSON.stringify(groupedLocations).replace(/</g, '\u003c')}></script>
+    <script type="application/json" id="location-data">{safeJson}</script>
     <script type="module" src="/scripts/render.cards.js"></script>
-
-    <style>
-      .perspective { perspective: 1000px; }
-      .transform-style-preserve-3d { transform-style: preserve-3d; }
-      .backface-hidden { backface-visibility: hidden; }
-      .rotate-y-180 { transform: rotateY(180deg); }
-    </style>
   </body>
 </html>
