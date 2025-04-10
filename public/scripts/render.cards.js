@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="flip-card-inner">
               <!-- Front -->
               <div class="card-front absolute inset-0 backface-hidden rounded-xl border border-orange-100 bg-white shadow overflow-hidden">
-                ${loc.logo_url ? \`<img src="${loc.logo_url}" alt="${escapeHTML(loc.name)}" class="w-full h-40 object-cover">\` : ''}
+                ${loc.logo_url ? \`<img src="${escapeHTML(loc.logo_url)}" alt="${escapeHTML(loc.name)}" class="w-full h-40 object-cover">\` : ''}
                 <div class="p-4 relative">
                   <h3 class="text-lg font-bold text-orange-800">${escapeHTML(loc.name)}</h3>
                   <div class="absolute bottom-2 right-2 bg-white/80 px-3 py-0.5 rounded-full text-xs font-semibold border border-orange-200 shadow" title="${hours}">
@@ -68,6 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
     }).join("");
 
+
     container.innerHTML = cards;
 
     if (isTouch) {
@@ -86,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function getOpenStatus(str, day, now) {
     if (!str || !coversDay(str.toLowerCase(), day.toLowerCase())) return { status: 'unknown', text: 'Unknown' };
-    const m = str.match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?\s*to\s*(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?/i);
+    const m = str.match(/(\\d{1,2})(?::(\\d{2}))?\\s*(AM|PM)?\\s*to\\s*(\\d{1,2})(?::(\\d{2}))?\\s*(AM|PM)?/i);
     if (!m) return { status: 'unknown', text: 'Unknown' };
     const to24 = (h, m, p) => (p?.toUpperCase() === 'PM' && h !== 12 ? h + 12 : h === 12 && p?.toUpperCase() === 'AM' ? 0 : h) + m / 60;
     const [_, h1, m1 = '0', ampm1, h2, m2 = '0', ampm2] = m;
