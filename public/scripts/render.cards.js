@@ -11,24 +11,24 @@ const fuse = new Fuse(locations, {
 });
 
 const tagColors = {
-  'Coffee Shop': 'bg-yellow-100 text-yellow-700',
-  'Study Spot': 'bg-blue-100 text-blue-700',
-  'LGBTQ+ Friendly': 'bg-pink-100 text-pink-700',
-  'Family-Friendly': 'bg-green-100 text-green-700',
-  'Casual Dining': 'bg-red-100 text-red-700',
-  'Quiet Space': 'bg-purple-100 text-purple-700',
-  'Wi-Fi': 'bg-indigo-100 text-indigo-700',
-  'Drive-Thru': 'bg-orange-200 text-orange-800',
-  'Good for Groups': 'bg-lime-100 text-lime-700',
+  'Coffee Shop': 'bg-tag-coffee',
+  'Study Spot': 'bg-tag-study',
+  'LGBTQ+ Friendly': 'bg-tag-default',
+  'Family-Friendly': 'bg-tag-family',
+  'Casual Dining': 'bg-tag-casual',
+  'Quiet Space': 'bg-tag-quiet',
+  'Wi-Fi': 'bg-tag-default',
+  'Drive-Thru': 'bg-tag-default',
+  'Good for Groups': 'bg-tag-group',
   'Black-Owned': 'bg-black text-white',
-  'Vegan Options': 'bg-emerald-100 text-emerald-700',
-  'Breakfast Spot': 'bg-amber-100 text-amber-700',
-  'Trendy Cafe': 'bg-fuchsia-100 text-fuchsia-700',
-  'Solo Dining': 'bg-cyan-100 text-cyan-700',
+  'Vegan Options': 'bg-tag-vegan',
+  'Breakfast Spot': 'bg-tag-default',
+  'Trendy Cafe': 'bg-tag-default',
+  'Solo Dining': 'bg-tag-default',
 };
 
 function getTagColor(tag) {
-  return tagColors[tag] || 'bg-orange-100 text-orange-700';
+  return tagColors[tag] || 'bg-tag-default';
 }
 
 function getRandomTags(tags, count = 2) {
@@ -47,16 +47,14 @@ function renderCards(data) {
         <div class="flip-inner w-full h-full transition-transform duration-500 [transform-style:preserve-3d] group-hover:rotate-y-180">
           <!-- Front -->
           <div class="card-front absolute inset-0 backface-hidden rounded-xl border border-orange-100 bg-white shadow overflow-hidden z-10">
-            <div class="relative w-full h-full">
-              ${loc.logo_url ? `<img src="${loc.logo_url}" alt="${loc.name}" class="w-full h-full object-cover" />` : ""}
+            ${loc.logo_url ? `<img src="${loc.logo_url}" alt="${loc.name}" class="w-full h-32 object-cover" />` : ""}
+            <div class="relative h-[calc(100%-8rem)] px-3 pt-3">
               <div class="absolute top-2 left-2 flex gap-1 flex-wrap">
                 ${frontTags.map(tag => `<span class="text-[0.6rem] ${getTagColor(tag)} px-2 py-0.5 rounded-full">${tag}</span>`).join('')}
               </div>
-              <div class="absolute bottom-2 left-2 right-2 flex justify-between items-end">
-                <h3 class="text-md font-bold text-orange-900 bg-white/90 px-2 py-0.5 rounded-md">${loc.name}</h3>
-                <div class="bg-white/90 px-3 py-0.5 rounded-full text-xs font-semibold border border-orange-200 shadow">
-                  ${statusIcon} ${statusText}
-                </div>
+              <h3 class="text-lg font-bold text-orange-800 mt-10">${loc.name}</h3>
+              <div class="absolute bottom-2 right-2 bg-white/90 px-3 py-0.5 rounded-full text-xs font-semibold border border-orange-200 shadow">
+                ${statusIcon} ${statusText}
               </div>
             </div>
           </div>
@@ -87,12 +85,17 @@ function renderCards(data) {
 
   container.innerHTML = cards;
 
-  // Tap to flip behavior for mobile
+  // Tap to flip on mobile, navigate on second tap
   container.querySelectorAll('.flip-card').forEach(card => {
     card.addEventListener('click', (e) => {
       if (window.innerWidth < 768) {
         e.preventDefault();
-        card.querySelector('.flip-inner').classList.toggle('rotate-y-180');
+        const inner = card.querySelector('.flip-inner');
+        if (inner.classList.contains('rotate-y-180')) {
+          window.location.href = card.href;
+        } else {
+          inner.classList.add('rotate-y-180');
+        }
       }
     });
   });
