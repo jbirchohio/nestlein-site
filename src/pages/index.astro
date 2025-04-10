@@ -4,7 +4,7 @@ import { getCollection } from 'astro:content';
 
 const locations = await getCollection('locations');
 const groupedLocations = locations.map(loc => ({ ...loc.data, slug: loc.slug }));
-const safeJson = JSON.stringify(groupedLocations).replace(/</g, '<');
+const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
 ---
 
 <html>
@@ -14,6 +14,7 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '<');
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
   </head>
   <body class="bg-orange-50 font-sans">
+    <!-- Header -->
     <header class="sticky top-0 z-50 bg-white shadow-sm p-4 flex flex-col md:flex-row items-center justify-between gap-2">
       <div class="text-2xl font-bold text-orange-600">NestleIn</div>
       <input id="search" placeholder="Search spots or tags..." class="border border-orange-300 px-4 py-2 rounded-full shadow-sm focus:ring-2 focus:ring-orange-400 w-full max-w-sm">
@@ -26,25 +27,39 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '<');
       </select>
     </header>
 
+    <!-- Hero -->
     <section class="bg-gradient-to-r from-orange-100 to-orange-50 py-16 text-center">
       <h1 class="text-4xl font-extrabold text-orange-700 mb-2">Work Remotely. Nest Comfortably.</h1>
       <p class="text-gray-700 text-lg max-w-xl mx-auto">Discover the best spots with Wi-Fi, vibes, and space to get things done.</p>
       <div id="tag-pills" class="mt-6 flex flex-wrap justify-center gap-2 transition-all duration-500 opacity-0 translate-y-2"></div>
     </section>
 
+    <!-- Cards -->
     <main class="px-4 py-10 space-y-12">
       <div id="dynamic-sections" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
     </main>
 
+    <!-- Location data -->
     <script type="application/json" id="location-data" set:html={safeJson}></script>
+
+    <!-- Fuse must load first -->
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.1.0/dist/fuse.min.js"></script>
+
+    <!-- Your custom render logic -->
     <script type="module" src="/scripts/render.cards.js"></script>
 
+    <!-- Styles for flip, icons, and layout -->
     <style>
       .perspective { perspective: 1000px; }
       .transform-style-preserve-3d { transform-style: preserve-3d; }
       .backface-hidden { backface-visibility: hidden; transform: rotateY(0); }
       .rotate-y-180 { transform: rotateY(180deg); }
-      svg.icon-sm { width: 1rem; height: 1rem; display: inline-block; vertical-align: middle; }
+      svg.icon-sm {
+        width: 1rem;
+        height: 1rem;
+        display: inline-block;
+        vertical-align: middle;
+      }
     </style>
   </body>
 </html>
