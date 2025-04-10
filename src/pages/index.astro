@@ -130,7 +130,7 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
                     <div class="mt-2 flex flex-wrap gap-1">
                       ${(loc.tags || []).map(t => `<span class="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">${t}</span>`).join("")}
                     </div>
-                    ${loc.latitude && loc.longitude ? `<div class="mt-2"><a href="https://www.google.com/maps/search/?api=1&query=${loc.latitude},${loc.longitude}" target="_blank" class="text-xs underline text-orange-600">Map</a></div>` : ""}
+                    ${Number.isFinite(loc.latitude) && Number.isFinite(loc.longitude) ? `<div class="mt-2"><a href="https://www.google.com/maps/search/?api=1&query=${loc.latitude},${loc.longitude}" target="_blank" class="text-xs underline text-orange-600">Map</a></div>` : ""}
                   </a>
                 `).join("")}
               </div>
