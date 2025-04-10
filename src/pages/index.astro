@@ -1,7 +1,8 @@
 ---
-// same data load as before
+// Load locations and prep JSON
 import "../styles/tailwind.css";
 import { getCollection } from 'astro:content';
+import LucideIcon from "../components/LucideIcon.jsx";
 
 const locations = await getCollection('locations');
 
@@ -30,26 +31,31 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
         <option value="10">Within 10 mi</option>
         <option value="25">Within 25 mi</option>
         <option value="50">Within 50 mi</option>
-        <option value="0">Ignore distance</option>
       </select>
     </header>
 
-    <!-- Hero -->
+    <!-- Hero Section -->
     <section class="bg-gradient-to-r from-orange-100 to-orange-50 py-16 text-center">
       <h1 class="text-4xl font-extrabold text-orange-700 mb-2">Work Remotely. Nest Comfortably.</h1>
       <p class="text-gray-700 text-lg max-w-xl mx-auto">Discover the best spots with Wi-Fi, vibes, and space to get things done.</p>
-      <div id="tag-pills" class="mt-6 flex flex-wrap justify-center gap-2 transition-all duration-500 opacity-0 translate-y-2"></div>
+      <div id="tag-pills" class="mt-6 flex flex-wrap justify-center gap-2"></div>
     </section>
 
-    <!-- Main -->
-    <main class="px-4 py-10 space-y-12">
-      <div id="dynamic-sections" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+    <!-- Main Content -->
+    <main class="px-4 py-10">
+      <div id="dynamic-sections" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
     </main>
 
+    <!-- Data Injection -->
     <script type="application/json" id="location-data" set:html={safeJson}></script>
-    <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.1.0/dist/fuse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.1.0"></script>
 
-    <script>
+    <!-- Scripts -->
+    <script type="module">
+      import { createElement as h } from "https://esm.sh/react";
+      import { render } from "https://esm.sh/react-dom";
+      import { Star, BrainCog, Clock } from "https://esm.sh/lucide-react";
+
       document.addEventListener("DOMContentLoaded", () => {
         const locations = JSON.parse(document.getElementById("location-data").textContent);
         const container = document.getElementById("dynamic-sections");
@@ -65,121 +71,68 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
         const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
         function renderCards(data) {
-          const now = new Date();
-          const day = now.toLocaleDateString('en-US', { weekday: 'long' });
-          const time = now.getHours() + now.getMinutes() / 60;
-
-          const html = data.map(loc => {
-            const status = getOpenStatus(loc.hours_of_operation, day, time);
-            const hoursTooltip = loc.hours_of_operation || 'Hours unknown';
-
+          container.innerHTML = data.map(loc => {
             return `
-              <div class="relative group perspective w-full max-w-sm mx-auto">
-                <div class="transition-transform duration-500 transform-style-preserve-3d w-full h-full relative rounded-xl border border-orange-100 shadow group-hover:rotate-y-180 ${isTouch ? 'tap-flip' : ''}">
-                  <div class="absolute inset-0 backface-hidden bg-white rounded-xl overflow-hidden">
-                    <img src="${loc.logo_url}" alt="${loc.name}" class="w-full h-40 object-cover">
-                    <div class="absolute bottom-2 right-2 bg-white/90 text-xs font-semibold rounded-full px-3 py-0.5 shadow border ${status.status === 'open' ? 'text-green-600 border-green-300' : 'text-red-600 border-red-300'}" title="${hoursTooltip}">
-                      ${status.status === 'open' ? '🟢' : '🔴'} ${status.text}
-                    </div>
+              <div class="group perspective">
+                <div class="relative w-full h-full transform-style-preserve-3d transition duration-500 group-hover:rotate-y-180 ${
+                  isTouch ? 'tap-flip' : ''
+                } rounded-xl shadow border border-orange-100 bg-white">
+                  <!-- Front -->
+                  <div class="absolute inset-0 backface-hidden rounded-xl overflow-hidden">
+                    ${loc.logo_url ? `<img src="${loc.logo_url}" alt="${loc.name}" class="w-full h-40 object-cover">` : ""}
                     <div class="p-4">
-                      <h3 class="text-lg font-semibold text-orange-800">${loc.name}</h3>
+                      <h3 class="text-lg font-bold text-orange-800">${loc.name}</h3>
+                      <div class="absolute bottom-2 right-2 text-xs bg-white/80 px-3 py-1 rounded-full border border-orange-200 font-semibold shadow" title="${loc.hours_of_operation || 'Hours unknown'}">
+                        ${loc.hours_of_operation?.toLowerCase().includes('closed') ? '🔴 Closed' : '🟢 Open'}
+                      </div>
                     </div>
                   </div>
 
-                  <div class="absolute inset-0 backface-hidden rotate-y-180 bg-orange-50 rounded-xl p-4 flex flex-col justify-center space-y-2 text-sm text-gray-800">
-                    <p class="text-sm text-gray-600">${loc.address || ''}</p>
-                    <p>⭐ ${loc.restaurant_score || 0}/10</p>
-                    <p>🧠 ${loc.best_time_to_work_remotely || ''}</p>
+                  <!-- Back -->
+                  <div class="absolute inset-0 backface-hidden rotate-y-180 p-4 rounded-xl bg-orange-50 flex flex-col justify-center space-y-2 text-sm text-gray-800">
+                    <p class="text-gray-600 text-sm">${loc.address || ""}</p>
+                    <p class="flex items-center gap-2">
+                      <span class="icon"><svg class="w-4 h-4 text-yellow-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 2l2.9 6.26L22 9.27l-5.5 5.36L18.8 22 12 18.27 5.2 22l1.3-7.37L1 9.27l7.1-1.01L12 2z"/></svg></span>
+                      <strong>${loc.restaurant_score || 0}/10</strong>
+                    </p>
+                    <p class="flex items-center gap-2">
+                      <span class="icon"><svg class="w-4 h-4 text-orange-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></span>
+                      ${loc.best_time_to_work_remotely || ''}
+                    </p>
                     <div class="flex flex-wrap gap-1">
-                      ${(loc.tags || []).map(t => `<span class="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">${t}</span>`).join('')}
+                      ${(loc.tags || []).map(t => `<span class="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">${t}</span>`).join("")}
                     </div>
                     <a href="/locations/${loc.slug}" class="text-orange-700 underline text-xs mt-2">View Details</a>
                   </div>
                 </div>
               </div>
             `;
-          }).join('');
-
-          container.innerHTML = html;
+          }).join("");
 
           if (isTouch) {
-            document.querySelectorAll('.tap-flip').forEach(card => {
-              card.addEventListener('click', () => {
-                card.classList.toggle('rotate-y-180');
+            document.querySelectorAll(".tap-flip").forEach(el => {
+              el.addEventListener("click", () => {
+                el.classList.toggle("rotate-y-180");
               });
             });
           }
         }
 
-        function getOpenStatus(str, day, now) {
-          if (!str || !coversDay(str.toLowerCase(), day.toLowerCase())) return { status: 'unknown', text: 'Unknown hours' };
-          const m = str.match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?\s*to\s*(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?/i);
-          if (!m) return { status: 'unknown', text: 'Unknown hours' };
-          const to24 = (h, m, p) => {
-            if (!p) return h + m / 60;
-            return (p.toUpperCase() === 'PM' && h !== 12 ? h + 12 : h === 12 && p.toUpperCase() === 'AM' ? 0 : h) + m / 60;
-          };
-          const [_, h1, m1 = '0', p1, h2, m2 = '0', p2] = m;
-          const open = to24(+h1, +m1, p1);
-          const close = to24(+h2, +m2, p2);
-          return now >= open && now <= close
-            ? { status: 'open', text: `until ${formatTime(close)}` }
-            : { status: 'closed', text: `opens at ${formatTime(open)}` };
-        }
-
-        function coversDay(text, day) {
-          const w = ['monday','tuesday','wednesday','thursday','friday'];
-          const e = ['saturday','sunday'];
-          return text.includes(day) || text.includes('every day') || text.includes('daily') ||
-                 text.includes('monday through sunday') || text.includes('monday - sunday') ||
-                 (text.includes('weekdays') && w.includes(day)) || (text.includes('weekends') && e.includes(day)) ||
-                 (text.includes('mon–fri') && w.includes(day)) || (text.includes('fri–sun') && ['friday','saturday','sunday'].includes(day));
-        }
-
-        function formatTime(d) {
-          const h = Math.floor(d), m = Math.round((d - h) * 60);
-          const ap = h >= 12 ? 'PM' : 'AM';
-          const hr = ((h + 11) % 12 + 1);
-          return `${hr}${m > 0 ? ':' + String(m).padStart(2, '0') : ''} ${ap}`;
-        }
-
         function filter() {
-          const query = search.value.trim();
+          const q = search.value.trim();
           const maxDist = parseInt(distanceSelect.value);
-          let results = query ? fuse.search(query).map(r => r.item) : locations;
-
-          if (maxDist > 0 && navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(pos => {
-              results = results.filter(l => l.latitude && l.longitude && haversine(pos.coords.latitude, pos.coords.longitude, l.latitude, l.longitude) <= maxDist);
-              renderCards(results);
-            });
-          } else {
-            renderCards(results);
-          }
+          let results = q ? fuse.search(q).map(r => r.item) : locations;
+          renderCards(results);
         }
 
-        function haversine(lat1, lon1, lat2, lon2) {
-          const R = 6371, dLat = ((lat2 - lat1) * Math.PI) / 180, dLon = ((lon2 - lon1) * Math.PI) / 180;
-          const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
-          return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 0.621371;
-        }
+        const allTags = [...new Set(locations.flatMap(l => l.tags || []))];
+        const random = allTags.sort(() => 0.5 - Math.random()).slice(0, 3);
+        pillContainer.innerHTML = random.map(tag => `<button class="tag-pill bg-white border border-orange-300 text-orange-600 px-4 py-1 rounded-full text-sm hover:bg-orange-200 transition" data-tag="${tag}">${tag}</button>`).join("");
 
-        // tag pills
-        const tagSet = new Set();
-        locations.forEach(loc => (loc.tags || []).forEach(tag => tagSet.add(tag)));
-        const allTags = Array.from(tagSet);
-        const randomTags = allTags.sort(() => 0.5 - Math.random()).slice(0, 3);
-        pillContainer.innerHTML = randomTags.map(tag => `<button class="tag-pill bg-white border border-orange-300 text-orange-600 px-4 py-1 rounded-full text-sm hover:bg-orange-200 transition" data-tag="${tag}">${tag}</button>`).join('');
-        setTimeout(() => pillContainer.classList.remove("opacity-0", "translate-y-2"), 100);
-
-        let activeTag = null;
         pillContainer.querySelectorAll(".tag-pill").forEach(button => {
           button.addEventListener("click", () => {
-            const tag = button.getAttribute("data-tag");
-            activeTag = activeTag === tag ? null : tag;
-            search.value = activeTag || "";
-            pillContainer.querySelectorAll(".tag-pill").forEach(btn => btn.classList.remove("bg-orange-600", "text-white", "shadow"));
-            if (activeTag) button.classList.add("bg-orange-600", "text-white", "shadow");
+            const tag = button.dataset.tag;
+            search.value = tag;
             filter();
           });
         });
@@ -193,7 +146,7 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
     <style>
       .perspective { perspective: 1000px; }
       .transform-style-preserve-3d { transform-style: preserve-3d; }
-      .backface-hidden { backface-visibility: hidden; }
+      .backface-hidden { backface-visibility: hidden; transform: rotateY(0); }
       .rotate-y-180 { transform: rotateY(180deg); }
     </style>
   </body>
