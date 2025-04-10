@@ -6,7 +6,7 @@ address: '2071 Portage Trail, Cuyahoga Falls, OH 44223'
 phone_number: (330) 923-4126
 hours_of_operation: '4:30 AM to 9:30 PM, daily'
 restaurant_score: 4.2
-best_time_to_work_remotely: 'Weekday mornings before 11 AM  --- ##Remote Work Features##'
+best_time_to_work_remotely: Weekday mornings before 11 AM
 tags:
   - Coffee Shop
   - Drive-Thru

@@ -6,7 +6,7 @@ address: '1491 Aster Ave, Akron, OH 44301'
 phone_number: (330) 536-9255
 hours_of_operation: '8 AM to 2 PM, Monday through Sunday'
 restaurant_score: 4.4
-best_time_to_work_remotely: 'Weekday mornings before 11 AM  --- ##Remote Work Features##'
+best_time_to_work_remotely: Weekday mornings before 11 AM
 tags:
   - Black-Owned
   - Family-Friendly

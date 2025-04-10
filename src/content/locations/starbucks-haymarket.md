@@ -5,7 +5,7 @@ address: "Capitol Square, g01, 730-742 George St, Haymarket, NSW 2000, Australia
 phone_number: "+61 1800 787 289 (International format; US format unavailable due to country code)"
 hours_of_operation: "Check Website for Updated Hours (Inconsistent opening times are shown for takeout vs dine-in)"
 restaurant_score: 3.7
-best_time_to_work_remotely: "Weekday mornings before 11 AM  --- ##Remote Work Features##"
+best_time_to_work_remotely: "Weekday mornings before 11 AM"
 tags: [
     "Coffee Shop",
     "Study Spot",

@@ -6,7 +6,7 @@ address: '7 Kedron Ave, Morton, PA 19070'
 phone_number: (610) 328-1816
 hours_of_operation: '7 AM to 2 PM, Monday through Sunday'
 restaurant_score: 4.4
-best_time_to_work_remotely: 'Weekday mornings before 11am  --- ##Remote Work Features##'
+best_time_to_work_remotely: Weekday mornings before 11am
 tags:
   - Breakfast Spot
   - Casual Dining

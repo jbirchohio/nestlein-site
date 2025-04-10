@@ -7,7 +7,7 @@ address: '367 Pitt St, Sydney NSW 2000, Australia'
 phone_number: Unknown
 hours_of_operation: Check Website for Updated Hours
 restaurant_score: 4.4
-best_time_to_work_remotely: 'Weekday mornings before 11am  --- ##Remote Work Features##'
+best_time_to_work_remotely: Weekday mornings before 11am
 tags:
   - Good for Groups
   - Breakfast Spot

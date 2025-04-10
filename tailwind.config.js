@@ -2,7 +2,14 @@ module.exports = {
   content: [
     './src/**/*.{astro,html,js,jsx,ts,tsx,vue}',
     './src/pages/**/*.{astro,html}',
-    './src/layouts/**/*.{astro,html}'
+    './src/layouts/**/*.{astro,html}',
+    './public/scripts/*.js',
+  ],
+  safelist: [
+    'rotate-y-180',
+    'perspective',
+    'transform-style-preserve-3d',
+    'backface-hidden',
   ],
   theme: {
     extend: {

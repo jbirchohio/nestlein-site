@@ -4,7 +4,7 @@ address: "2897 S Arlington Rd, Akron, OH 44312"
 phone_number: "(330) 644-5303"
 hours_of_operation: "Monday - Thursday: 11 AM to 12 AM; Friday - Saturday: 11 AM to 1 AM; Sunday: 11 AM to 12 AM"
 restaurant_score: 3.9
-best_time_to_work_remotely: "Weekday mornings before 11 AM  --- ##Remote Work Features##"
+best_time_to_work_remotely: "Weekday mornings before 11 AM"
 tags: [
     "Family-friendly",
     "Good for Groups",
