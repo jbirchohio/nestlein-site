@@ -1,5 +1,6 @@
 import Fuse from "https://cdn.jsdelivr.net/npm/fuse.js@7.1.0/+esm";
 
+// Helper to escape HTML characters
 function escapeHTML(str) {
   if (!str) return '';
   return str.replace(/&/g, '&amp;')
