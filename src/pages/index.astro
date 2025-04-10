@@ -1,5 +1,5 @@
 ---
-// 🧠 Astro content loading
+// same data load as before
 import "../styles/tailwind.css";
 import { getCollection } from 'astro:content';
 
@@ -34,132 +34,123 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
       </select>
     </header>
 
-    <!-- Hero Section -->
+    <!-- Hero -->
     <section class="bg-gradient-to-r from-orange-100 to-orange-50 py-16 text-center">
       <h1 class="text-4xl font-extrabold text-orange-700 mb-2">Work Remotely. Nest Comfortably.</h1>
       <p class="text-gray-700 text-lg max-w-xl mx-auto">Discover the best spots with Wi-Fi, vibes, and space to get things done.</p>
       <div id="tag-pills" class="mt-6 flex flex-wrap justify-center gap-2 transition-all duration-500 opacity-0 translate-y-2"></div>
     </section>
 
-    <!-- Main Content -->
+    <!-- Main -->
     <main class="px-4 py-10 space-y-12">
-      <div id="dynamic-sections"></div>
+      <div id="dynamic-sections" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
     </main>
 
-    <!-- Data + Fuse -->
     <script type="application/json" id="location-data" set:html={safeJson}></script>
     <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.1.0/dist/fuse.min.js"></script>
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const locations = JSON.parse(document.getElementById("location-data").textContent);
-        const sectionContainer = document.getElementById("dynamic-sections");
+        const container = document.getElementById("dynamic-sections");
         const search = document.getElementById("search");
         const distanceSelect = document.getElementById("distance-filter");
         const pillContainer = document.getElementById("tag-pills");
 
-        const savedDistance = localStorage.getItem("nestlein-distance");
-        if (savedDistance) distanceSelect.value = savedDistance;
-        const savedSearch = localStorage.getItem("nestlein-search");
-        if (savedSearch) search.value = savedSearch;
-
         const fuse = new window.Fuse(locations, {
           keys: ['name', 'tags', 'address'],
           threshold: 0.35,
-          includeScore: true,
         });
+
+        const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
         function renderCards(data) {
           const now = new Date();
-          const currentDay = now.toLocaleDateString('en-US', { weekday: 'long' });
-          const currentTime = now.getHours() + now.getMinutes() / 60;
+          const day = now.toLocaleDateString('en-US', { weekday: 'long' });
+          const time = now.getHours() + now.getMinutes() / 60;
 
           const html = data.map(loc => {
-            const status = getOpenStatus(loc.hours_of_operation, currentDay, currentTime);
+            const status = getOpenStatus(loc.hours_of_operation, day, time);
+            const hoursTooltip = loc.hours_of_operation || 'Hours unknown';
 
             return `
-              <a href="/locations/${loc.slug}" class="group relative block bg-white rounded-xl shadow hover:shadow-lg transition border border-orange-100 w-full max-w-sm mx-auto overflow-hidden">
-                <div class="relative">
-                  <img src="${loc.logo_url}" alt="${loc.name}" class="w-full h-40 object-cover rounded-t-md">
-                  <div class="absolute bottom-2 right-2 bg-white/90 text-xs font-semibold rounded-full px-3 py-0.5 shadow border ${
-                    status.status === 'open' ? 'text-green-600 border-green-300' : 'text-red-600 border-red-300'
-                  }">
-                    ${status.status === 'open' ? '🟢' : '🔴'} ${status.text}
-                  </div>
-                </div>
-                <div class="p-4">
-                  <h3 class="text-lg font-semibold text-orange-800">${loc.name}</h3>
-                  <div class="transition-all duration-300 opacity-0 max-h-0 group-hover:opacity-100 group-hover:max-h-96 overflow-hidden space-y-1 mt-2">
-                    <p class="text-sm text-gray-500">${loc.address || ""}</p>
-                    <p class="text-sm">⭐ ${loc.restaurant_score || 0}/10</p>
-                    <p class="text-sm">🧠 ${loc.best_time_to_work_remotely || ""}</p>
-                    <div class="flex flex-wrap gap-1 mt-2">
-                      ${(loc.tags || []).map(t => `<span class="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">${t}</span>`).join("")}
+              <div class="relative group perspective w-full max-w-sm mx-auto">
+                <div class="transition-transform duration-500 transform-style-preserve-3d w-full h-full relative rounded-xl border border-orange-100 shadow group-hover:rotate-y-180 ${isTouch ? 'tap-flip' : ''}">
+                  <div class="absolute inset-0 backface-hidden bg-white rounded-xl overflow-hidden">
+                    <img src="${loc.logo_url}" alt="${loc.name}" class="w-full h-40 object-cover">
+                    <div class="absolute bottom-2 right-2 bg-white/90 text-xs font-semibold rounded-full px-3 py-0.5 shadow border ${status.status === 'open' ? 'text-green-600 border-green-300' : 'text-red-600 border-red-300'}" title="${hoursTooltip}">
+                      ${status.status === 'open' ? '🟢' : '🔴'} ${status.text}
+                    </div>
+                    <div class="p-4">
+                      <h3 class="text-lg font-semibold text-orange-800">${loc.name}</h3>
                     </div>
                   </div>
+
+                  <div class="absolute inset-0 backface-hidden rotate-y-180 bg-orange-50 rounded-xl p-4 flex flex-col justify-center space-y-2 text-sm text-gray-800">
+                    <p class="text-sm text-gray-600">${loc.address || ''}</p>
+                    <p>⭐ ${loc.restaurant_score || 0}/10</p>
+                    <p>🧠 ${loc.best_time_to_work_remotely || ''}</p>
+                    <div class="flex flex-wrap gap-1">
+                      ${(loc.tags || []).map(t => `<span class="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">${t}</span>`).join('')}
+                    </div>
+                    <a href="/locations/${loc.slug}" class="text-orange-700 underline text-xs mt-2">View Details</a>
+                  </div>
                 </div>
-              </a>
+              </div>
             `;
-          }).join("");
+          }).join('');
 
-          sectionContainer.innerHTML = `<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">${html}</div>`;
+          container.innerHTML = html;
+
+          if (isTouch) {
+            document.querySelectorAll('.tap-flip').forEach(card => {
+              card.addEventListener('click', () => {
+                card.classList.toggle('rotate-y-180');
+              });
+            });
+          }
         }
 
-        function getOpenStatus(hoursStr, day, nowDecimal) {
-          if (!hoursStr || !isDayCovered(hoursStr, day)) return { status: 'unknown', text: 'Unknown hours' };
-          const match = hoursStr.match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?\s*(?:to|-)\s*(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?/i);
-          if (!match) return { status: 'unknown', text: 'Unknown hours' };
-          const [_, h1, m1 = '0', ampm1 = '', h2, m2 = '0', ampm2 = ''] = match;
-          const open = to24Hour(+h1, +m1, ampm1);
-          const close = to24Hour(+h2, +m2, ampm2);
-          return nowDecimal >= open && nowDecimal <= close
-            ? { status: 'open', text: `Open until ${formatTime(close)}` }
-            : { status: 'closed', text: `Opens at ${formatTime(open)}` };
+        function getOpenStatus(str, day, now) {
+          if (!str || !coversDay(str.toLowerCase(), day.toLowerCase())) return { status: 'unknown', text: 'Unknown hours' };
+          const m = str.match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?\s*to\s*(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?/i);
+          if (!m) return { status: 'unknown', text: 'Unknown hours' };
+          const to24 = (h, m, p) => {
+            if (!p) return h + m / 60;
+            return (p.toUpperCase() === 'PM' && h !== 12 ? h + 12 : h === 12 && p.toUpperCase() === 'AM' ? 0 : h) + m / 60;
+          };
+          const [_, h1, m1 = '0', p1, h2, m2 = '0', p2] = m;
+          const open = to24(+h1, +m1, p1);
+          const close = to24(+h2, +m2, p2);
+          return now >= open && now <= close
+            ? { status: 'open', text: `until ${formatTime(close)}` }
+            : { status: 'closed', text: `opens at ${formatTime(open)}` };
         }
 
-        function isDayCovered(str, day) {
-          const lc = str.toLowerCase();
-          const weekdays = ['monday','tuesday','wednesday','thursday','friday'];
-          const weekends = ['saturday','sunday'];
-          return lc.includes(day.toLowerCase()) ||
-                 lc.includes('every day') || lc.includes('daily') ||
-                 lc.includes('monday through sunday') || lc.includes('monday - sunday') ||
-                 (lc.includes('weekdays') && weekdays.includes(day.toLowerCase())) ||
-                 (lc.includes('weekends') && weekends.includes(day.toLowerCase())) ||
-                 (lc.includes('mon–fri') && weekdays.includes(day.toLowerCase())) ||
-                 (lc.includes('fri–sun') && ['friday','saturday','sunday'].includes(day.toLowerCase()));
+        function coversDay(text, day) {
+          const w = ['monday','tuesday','wednesday','thursday','friday'];
+          const e = ['saturday','sunday'];
+          return text.includes(day) || text.includes('every day') || text.includes('daily') ||
+                 text.includes('monday through sunday') || text.includes('monday - sunday') ||
+                 (text.includes('weekdays') && w.includes(day)) || (text.includes('weekends') && e.includes(day)) ||
+                 (text.includes('mon–fri') && w.includes(day)) || (text.includes('fri–sun') && ['friday','saturday','sunday'].includes(day));
         }
 
-        function to24Hour(hour, minute, ampm) {
-          if (!ampm) return hour + minute / 60;
-          const h = ampm.toUpperCase() === 'PM' && hour !== 12 ? hour + 12 : hour === 12 && ampm.toUpperCase() === 'AM' ? 0 : hour;
-          return h + minute / 60;
-        }
-
-        function formatTime(decimalTime) {
-          const h = Math.floor(decimalTime);
-          const m = Math.round((decimalTime - h) * 60);
-          const ampm = h >= 12 ? 'PM' : 'AM';
-          const displayHour = ((h + 11) % 12 + 1);
-          return `${displayHour}${m > 0 ? ':' + String(m).padStart(2, '0') : ''} ${ampm}`;
+        function formatTime(d) {
+          const h = Math.floor(d), m = Math.round((d - h) * 60);
+          const ap = h >= 12 ? 'PM' : 'AM';
+          const hr = ((h + 11) % 12 + 1);
+          return `${hr}${m > 0 ? ':' + String(m).padStart(2, '0') : ''} ${ap}`;
         }
 
         function filter() {
           const query = search.value.trim();
-          const maxDistance = parseInt(distanceSelect.value);
-          localStorage.setItem("nestlein-search", query);
-          localStorage.setItem("nestlein-distance", distanceSelect.value);
-
+          const maxDist = parseInt(distanceSelect.value);
           let results = query ? fuse.search(query).map(r => r.item) : locations;
 
-          if (maxDistance > 0 && navigator.geolocation) {
+          if (maxDist > 0 && navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(pos => {
-              const { latitude, longitude } = pos.coords;
-              results = results.filter(loc => {
-                if (!loc.latitude || !loc.longitude) return false;
-                const dist = haversine(latitude, longitude, loc.latitude, loc.longitude);
-                return dist <= maxDistance;
-              });
+              results = results.filter(l => l.latitude && l.longitude && haversine(pos.coords.latitude, pos.coords.longitude, l.latitude, l.longitude) <= maxDist);
               renderCards(results);
             });
           } else {
@@ -168,45 +159,27 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
         }
 
         function haversine(lat1, lon1, lat2, lon2) {
-          const toRad = angle => angle * Math.PI / 180;
-          const R = 6371;
-          const dLat = toRad(lat2 - lat1);
-          const dLon = toRad(lon2 - lon1);
-          const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
-          const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-          return R * c * 0.621371;
+          const R = 6371, dLat = ((lat2 - lat1) * Math.PI) / 180, dLon = ((lon2 - lon1) * Math.PI) / 180;
+          const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
+          return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 0.621371;
         }
 
+        // tag pills
         const tagSet = new Set();
         locations.forEach(loc => (loc.tags || []).forEach(tag => tagSet.add(tag)));
         const allTags = Array.from(tagSet);
         const randomTags = allTags.sort(() => 0.5 - Math.random()).slice(0, 3);
-
-        pillContainer.innerHTML = randomTags.map(tag => `
-          <button class="tag-pill bg-white border border-orange-300 text-orange-600 px-4 py-1 rounded-full text-sm hover:bg-orange-200 transition" data-tag="${tag}">
-            ${tag}
-          </button>
-        `).join("");
-
-        setTimeout(() => {
-          pillContainer.classList.remove("opacity-0", "translate-y-2");
-        }, 100);
+        pillContainer.innerHTML = randomTags.map(tag => `<button class="tag-pill bg-white border border-orange-300 text-orange-600 px-4 py-1 rounded-full text-sm hover:bg-orange-200 transition" data-tag="${tag}">${tag}</button>`).join('');
+        setTimeout(() => pillContainer.classList.remove("opacity-0", "translate-y-2"), 100);
 
         let activeTag = null;
-
         pillContainer.querySelectorAll(".tag-pill").forEach(button => {
           button.addEventListener("click", () => {
             const tag = button.getAttribute("data-tag");
             activeTag = activeTag === tag ? null : tag;
             search.value = activeTag || "";
-            pillContainer.querySelectorAll(".tag-pill").forEach(btn => {
-              btn.classList.remove("bg-orange-600", "text-white", "shadow");
-              btn.classList.add("bg-white", "text-orange-600", "border-orange-300");
-            });
-            if (activeTag) {
-              button.classList.remove("bg-white", "text-orange-600", "border-orange-300");
-              button.classList.add("bg-orange-600", "text-white", "shadow");
-            }
+            pillContainer.querySelectorAll(".tag-pill").forEach(btn => btn.classList.remove("bg-orange-600", "text-white", "shadow"));
+            if (activeTag) button.classList.add("bg-orange-600", "text-white", "shadow");
             filter();
           });
         });
@@ -216,5 +189,12 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
         filter();
       });
     </script>
+
+    <style>
+      .perspective { perspective: 1000px; }
+      .transform-style-preserve-3d { transform-style: preserve-3d; }
+      .backface-hidden { backface-visibility: hidden; }
+      .rotate-y-180 { transform: rotateY(180deg); }
+    </style>
   </body>
 </html>
