@@ -105,6 +105,11 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
         distanceSelect.addEventListener("change", filter);
 
         renderCards(locations); // Initial render
+search.addEventListener("input", filter);
+distanceSelect.addEventListener("change", filter);
+
+filter(); // Proper initial render
+
       });
     </script>
   </body>
