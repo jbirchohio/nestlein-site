@@ -9,7 +9,7 @@
   "preview": "astro preview",
   "clean:json": "node ./scripts/clean-best-time-field.js",
   "postinstall": "chmod +x ./node_modules/.bin/astro"
-}
+},
   "dependencies": {
     "@astrojs/react": "^4.2.3",
     "@astrojs/tailwind": "^6.0.2",
