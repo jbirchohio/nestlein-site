@@ -37,55 +37,43 @@ function getRandomTags(tags, count = 2) {
 }
 
 function getDistance(lat1, lon1, lat2, lon2) {
-  const R = 3958.8; // Earth radius in miles
-  const toRad = x => x * Math.PI / 180;
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
-  const a = Math.sin(dLat / 2) ** 2 +
-            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-            Math.sin(dLon / 2) ** 2;
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
+  const R = 3958.8; // miles
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-function renderCards(data, userCoords = null, maxDistance = 0) {
-  let filtered = data;
-
-  if (userCoords && maxDistance > 0) {
-    filtered = filtered
-      .map(loc => {
-        loc.distance = loc.latitude && loc.longitude
-          ? getDistance(userCoords.lat, userCoords.lon, loc.latitude, loc.longitude)
-          : Infinity;
-        return loc;
-      })
-      .filter(loc => loc.distance <= maxDistance)
-      .sort((a, b) => a.distance - b.distance);
-  }
-
-  const cards = filtered.map(loc => {
+function renderCards(data) {
+  const cards = data.map(loc => {
     const statusIcon = loc.status?.status === 'open' ? '🟢' : loc.status?.status === 'closed' ? '🔴' : '🟡';
     const statusText = loc.status?.text || 'Unknown';
     const frontTags = getRandomTags(loc.tags || []);
-    const distanceDisplay = loc.distance ? `${loc.distance.toFixed(1)} mi` : '';
+    const distanceText = loc.distance ? `${loc.distance.toFixed(1)} mi` : '';
 
     return `
-      <a href="/locations/${loc.slug}" class="flip-card block relative w-full max-w-sm h-[220px] mx-auto group [perspective:1000px]">
-        <div class="flip-inner w-full h-full transition-transform duration-500 [transform-style:preserve-3d] group-hover:rotate-y-180">
+      <div class="flip-card block relative w-full max-w-sm h-[220px] mx-auto group [perspective:1000px]" data-slug="${loc.slug}">
+        <div class="flip-inner w-full h-full transition-transform duration-500 [transform-style:preserve-3d]">
+          <!-- Front -->
           <div class="card-front absolute inset-0 backface-hidden rounded-xl border border-orange-100 bg-white shadow overflow-hidden z-10">
             ${loc.logo_url ? `<img src="${loc.logo_url}" alt="${loc.name}" class="w-full h-32 object-cover" />` : ""}
             <div class="relative h-[calc(100%-8rem)] px-3 pt-3">
               <div class="absolute top-2 left-2 flex gap-1 flex-wrap">
                 ${frontTags.map(tag => `<span class="text-[0.6rem] ${getTagColor(tag)} px-2 py-0.5 rounded-full">${tag}</span>`).join('')}
               </div>
-              ${distanceDisplay ? `<div class="text-xs text-gray-500 absolute top-2 right-2 bg-white/90 px-2 py-0.5 rounded">${distanceDisplay}</div>` : ''}
-              <h3 class="text-lg font-bold text-orange-800 mt-10 truncate">${loc.name}</h3>
+              ${distanceText ? `<div class="absolute top-2 right-2 text-[0.6rem] bg-white/90 border border-orange-200 px-2 py-0.5 rounded-full">${distanceText}</div>` : ""}
+              <h3 class="text-lg font-bold text-orange-800 mt-10">${loc.name}</h3>
               <div class="absolute bottom-2 right-2 bg-white/90 px-3 py-0.5 rounded-full text-xs font-semibold border border-orange-200 shadow">
                 ${statusIcon} ${statusText}
               </div>
             </div>
           </div>
 
+          <!-- Back -->
           <div class="card-back absolute inset-0 backface-hidden rotate-y-180 rounded-xl bg-white shadow border border-orange-100 overflow-hidden z-0">
             <div class="p-4 flex flex-col justify-between h-full space-y-2 text-sm text-gray-800">
               <div>
@@ -105,49 +93,64 @@ function renderCards(data, userCoords = null, maxDistance = 0) {
             </div>
           </div>
         </div>
-      </a>
+      </div>
     `;
   }).join("");
 
   container.innerHTML = cards;
 
+  // Tap-to-flip and tap-through logic
   container.querySelectorAll('.flip-card').forEach(card => {
+    let tappedOnce = false;
+    const inner = card.querySelector('.flip-inner');
     card.addEventListener('click', (e) => {
       if (window.innerWidth < 768) {
         e.preventDefault();
-        card.querySelector('.flip-inner').classList.toggle('rotate-y-180');
+        if (!inner.classList.contains('rotate-y-180')) {
+          inner.classList.add('rotate-y-180');
+          tappedOnce = true;
+        } else if (tappedOnce) {
+          window.location.href = `/locations/${card.dataset.slug}`;
+        }
+      } else {
+        window.location.href = `/locations/${card.dataset.slug}`;
       }
     });
   });
 }
 
-function getUserLocationAndRender() {
-  const maxMiles = parseInt(distanceSelect.value, 10);
-  if (maxMiles === 0) return filter();
+function filter() {
+  const value = parseInt(distanceSelect.value);
+  const q = search.value.trim();
+  let results = q ? fuse.search(q).map(r => r.item) : locations;
 
-  if (navigator.geolocation) {
+  if (value > 0 && navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
-      pos => {
-        const coords = {
-          lat: pos.coords.latitude,
-          lon: pos.coords.longitude,
-        };
-        filter(coords, maxMiles);
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        results = results
+          .map(loc => ({
+            ...loc,
+            distance: loc.latitude && loc.longitude
+              ? getDistance(latitude, longitude, loc.latitude, loc.longitude)
+              : Infinity,
+          }))
+          .filter(loc => loc.distance <= value)
+          .sort((a, b) => a.distance - b.distance);
+        renderCards(results);
       },
-      () => filter()
+      () => {
+        // If user blocks location, just render the unfiltered list
+        renderCards(results);
+      },
+      { timeout: 3000 }
     );
   } else {
-    filter();
+    renderCards(results);
   }
 }
 
-function filter(userCoords = null, maxMiles = 0) {
-  const q = search.value.trim();
-  let results = q ? fuse.search(q).map(r => r.item) : locations;
-  renderCards(results, userCoords, maxMiles);
-}
+search.addEventListener("input", filter);
+distanceSelect.addEventListener("change", filter);
 
-search.addEventListener("input", () => getUserLocationAndRender());
-distanceSelect.addEventListener("change", () => getUserLocationAndRender());
-
-getUserLocationAndRender();
+renderCards(locations);
