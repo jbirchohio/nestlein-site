@@ -29,6 +29,7 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
         <option value="10">Within 10 mi</option>
         <option value="25">Within 25 mi</option>
         <option value="50">Within 50 mi</option>
+        <option value="0">Ignore distance</option>
       </select>
     </header>
 
@@ -59,14 +60,13 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
         const search = document.getElementById("search");
         const distanceSelect = document.getElementById("distance-filter");
 
-        // Save/load filters from localStorage
+        // Load user filters
         const savedDistance = localStorage.getItem("nestlein-distance");
         if (savedDistance) distanceSelect.value = savedDistance;
 
         const savedSearch = localStorage.getItem("nestlein-search");
         if (savedSearch) search.value = savedSearch;
 
-        // Fuse.js config
         const fuse = new Fuse(locations, {
           keys: ['name', 'tags', 'address'],
           threshold: 0.35,
@@ -96,20 +96,37 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
           localStorage.setItem("nestlein-search", query);
           localStorage.setItem("nestlein-distance", distanceSelect.value);
 
-          let resultList = query ? fuse.search(query).map(r => r.item) : locations;
+          let results = query ? fuse.search(query).map(r => r.item) : locations;
 
-          renderCards(resultList);
+          if (maxDistance > 0 && navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(pos => {
+              const { latitude, longitude } = pos.coords;
+              results = results.filter(loc => {
+                if (!loc.latitude || !loc.longitude) return false;
+                const dist = haversine(latitude, longitude, loc.latitude, loc.longitude);
+                return dist <= maxDistance;
+              });
+              renderCards(results);
+            });
+          } else {
+            renderCards(results);
+          }
+        }
+
+        function haversine(lat1, lon1, lat2, lon2) {
+          const toRad = angle => angle * Math.PI / 180;
+          const R = 6371; // Earth radius in km
+          const dLat = toRad(lat2 - lat1);
+          const dLon = toRad(lon2 - lon1);
+          const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+          const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+          return R * c * 0.621371; // convert to miles
         }
 
         search.addEventListener("input", filter);
         distanceSelect.addEventListener("change", filter);
 
-        renderCards(locations); // Initial render
-search.addEventListener("input", filter);
-distanceSelect.addEventListener("change", filter);
-
-filter(); // Proper initial render
-
+        filter(); // Run at load
       });
     </script>
   </body>
