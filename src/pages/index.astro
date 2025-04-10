@@ -1,116 +1,91 @@
----
-import "../styles/tailwind.css";
-import { getCollection } from 'astro:content';
+--- 
+import "../styles/tailwind.css"; import { getCollection } from 'astro:content';
 
 const locations = await getCollection('locations');
 
-const groupedLocations = locations.map(loc => ({
-  ...loc.data,
-  slug: loc.slug
-}));
+const groupedLocations = locations.map(loc => ({ ...loc.data, slug: loc.slug }));
 
 const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
 ---
+<html> <head> <title>NestleIn</title> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"> </head> <body class="bg-orange-50 font-sans"> <!-- Header --> <header class="sticky top-0 z-50 bg-white shadow-sm p-4 flex flex-col md:flex-row items-center justify-between gap-2"> <div class="text-2xl font-bold text-orange-600">NestleIn</div> <input id="search" placeholder="Search spots or tags..." class="border border-orange-300 px-4 py-2 rounded-full shadow-sm focus:ring-2 focus:ring-orange-400 w-full max-w-sm"> <select id="distance-filter" class="border border-orange-300 px-3 py-2 rounded-full text-sm"> <option value="5">Within 5 mi</option> <option value="10">Within 10 mi</option> <option value="25">Within 25 mi</option> <option value="50">Within 50 mi</option> </select> </header>
+php-template
+Copy
+<!-- Hero Section -->
+<section class="bg-gradient-to-r from-orange-100 to-orange-50 py-16 text-center">
+  <h1 class="text-4xl font-extrabold text-orange-700 mb-2">Work Remotely. Nest Comfortably.</h1>
+  <p class="text-gray-700 text-lg max-w-xl mx-auto">Discover the best spots with Wi-Fi, vibes, and space to get things done.</p>
+  <div class="mt-6 flex flex-wrap justify-center gap-2">
+    <span class="bg-white border border-orange-300 text-orange-600 px-4 py-1 rounded-full text-sm">✨ Cozy Corners</span>
+    <span class="bg-white border border-orange-300 text-orange-600 px-4 py-1 rounded-full text-sm">🔌 Lots of Outlets</span>
+    <span class="bg-white border border-orange-300 text-orange-600 px-4 py-1 rounded-full text-sm">☕ Top Coffee</span>
+  </div>
+</section>
 
-<html>
-  <head>
-    <title>NestleIn</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-  </head>
+<!-- Main Content -->
+<main class="px-4 py-10 space-y-12">
+  <div id="dynamic-sections"></div>
+</main>
 
-  <body class="bg-orange-50 font-sans">
-    <!-- Header -->
-    <header class="sticky top-0 z-50 bg-white shadow-sm p-4 flex flex-col md:flex-row items-center justify-between gap-2">
-      <div class="text-2xl font-bold text-orange-600">NestleIn</div>
-      <input id="search" placeholder="Search spots or tags..." class="border border-orange-300 px-4 py-2 rounded-full shadow-sm focus:ring-2 focus:ring-orange-400 w-full max-w-sm">
-      <select id="distance-filter" class="border border-orange-300 px-3 py-2 rounded-full text-sm">
-        <option value="5">Within 5 mi</option>
-        <option value="10">Within 10 mi</option>
-        <option value="25">Within 25 mi</option>
-        <option value="50">Within 50 mi</option>
-      </select>
-    </header>
+<script type="application/json" id="location-data" set:html={safeJson}></script>
 
-    <!-- Hero Section -->
-    <section class="bg-gradient-to-r from-orange-100 to-orange-50 py-16 text-center">
-      <h1 class="text-4xl font-extrabold text-orange-700 mb-2">Work Remotely. Nest Comfortably.</h1>
-      <p class="text-gray-700 text-lg max-w-xl mx-auto">Discover the best spots with Wi-Fi, vibes, and space to get things done.</p>
-      <div class="mt-6 flex flex-wrap justify-center gap-2">
-        <span class="bg-white border border-orange-300 text-orange-600 px-4 py-1 rounded-full text-sm">✨ Cozy Corners</span>
-        <span class="bg-white border border-orange-300 text-orange-600 px-4 py-1 rounded-full text-sm">🔌 Lots of Outlets</span>
-        <span class="bg-white border border-orange-300 text-orange-600 px-4 py-1 rounded-full text-sm">☕ Top Coffee</span>
-      </div>
-    </section>
+<script type="module">
+  import Fuse from 'fuse.js';
 
-    <!-- Main Content -->
-    <main class="px-4 py-10 space-y-12">
-      <div id="dynamic-sections"></div>
-    </main>
+  document.addEventListener("DOMContentLoaded", () => {
+    const locations = JSON.parse(document.getElementById("location-data").textContent);
+    const sectionContainer = document.getElementById("dynamic-sections");
+    const search = document.getElementById("search");
+    const distanceSelect = document.getElementById("distance-filter");
 
-    <script type="application/json" id="location-data" set:html={safeJson}></script>
+    // Load filters from localStorage if available, otherwise default
+    distanceSelect.value = localStorage.getItem("nestlein-distance") || distanceSelect.value;
+    search.value = localStorage.getItem("nestlein-search") || "";
 
-    <script type="module">
-      import Fuse from 'fuse.js';
+    // Fuse.js configuration for filtering by name, tags, and address
+    const fuse = new Fuse(locations, {
+      keys: ['name', 'tags', 'address'],
+      threshold: 0.35,
+      includeScore: true,
+    });
 
-      document.addEventListener("DOMContentLoaded", () => {
-        const locations = JSON.parse(document.getElementById("location-data").textContent);
-        const sectionContainer = document.getElementById("dynamic-sections");
-        const search = document.getElementById("search");
-        const distanceSelect = document.getElementById("distance-filter");
+    // Render location cards; show a message if no results are found
+    function renderCards(data) {
+      if (data.length === 0) {
+        sectionContainer.innerHTML = "<p class='text-center text-gray-500'>No results found.</p>";
+        return;
+      }
+      const html = data.map(loc => `
+        <a href="/locations/${loc.slug}" class="block bg-white rounded-xl shadow hover:shadow-md transition p-4 border border-orange-100 w-full max-w-sm mx-auto location-card" data-tags="${(loc.tags || []).join(', ').toLowerCase()}" data-lat="${loc.latitude}" data-lon="${loc.longitude}">
+          ${loc.logo_url ? `<img src="${loc.logo_url}" alt="${loc.name}" class="w-full h-40 object-cover rounded-md mb-3">` : ""}
+          <h3 class="text-lg font-semibold text-orange-800 mb-1">${loc.name}</h3>
+          <p class="text-sm text-gray-500">${loc.address || ""}</p>
+          <p class="text-sm mt-1">⭐ ${loc.restaurant_score || 0}/10</p>
+          <p class="text-sm">🧠 ${loc.best_time_to_work_remotely || ""}</p>
+          <div class="mt-2 flex flex-wrap gap-1">
+            ${(loc.tags || []).map(t => `<span class="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">${t}</span>`).join("")}
+          </div>
+        </a>
+      `).join("");
 
-        // Save/load filters from localStorage
-        const savedDistance = localStorage.getItem("nestlein-distance");
-        if (savedDistance) distanceSelect.value = savedDistance;
+      sectionContainer.innerHTML = `<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">${html}</div>`;
+    }
 
-        const savedSearch = localStorage.getItem("nestlein-search");
-        if (savedSearch) search.value = savedSearch;
+    function filter() {
+      const query = search.value.trim();
+      localStorage.setItem("nestlein-search", query);
+      localStorage.setItem("nestlein-distance", distanceSelect.value);
 
-        // Fuse.js config
-        const fuse = new Fuse(locations, {
-          keys: ['name', 'tags', 'address'],
-          threshold: 0.35,
-          includeScore: true,
-        });
+      // Use Fuse for filtering if there’s a non-empty query, otherwise display all locations
+      let resultList = query ? fuse.search(query).map(r => r.item) : locations;
+      renderCards(resultList);
+    }
 
-        function renderCards(data) {
-          const html = data.map(loc => `
-            <a href="/locations/${loc.slug}" class="block bg-white rounded-xl shadow hover:shadow-md transition p-4 border border-orange-100 w-full max-w-sm mx-auto location-card" data-tags="${(loc.tags || []).join(', ').toLowerCase()}" data-lat="${loc.latitude}" data-lon="${loc.longitude}">
-              ${loc.logo_url ? `<img src="${loc.logo_url}" alt="${loc.name}" class="w-full h-40 object-cover rounded-md mb-3">` : ""}
-              <h3 class="text-lg font-semibold text-orange-800 mb-1">${loc.name}</h3>
-              <p class="text-sm text-gray-500">${loc.address || ""}</p>
-              <p class="text-sm mt-1">⭐ ${loc.restaurant_score || 0}/10</p>
-              <p class="text-sm">🧠 ${loc.best_time_to_work_remotely || ""}</p>
-              <div class="mt-2 flex flex-wrap gap-1">
-                ${(loc.tags || []).map(t => `<span class="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">${t}</span>`).join("")}
-              </div>
-            </a>
-          `).join("");
+    // Attach event listeners once
+    search.addEventListener("input", filter);
+    distanceSelect.addEventListener("change", filter);
 
-          sectionContainer.innerHTML = `<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">${html}</div>`;
-        }
-
-        function filter() {
-          const query = search.value.trim();
-          const maxDistance = parseInt(distanceSelect.value);
-          localStorage.setItem("nestlein-search", query);
-          localStorage.setItem("nestlein-distance", distanceSelect.value);
-
-          let resultList = query ? fuse.search(query).map(r => r.item) : locations;
-
-          renderCards(resultList);
-        }
-
-        search.addEventListener("input", filter);
-        distanceSelect.addEventListener("change", filter);
-
-        renderCards(locations); // Initial render
-search.addEventListener("input", filter);
-distanceSelect.addEventListener("change", filter);
-
-filter(); // Proper initial render
-
-      });
-    </script>
-  </body>
-</html>
+    // Initial render
+    filter();
+  });
+</script>
+</body> </html>
