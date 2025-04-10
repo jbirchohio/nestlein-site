@@ -1,3 +1,4 @@
+
 import Fuse from 'https://cdn.skypack.dev/fuse.js';
 
 const locations = JSON.parse(document.getElementById("location-data").textContent);
@@ -31,24 +32,6 @@ function getTagColor(tag) {
   return tagColors[tag] || 'bg-orange-100 text-orange-700';
 }
 
-let userCoords = null;
-navigator.geolocation?.getCurrentPosition(pos => {
-  userCoords = {
-    lat: pos.coords.latitude,
-    lon: pos.coords.longitude
-  };
-}, console.warn);
-
-function getDistance(loc) {
-  if (!userCoords || !loc.latitude || !loc.longitude) return Infinity;
-  const toRad = d => d * (Math.PI / 180);
-  const R = 3958.8;
-  const dLat = toRad(loc.latitude - userCoords.lat);
-  const dLon = toRad(loc.longitude - userCoords.lon);
-  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(userCoords.lat)) * Math.cos(toRad(loc.latitude)) * Math.sin(dLon/2)**2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
-
 function renderCards(data) {
   const cards = data.map(loc => {
     const statusIcon = loc.status?.status === 'open' ? '🟢' : loc.status?.status === 'closed' ? '🔴' : '🟡';
@@ -60,11 +43,17 @@ function renderCards(data) {
           <!-- Front -->
           <div class="card-front absolute inset-0 backface-hidden rounded-xl border border-orange-100 bg-white shadow overflow-hidden z-10">
             ${loc.logo_url ? `<img src="${loc.logo_url}" alt="${loc.name}" class="w-full h-40 object-cover" />` : ""}
-            <div class="p-4 relative h-[calc(100%-10rem)]">
-              <h3 class="text-xl font-bold text-orange-800 bg-white/80 px-2 py-0.5 rounded-md inline-block absolute top-2 left-2">${loc.name}</h3>
-              <div class="absolute bottom-2 right-2 bg-white/90 px-3 py-0.5 rounded-full text-xs font-semibold border border-orange-200 shadow">
-                ${statusIcon} ${statusText}
+            <div class="absolute top-2 left-2 right-2 z-20">
+              <h3 class="text-lg md:text-xl font-bold text-orange-800 bg-white/90 px-2 py-1 rounded-md inline-block">${loc.name}</h3>
+              <div class="mt-1 flex flex-wrap gap-1">
+                ${(loc.tags || []).map(tag => {
+                  const baseColor = getTagColor(tag);
+                  return `<span class="text-xs ${baseColor} px-2 py-0.5 rounded-full">${tag}</span>`;
+                }).join('')}
               </div>
+            </div>
+            <div class="absolute bottom-2 right-2 bg-white/90 px-3 py-0.5 rounded-full text-xs font-semibold border border-orange-200 shadow">
+              ${statusIcon} ${statusText}
             </div>
           </div>
 
@@ -74,11 +63,15 @@ function renderCards(data) {
               <div>
                 <p class="text-gray-600 font-medium truncate">${loc.address || ''}</p>
                 <p class="flex items-center gap-2 mt-1">
-                  <svg class="w-4 h-4 text-yellow-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2l2.9 6.26L22 9.27l-5.5 5.36L18.8 22 12 18.27 5.2 22l1.3-7.37L1 9.27l7.1-1.01L12 2z"/></svg>
+                  <svg class="w-4 h-4 text-yellow-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M12 2l2.9 6.26L22 9.27l-5.5 5.36L18.8 22 12 18.27 5.2 22l1.3-7.37L1 9.27l7.1-1.01L12 2z"/>
+                  </svg>
                   <span class="font-medium">${loc.restaurant_score || 0}/10</span>
                 </p>
                 <p class="flex items-center gap-2 mt-1">
-                  <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></path></svg>
+                  <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                  </svg>
                   <span>${loc.best_time_to_work_remotely || ''}</span>
                 </p>
               </div>
@@ -107,12 +100,6 @@ function renderCards(data) {
 function filter() {
   const q = search.value.trim();
   let results = q ? fuse.search(q).map(r => r.item) : locations;
-
-  const distanceLimit = Number(distanceSelect.value);
-  if (distanceLimit > 0 && userCoords) {
-    results = results.filter(loc => getDistance(loc) <= distanceLimit);
-  }
-
   renderCards(results);
 }
 
