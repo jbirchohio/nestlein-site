@@ -1,6 +1,5 @@
 import Fuse from "https://cdn.jsdelivr.net/npm/fuse.js@7.1.0/+esm";
 
-// Helper function to escape HTML
 function escapeHTML(str) {
   if (!str) return '';
   return str.replace(/&/g, '&amp;')
@@ -33,6 +32,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const hours = escapeHTML(loc.hours_of_operation || 'Unknown hours');
       const statustext = escapeHTML(status.text);
       const tags = (loc.tags || []).map(tag => `<span class="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">${escapeHTML(tag)}</span>`).join("");
+
+      console.log("Rendering Card:", loc.name, "Status:", statustext); // Logging for debugging
 
       return `
         <div class="perspective w-full max-w-sm mx-auto">
@@ -68,7 +69,6 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
       `;
     }).join("");
-
 
     container.innerHTML = cards;
 
