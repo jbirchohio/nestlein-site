@@ -57,6 +57,7 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
         const sectionContainer = document.getElementById("dynamic-sections");
         const search = document.getElementById("search");
         const distanceSelect = document.getElementById("distance-filter");
+        const tagFiltersContainer = document.getElementById("tag-filters");
 
         let userLat = null, userLon = null;
 
@@ -77,8 +78,7 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
         }
 
         function createTagFilters(allTags) {
-          const container = document.getElementById("tag-filters");
-          container.innerHTML = "";
+          tagFiltersContainer.innerHTML = "";
 
           const sortedTags = [...new Set(allTags)].sort();
           sortedTags.forEach(tag => {
@@ -88,9 +88,9 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
             btn.addEventListener("click", () => {
               search.value = tag;
               localStorage.setItem("nestlein-search", tag);
-              filter();
+              renderSections();
             });
-            container.appendChild(btn);
+            tagFiltersContainer.appendChild(btn);
           });
         }
 
@@ -104,9 +104,9 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
 
           createTagFilters(allTags);
 
-          const filteredTags = selectedTag ? [selectedTag] : allTags.sort(() => 0.5 - Math.random()).slice(0, 3);
+          const tagToRender = selectedTag ? [selectedTag] : allTags.sort(() => 0.5 - Math.random()).slice(0, 3);
 
-          filteredTags.forEach(tag => {
+          tagToRender.forEach(tag => {
             const filtered = locations.filter(l => (l.tags || []).some(t => t.toLowerCase() === tag));
             const nearby = filtered.map(l => ({
               ...l,
@@ -137,8 +137,6 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
             `;
             sectionContainer.appendChild(section);
           });
-
-          filter();
         }
 
         function filter() {
