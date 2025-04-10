@@ -1,4 +1,3 @@
-
 import Fuse from 'https://cdn.skypack.dev/fuse.js';
 
 const locations = JSON.parse(document.getElementById("location-data").textContent);
@@ -32,28 +31,31 @@ function getTagColor(tag) {
   return tagColors[tag] || 'bg-orange-100 text-orange-700';
 }
 
+function getRandomTags(tags, count = 2) {
+  const shuffled = [...tags].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
+}
+
 function renderCards(data) {
   const cards = data.map(loc => {
     const statusIcon = loc.status?.status === 'open' ? '🟢' : loc.status?.status === 'closed' ? '🔴' : '🟡';
     const statusText = loc.status?.text || 'Unknown';
+    const frontTags = getRandomTags(loc.tags || []);
 
     return `
       <a href="/locations/${loc.slug}" class="flip-card block relative w-full max-w-sm h-[220px] mx-auto group [perspective:1000px]">
         <div class="flip-inner w-full h-full transition-transform duration-500 [transform-style:preserve-3d] group-hover:rotate-y-180">
           <!-- Front -->
           <div class="card-front absolute inset-0 backface-hidden rounded-xl border border-orange-100 bg-white shadow overflow-hidden z-10">
-            ${loc.logo_url ? `<img src="${loc.logo_url}" alt="${loc.name}" class="w-full h-40 object-cover" />` : ""}
-            <div class="absolute top-2 left-2 right-2 z-20">
-              <h3 class="text-lg md:text-xl font-bold text-orange-800 bg-white/90 px-2 py-1 rounded-md inline-block">${loc.name}</h3>
-              <div class="mt-1 flex flex-wrap gap-1">
-                ${(loc.tags || []).map(tag => {
-                  const baseColor = getTagColor(tag);
-                  return `<span class="text-xs ${baseColor} px-2 py-0.5 rounded-full">${tag}</span>`;
-                }).join('')}
+            ${loc.logo_url ? `<img src="${loc.logo_url}" alt="${loc.name}" class="w-full h-32 object-cover" />` : ""}
+            <div class="p-3 relative">
+              <h3 class="text-xl font-bold text-orange-800 absolute top-2 left-2 bg-white/90 px-2 py-1 rounded shadow">${loc.name}</h3>
+              <div class="absolute bottom-2 right-2 bg-white/90 px-3 py-0.5 rounded-full text-xs font-semibold border border-orange-200 shadow">
+                ${statusIcon} ${statusText}
               </div>
-            </div>
-            <div class="absolute bottom-2 right-2 bg-white/90 px-3 py-0.5 rounded-full text-xs font-semibold border border-orange-200 shadow">
-              ${statusIcon} ${statusText}
+              <div class="absolute top-2 right-2 flex gap-1">
+                ${frontTags.map(tag => `<span class="text-[0.6rem] ${getTagColor(tag)} px-2 py-0.5 rounded-full">${tag}</span>`).join('')}
+              </div>
             </div>
           </div>
 
@@ -63,15 +65,11 @@ function renderCards(data) {
               <div>
                 <p class="text-gray-600 font-medium truncate">${loc.address || ''}</p>
                 <p class="flex items-center gap-2 mt-1">
-                  <svg class="w-4 h-4 text-yellow-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path d="M12 2l2.9 6.26L22 9.27l-5.5 5.36L18.8 22 12 18.27 5.2 22l1.3-7.37L1 9.27l7.1-1.01L12 2z"/>
-                  </svg>
+                  <svg class="w-4 h-4 text-yellow-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2l2.9 6.26L22 9.27l-5.5 5.36L18.8 22 12 18.27 5.2 22l1.3-7.37L1 9.27l7.1-1.01L12 2z"/></svg>
                   <span class="font-medium">${loc.restaurant_score || 0}/10</span>
                 </p>
                 <p class="flex items-center gap-2 mt-1">
-                  <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                  </svg>
+                  <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
                   <span>${loc.best_time_to_work_remotely || ''}</span>
                 </p>
               </div>
@@ -87,7 +85,8 @@ function renderCards(data) {
 
   container.innerHTML = cards;
 
-  document.querySelectorAll('.flip-card').forEach(card => {
+  // Tap to flip behavior for mobile
+  container.querySelectorAll('.flip-card').forEach(card => {
     card.addEventListener('click', (e) => {
       if (window.innerWidth < 768) {
         e.preventDefault();
