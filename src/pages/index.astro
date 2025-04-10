@@ -49,25 +49,28 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
       <div id="dynamic-sections"></div>
     </main>
 
+    <!-- Load Location Data -->
     <script type="application/json" id="location-data" set:html={safeJson}></script>
 
-    <script type="module">
-      import Fuse from 'fuse.js';
+    <!-- Load Fuse.js from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.1.0/dist/fuse.min.js"></script>
 
+    <!-- Client-side logic -->
+    <script>
       document.addEventListener("DOMContentLoaded", () => {
         const locations = JSON.parse(document.getElementById("location-data").textContent);
         const sectionContainer = document.getElementById("dynamic-sections");
         const search = document.getElementById("search");
         const distanceSelect = document.getElementById("distance-filter");
 
-        // Load user filters
+        // Load saved filters
         const savedDistance = localStorage.getItem("nestlein-distance");
         if (savedDistance) distanceSelect.value = savedDistance;
 
         const savedSearch = localStorage.getItem("nestlein-search");
         if (savedSearch) search.value = savedSearch;
 
-        const fuse = new Fuse(locations, {
+        const fuse = new window.Fuse(locations, {
           keys: ['name', 'tags', 'address'],
           threshold: 0.35,
           includeScore: true,
@@ -115,18 +118,18 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
 
         function haversine(lat1, lon1, lat2, lon2) {
           const toRad = angle => angle * Math.PI / 180;
-          const R = 6371; // Earth radius in km
+          const R = 6371;
           const dLat = toRad(lat2 - lat1);
           const dLon = toRad(lon2 - lon1);
           const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
           const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-          return R * c * 0.621371; // convert to miles
+          return R * c * 0.621371;
         }
 
         search.addEventListener("input", filter);
         distanceSelect.addEventListener("change", filter);
 
-        filter(); // Run at load
+        filter(); // Initial render
       });
     </script>
   </body>
