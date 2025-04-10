@@ -1,6 +1,6 @@
 // /public/scripts/render.cards.js
 
-import Fuse from 'fuse.js';
+
 
 const locations = JSON.parse(document.getElementById("location-data").textContent);
 const container = document.getElementById("dynamic-sections");
