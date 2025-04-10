@@ -98,22 +98,20 @@ const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\u003c');
           sectionContainer.innerHTML = "";
 
           const allTags = [...new Set(locations.flatMap(l => l.tags || []))];
-          const shuffledTags = allTags.sort(() => 0.5 - Math.random()).slice(0, 3);
+          const selectedTag = search.value.toLowerCase();
+          const lat = parseFloat(new URL(window.location.href).searchParams.get("lat")) || userLat;
+          const lon = parseFloat(new URL(window.location.href).searchParams.get("lon")) || userLon;
+
           createTagFilters(allTags);
 
-          let lat = parseFloat(new URL(window.location.href).searchParams.get("lat")) || userLat;
-          let lon = parseFloat(new URL(window.location.href).searchParams.get("lon")) || userLon;
+          const filteredTags = selectedTag ? [selectedTag] : allTags.sort(() => 0.5 - Math.random()).slice(0, 3);
 
-          shuffledTags.forEach(tag => {
-            const filtered = locations.filter(l => (l.tags || []).includes(tag));
-            const nearby = filtered
-              .filter(l => l.latitude && l.longitude)
-              .map(l => ({
-                ...l,
-                distance: lat && lon ? haversine(lat, lon, l.latitude, l.longitude) : Infinity
-              }))
-              .sort((a, b) => a.distance - b.distance)
-              .slice(0, 3);
+          filteredTags.forEach(tag => {
+            const filtered = locations.filter(l => (l.tags || []).some(t => t.toLowerCase() === tag));
+            const nearby = filtered.map(l => ({
+              ...l,
+              distance: lat && lon && l.latitude && l.longitude ? haversine(lat, lon, l.latitude, l.longitude) : Infinity
+            })).sort((a, b) => a.distance - b.distance);
 
             if (!nearby.length) return;
 
