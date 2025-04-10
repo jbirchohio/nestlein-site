@@ -47,14 +47,16 @@ function renderCards(data) {
         <div class="flip-inner w-full h-full transition-transform duration-500 [transform-style:preserve-3d] group-hover:rotate-y-180">
           <!-- Front -->
           <div class="card-front absolute inset-0 backface-hidden rounded-xl border border-orange-100 bg-white shadow overflow-hidden z-10">
-            ${loc.logo_url ? `<img src="${loc.logo_url}" alt="${loc.name}" class="w-full h-32 object-cover" />` : ""}
-            <div class="relative h-[calc(100%-8rem)] px-3 pt-3">
+            <div class="relative w-full h-full">
+              ${loc.logo_url ? `<img src="${loc.logo_url}" alt="${loc.name}" class="w-full h-full object-cover" />` : ""}
               <div class="absolute top-2 left-2 flex gap-1 flex-wrap">
                 ${frontTags.map(tag => `<span class="text-[0.6rem] ${getTagColor(tag)} px-2 py-0.5 rounded-full">${tag}</span>`).join('')}
               </div>
-              <h3 class="text-lg font-bold text-orange-800 mt-10">${loc.name}</h3>
-              <div class="absolute bottom-2 right-2 bg-white/90 px-3 py-0.5 rounded-full text-xs font-semibold border border-orange-200 shadow">
-                ${statusIcon} ${statusText}
+              <div class="absolute bottom-2 left-2 right-2 flex justify-between items-end">
+                <h3 class="text-md font-bold text-orange-900 bg-white/90 px-2 py-0.5 rounded-md">${loc.name}</h3>
+                <div class="bg-white/90 px-3 py-0.5 rounded-full text-xs font-semibold border border-orange-200 shadow">
+                  ${statusIcon} ${statusText}
+                </div>
               </div>
             </div>
           </div>
