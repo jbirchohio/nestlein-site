@@ -43,8 +43,8 @@ function getDistance(lat1, lon1, lat2, lon2) {
   const a =
     Math.sin(dLat / 2) ** 2 +
     Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLon / 2) ** 2;
+    Math.cos((lat2 * Math.PI) / 180) *
+    Math.sin(dLon / 2) ** 2;
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
@@ -65,7 +65,7 @@ function renderCards(data) {
               <div class="absolute top-2 left-2 flex gap-1 flex-wrap">
                 ${frontTags.map(tag => `<span class="text-[0.6rem] ${getTagColor(tag)} px-2 py-0.5 rounded-full">${tag}</span>`).join('')}
               </div>
-              ${distanceText ? `<div class="absolute top-2 right-2 text-[0.6rem] bg-white/90 border border-orange-200 px-2 py-0.5 rounded-full">${distanceText}</div>` : ""}
+              ${distanceText ? `<div class="absolute top-[2.25rem] left-2 text-[0.6rem] bg-white/90 border border-orange-200 px-2 py-0.5 rounded-full">${distanceText}</div>` : ""}
               <h3 class="text-lg font-bold text-orange-800 mt-10">${loc.name}</h3>
               <div class="absolute bottom-2 right-2 bg-white/90 px-3 py-0.5 rounded-full text-xs font-semibold border border-orange-200 shadow">
                 ${statusIcon} ${statusText}
@@ -139,10 +139,7 @@ function filter() {
           .sort((a, b) => a.distance - b.distance);
         renderCards(results);
       },
-      () => {
-        // If user blocks location, just render the unfiltered list
-        renderCards(results);
-      },
+      () => renderCards(results),
       { timeout: 3000 }
     );
   } else {
