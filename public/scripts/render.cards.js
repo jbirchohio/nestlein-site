@@ -38,7 +38,7 @@ function renderCards(data) {
     const statusText = loc.status?.text || 'Unknown';
 
     return `
-      <a href="/locations/${loc.slug}" class="flip-card block relative w-full max-w-sm h-[250px] mx-auto group [perspective:1000px]">
+      <a href="/locations/${loc.slug}" class="flip-card block relative w-full max-w-sm h-[220px] mx-auto group [perspective:1000px]">
         <div class="flip-inner w-full h-full transition-transform duration-500 [transform-style:preserve-3d] group-hover:rotate-y-180">
           <!-- Front -->
           <div class="card-front absolute inset-0 backface-hidden rounded-xl border border-orange-100 bg-white shadow overflow-hidden z-10">
