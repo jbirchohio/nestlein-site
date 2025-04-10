@@ -5,11 +5,16 @@ module.exports = {
     './src/layouts/**/*.{astro,html}'
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ['"DM Sans"', 'sans-serif'],
+        serif: ['"Playfair Display"', 'serif'],
+      },
+    },
   },
- plugins: [
-  require('@tailwindcss/forms'),
-  require('@tailwindcss/typography'),
-  require('@tailwindcss/aspect-ratio'),
-],
-}
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/typography'),
+    require('@tailwindcss/aspect-ratio'),
+  ],
+};
