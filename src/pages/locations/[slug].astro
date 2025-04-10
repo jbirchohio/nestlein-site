@@ -83,7 +83,6 @@ const nearbySpots =
   </head>
 
   <body class="bg-orange-50 font-sans text-gray-800 min-h-screen">
-
     <main class="max-w-3xl mx-auto px-4 py-10 space-y-10">
 
       <!-- Back Button -->
@@ -92,25 +91,30 @@ const nearbySpots =
         Back to Discover
       </a>
 
-      <!-- Location Image Section or Fallback -->
-      {location.logo_url ? (
-        <section class="bg-white rounded-xl shadow border border-orange-100 overflow-hidden">
-          <div class="w-full flex justify-center items-center bg-orange-50 p-4 sm:p-6">
+      <!-- Image + Name Section -->
+      <section class="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-6 bg-white border border-orange-100 shadow rounded-xl p-4 sm:p-6">
+        <!-- Name & Address -->
+        <div class="flex-1">
+          <h1 class="text-3xl sm:text-4xl font-serif font-semibold text-orange-700 mb-1">{location.name}</h1>
+          <p class="text-gray-600 text-sm">{location.address}</p>
+        </div>
+
+        <!-- Image or Fallback -->
+        <div class="flex justify-center sm:justify-end items-center w-full sm:w-60 md:w-72 shrink-0">
+          {location.logo_url ? (
             <img
               src={location.logo_url}
               alt={location.name}
-              class="w-full sm:w-auto max-h-[20rem] sm:max-h-[24rem] md:max-h-[28rem] object-contain rounded-md shadow-sm transition-all duration-300 ease-in-out"
+              class="w-full sm:w-auto max-h-60 sm:max-h-72 object-contain rounded-lg border border-orange-200 shadow-sm"
               loading="lazy"
             />
-          </div>
-        </section>
-      ) : (
-        <div class="bg-orange-100 text-orange-700 text-center text-sm p-6 rounded-xl border border-dashed border-orange-300">
-          This location hasn’t added an image yet. Maybe it’s a hidden gem.
+          ) : (
+            <div class="bg-orange-100 text-orange-700 text-sm text-center px-4 py-3 rounded-md border border-dashed border-orange-300 w-full">
+              No image available yet.
+            </div>
+          )}
         </div>
-      )}
-
-      <p class="text-gray-600 text-sm mt-1">{location.address}</p>
+      </section>
 
       <!-- Quick Info -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
