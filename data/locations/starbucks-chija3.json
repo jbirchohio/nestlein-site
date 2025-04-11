@@ -1,0 +1,30 @@
+{
+  "website_url": "Unknown Logo URL: https://maps.google.com/maps/api/staticmap?center=38.94929395%2C-77.3910968&zoom=10&size=200x200&sensor=false&client=google-maps-frontend&signature=mE1hyVHIOhsZTN0YDEd2kLTk1Eg",
+  "address": "Multiple locations listed in the data. Addresses include: 44050 Pipeline Plaza, Ashburn, VA 20147; 43155 Broadlands Center Plaza, Ashburn, VA 20148; 44185 Ashbrook Marketplace Plaza, Ashburn, VA 20147; 3 Pidgeon Hill Dr, Potomac Falls, VA 20165; 21100 Dulles Town Circle Dulles Town Center - kiosk, Sterling, VA 20166; 45020 Aviation Dr, Sterling, VA 20166; 526 E Market St, Leesburg, VA 20176; 1011 Edwards Ferry Rd NE, Leesburg, VA 20176; 1140 Elden St, Herndon, VA 20170; 2407 Centreville Rd, Herndon, VA 20171.",
+  "phone_number": "Multiple phone numbers listed in the data. Phone numbers include: (703) 723-8534; (703) 858-1102; (571) 271-4807; (571) 439-4061; (202) 815-9914; (703) 421-4334; (703) 463-2008; (703) 669-3592; (703) 829-1290; (703) 972-7183; (703) 893-5125; (703) 488-9976; (571) 643-0240.",
+  "hours_of_operation": "Check Website for Updated Hours",
+  "restaurant_score": 0,
+  "best_time_to_work_remotely": "Unknown",
+  "tags": [
+    "Good for working on laptop",
+    "Wi-Fi",
+    "Family-friendly",
+    "LGBTQ+ Friendly"
+  ],
+  "tags_reasoning**:\n-_good_for_working_on_laptop:__many_reviews_mention_this_starbucks_location_is_a_good_place_to_work_on_a_laptop.\n-_wi-fi:_starbucks_typically_provides_wi-fi_access_at_its_locations.\n-_family-friendly:_many_starbucks_locations_are_family-friendly,_with_amenities_for_children.\n-_lgbtq+_friendly:_many_starbucks_locations_are_lgbtq+_friendly.\n\n**final_score": "Unknown",
+  "name": "Starbucks",
+  "remote_work_features": {
+    "wi_fi_quality": "Unknown",
+    "outlet_access": "Unknown",
+    "noise_level": "Unknown",
+    "seating_comfort": "Unknown",
+    "natural_light": "Unknown",
+    "stay_duration_friendliness": "Unknown",
+    "food_drink_options": "Coffee, tea, prepared foods, small plates, breakfast, lunch, dessert. Some locations may also serve beer and wine.",
+    "bathroom_access": "Unknown",
+    "parking_availability": "Varies by location; some locations list free parking lots and free street parking as options."
+  },
+  "logo_url": "https://lh3.googleusercontent.com/p/AF1QipN33bvG46SXZKsY8aEtl173Xbqhes0B0peLxUIb=w426-h240-k-no",
+  "slug": "starbucks-chija3",
+  "google_place_id": "ChIJa3rrJybWMIgRF8LaNJKD98U"
+}
