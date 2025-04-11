@@ -6,6 +6,8 @@ export interface Props {
 
 <html lang="en">
   <head>
+<link rel="stylesheet" href="/styles/tailwind.css" />
+<slot name="head" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{Astro.props.title || "NestleIn"}</title>
