@@ -1,8 +1,7 @@
 // src/pages/sitemap.xml.js
-
 import { getCollection } from 'astro:content';
 
-export async function get() {
+export async function GET() {
   const locations = await getCollection('locations');
   const base = 'https://nestlein-site.vercel.app';
 
