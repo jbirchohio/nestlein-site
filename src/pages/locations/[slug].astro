@@ -44,7 +44,7 @@ const pageUrl = `https://nestlein-site.vercel.app/locations/${slug}`;
     <!-- Open Graph -->
     <meta property="og:title" content={`${name} – Remote Work Spot`} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={image} />
+<meta property="og:image" content={`https://nestlein-site.vercel.app/api/og/${slug}`} />
     <meta property="og:url" content={pageUrl} />
     <meta property="og:type" content="place" />
 
@@ -52,7 +52,7 @@ const pageUrl = `https://nestlein-site.vercel.app/locations/${slug}`;
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={`${name} – Remote Work Spot`} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={image} />
+<meta name="twitter:image" content={`https://nestlein-site.vercel.app/api/og/${slug}`} />
 
     <!-- Schema.org LocalBusiness -->
     <script type="application/ld+json">
