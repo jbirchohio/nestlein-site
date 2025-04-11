@@ -2,6 +2,8 @@
 // src/pages/locations/[slug].astro
 import Layout from '../../layouts/Layout.astro';
 import { getCollection, getEntryBySlug } from 'astro:content';
+import { Fragment } from 'astro/jsx';
+
 
 export async function getStaticPaths() {
   const entries = await getCollection('locations');
