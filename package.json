@@ -10,7 +10,7 @@
   "clean:json": "node ./scripts/clean-best-time-field.js",
   "postinstall": "chmod +x ./node_modules/.bin/astro",
   "vercel:build": "npm install --legacy-peer-deps && npm run build"
-}
+},
   "dependencies": {
     "@astrojs/react": "^4.2.3",
     "@astrojs/tailwind": "^6.0.2",
