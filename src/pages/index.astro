@@ -1,0 +1,117 @@
+---
+import { getCollection } from 'astro:content';
+const locations = await getCollection('locations');
+
+const groupedLocations = locations.map(loc => ({
+  ...loc.data,
+  slug: loc.slug,
+  status: getOpenStatus(loc.data.hours_of_operation),
+}));
+
+function getOpenStatus(hours) {
+  const now = new Date();
+  const day = now.toLocaleDateString('en-US', { weekday: 'long' });
+  const time = now.getHours() + now.getMinutes() / 60;
+
+  if (!hours || !coversDay(hours.toLowerCase(), day.toLowerCase())) return { status: 'unknown', text: 'Unknown' };
+  
+  const m = hours.match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?\s*to\s*(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?/i);
+  if (!m) return { status: 'unknown', text: 'Unknown' };
+
+  const to24 = (h, m, p) => (p?.toUpperCase() === 'PM' && h !== 12 ? h + 12 : h === 12 && p?.toUpperCase() === 'AM' ? 0 : h) + m / 60;
+  const [_, h1, m1 = '0', ampm1, h2, m2 = '0', ampm2] = m;
+  const open = to24(+h1, +m1, ampm1);
+  const close = to24(+h2, +m2, ampm2);
+  return time >= open && time <= close
+    ? { status: 'open', text: `until ${formatTime(close)}` }
+    : { status: 'closed', text: `opens at ${formatTime(open)}` };
+}
+
+function coversDay(text, day) {
+  const w = ['monday','tuesday','wednesday','thursday','friday'];
+  const e = ['saturday','sunday'];
+  return text.includes(day) || text.includes('every day') || text.includes('daily') ||
+         text.includes('monday through sunday') || text.includes('monday - sunday') ||
+         (text.includes('weekdays') && w.includes(day)) || (text.includes('weekends') && e.includes(day));
+}
+
+function formatTime(decimal) {
+  const h = Math.floor(decimal), m = Math.round((decimal - h) * 60);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const hr = ((h + 11) % 12 + 1);
+  return `${hr}${m > 0 ? ':' + m.toString().padStart(2, '0') : ''} ${ampm}`;
+}
+
+const safeJson = JSON.stringify(groupedLocations).replace(/</g, '\\u003c');
+---
+
+<html lang="en">
+  <head>
+    <title>NestleIn – Remote Work-Friendly Cafes & Workspaces</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Discover top-rated remote work spots near you with Wi-Fi, quiet vibes, and space to get things done. Curated cafes, libraries, and cowork-friendly places that welcome your laptop." />
+    <link rel="canonical" href="https://nestlein-site.vercel.app/" />
+
+    <!-- Fonts + CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/tailwind.css">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="NestleIn – Find Remote Work-Friendly Cafes & Spaces Near You" />
+    <meta property="og:description" content="Explore top-rated places for remote work with Wi-Fi, outlets, and comfort. Curated listings for your productivity." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://nestlein-site.vercel.app/" />
+    <meta property="og:image" content="/images/nestlein%20logo.png" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="NestleIn – Find Remote Work-Friendly Cafes & Spaces Near You" />
+    <meta name="twitter:description" content="Remote work spots with great Wi-Fi, vibes, and space. Find your next cozy workspace today." />
+    <meta name="twitter:image" content="/images/nestlein%20logo.png" />
+
+    <!-- JSON-LD Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "NestleIn",
+      "url": "https://nestlein-site.vercel.app/",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://nestlein-site.vercel.app/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+  </head>
+  <body class="bg-orange-50 font-sans">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-white shadow-sm p-4 flex flex-col md:flex-row items-center justify-between gap-2">
+      <div class="text-2xl font-bold text-orange-600">NestleIn</div>
+      <input id="search" placeholder="Search spots or tags..." class="border border-orange-300 px-4 py-2 rounded-full shadow-sm focus:ring-2 focus:ring-orange-400 w-full max-w-sm">
+      <select id="distance-filter" class="border border-orange-300 px-3 py-2 rounded-full text-sm">
+        <option value="5">Within 5 mi</option>
+        <option value="10">Within 10 mi</option>
+        <option value="25">Within 25 mi</option>
+        <option value="50">Within 50 mi</option>
+        <option value="0">Ignore distance</option>
+      </select>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-r from-orange-100 to-orange-50 py-16 text-center">
+      <h1 class="text-4xl font-extrabold text-orange-700 mb-2">Work Remotely. Nest Comfortably.</h1>
+      <p class="text-gray-700 text-lg max-w-xl mx-auto">Discover the best spots with Wi-Fi, vibes, and space to get things done.</p>
+      <div id="tag-pills" class="mt-6 flex flex-wrap justify-center gap-2 transition-all duration-500 opacity-0 translate-y-2"></div>
+    </section>
+
+    <!-- Card Grid -->
+    <main class="px-4 py-10 space-y-12">
+      <div id="dynamic-sections" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+    </main>
+
+    <!-- Location JSON & Card Renderer -->
+    <script type="application/json" id="location-data" set:html={safeJson}></script>
+    <script type="module" src="/scripts/render.cards.js"></script>
+  </body>
+</html>
