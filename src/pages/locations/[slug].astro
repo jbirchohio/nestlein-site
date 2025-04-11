@@ -1,205 +1,85 @@
 ---
-import fs from 'fs';
-import path from 'path';
-import LucideIcon from "../../components/LucideIcon.jsx";
+// src/pages/locations/[slug].astro
 
-const iconMap = {
-  'Wi-Fi': 'wifi',
-  'Quiet Atmosphere': 'volume-x',
-  'Plenty Of Outlets': 'plug',
-  'Outdoor Seating': 'sun',
-  'Natural Light': 'sunrise',
-  'Comfortable Seating': 'sofa',
-  'Low Noise Level': 'waves',
-  'Great Coffee': 'coffee',
-};
-
-export async function getStaticPaths() {
-  const directory = path.resolve('./data/locations');
-  const files = fs.readdirSync(directory);
-  const paths = [];
-
-  for (const file of files) {
-    const raw = fs.readFileSync(path.join(directory, file), 'utf-8');
-    const data = JSON.parse(raw);
-    if (data.slug) {
-      paths.push({ params: { slug: data.slug } });
-    }
-  }
-
-  return paths;
-}
+import { getEntryBySlug } from 'astro:content';
+import { Astro } from 'astro';
 
 const { slug } = Astro.params;
-const directoryPath = path.resolve('./data/locations');
-const files = fs.readdirSync(directoryPath);
+const entry = await getEntryBySlug('locations', slug);
+if (!entry) throw new Error(`No entry found for slug: ${slug}`);
 
-let location = null;
-let allLocations = [];
+const {
+  name,
+  address,
+  tags,
+  logo_url,
+  best_time_to_work_remotely,
+  restaurant_score,
+  phone_number,
+  hours_of_operation,
+  latitude,
+  longitude
+} = entry.data;
 
-for (const file of files) {
-  const raw = fs.readFileSync(path.join(directoryPath, file), 'utf8');
-  const json = JSON.parse(raw);
-  allLocations.push(json);
-  if (json.slug === slug) {
-    location = json;
-  }
-}
-
-if (!location) {
-  throw new Error(`Location with slug "${slug}" not found.`);
-}
-
-function haversine(lat1, lon1, lat2, lon2) {
-  const toRad = angle => angle * Math.PI / 180;
-  const R = 6371;
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
-  const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c * 0.621371;
-}
-
-const nearbySpots =
-  location.latitude && location.longitude
-    ? allLocations
-        .filter(l => l.slug !== slug && l.latitude && l.longitude)
-        .map(l => ({
-          ...l,
-          distance: haversine(location.latitude, location.longitude, l.latitude, l.longitude),
-        }))
-        .filter(l => l.distance <= 10)
-        .sort((a, b) => a.distance - b.distance)
-        .slice(0, 3)
-    : [];
+const description = `${name} is a great spot to work remotely in ${address.split(',')[1]?.trim() || 'your city'}. Enjoy Wi-Fi, comfort, and productivity.`;
+const image = logo_url || '/images/nestlein%20logo.png';
+const pageUrl = `https://nestlein-site.vercel.app/locations/${slug}`;
 ---
-
 <html lang="en">
   <head>
-    <title>{location.name} – NestleIn</title>
+    <title>${name} – Remote Work Spot | NestleIn</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={pageUrl} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles/tailwind.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/tailwind.css">
 
+    <!-- Open Graph -->
+    <meta property="og:title" content={`${name} – Remote Work Spot`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:type" content="place" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={`${name} – Remote Work Spot`} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+
+    <!-- Schema.org LocalBusiness -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CafeOrCoffeeShop",
+      "name": "${name}",
+      "image": "${image}",
+      "address": "${address}",
+      "url": "${pageUrl}",
+      "telephone": "${phone_number || ''}",
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "${restaurant_score || 0}",
+        "reviewCount": "1"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": ${latitude || 0},
+        "longitude": ${longitude || 0}
+      }
+    }
+    </script>
   </head>
-
-  <body class="bg-orange-50 font-sans text-gray-800 min-h-screen">
-    <main class="max-w-3xl mx-auto px-4 py-10 space-y-10">
-
-      <!-- Back Button -->
-      <a href="/" class="inline-flex items-center gap-2 text-orange-600 bg-orange-100 px-4 py-2 rounded-full text-sm hover:bg-orange-200 transition w-fit">
-        <LucideIcon name="arrow-left" size={16} className="text-orange-600" client:only="react" />
-        Back to Discover
-      </a>
-
-      <!-- Image + Name Section -->
-      <section class="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-6 bg-white border border-orange-100 shadow rounded-xl p-4 sm:p-6">
-        <!-- Name & Address -->
-        <div class="flex-1">
-          <h1 class="text-3xl sm:text-4xl font-serif font-semibold text-orange-700 mb-1">{location.name}</h1>
-          <p class="text-gray-600 text-sm">{location.address}</p>
-        </div>
-
-        <!-- Image or Fallback -->
-        <div class="flex justify-center sm:justify-end items-center w-full sm:w-60 md:w-72 shrink-0">
-          {location.logo_url ? (
-            <img
-              src={location.logo_url}
-              alt={location.name}
-              class="w-full sm:w-auto max-h-60 sm:max-h-72 object-contain rounded-lg border border-orange-200 shadow-sm"
-              loading="lazy"
-            />
-          ) : (
-            <div class="bg-orange-100 text-orange-700 text-sm text-center px-4 py-3 rounded-md border border-dashed border-orange-300 w-full">
-              No image available yet.
-            </div>
-          )}
-        </div>
-      </section>
-
-      <!-- Quick Info -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition p-5 space-y-3 border border-orange-100">
-          <p class="flex items-center gap-2 text-sm">
-            <LucideIcon name="star" size={18} className="text-yellow-500" client:only="react" />
-            <strong>Remote Score:</strong> {location.restaurant_score}/10
-          </p>
-          <p class="flex items-center gap-2 text-sm">
-            <LucideIcon name="brain-cog" size={18} className="text-orange-600" client:only="react" />
-            <strong>Best Time:</strong> {location.best_time_to_work_remotely}
-          </p>
-          <p class="flex items-center gap-2 text-sm">
-            <LucideIcon name="clock" size={18} className="text-gray-600" client:only="react" />
-            <strong>Open Hours:</strong> {location.hours_of_operation}
-          </p>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition p-5 border border-orange-100">
-          <div class="flex items-center gap-2 mb-3">
-            <LucideIcon name="tags" size={18} className="text-orange-600" client:only="react" />
-            <h2 class="text-sm font-semibold font-serif text-orange-700">Tags</h2>
-          </div>
-          <div class="flex flex-wrap gap-2">
-            {location.tags?.map(tag => (
-              <span class="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full border border-orange-300 shadow-sm font-medium tracking-wide">{tag}</span>
-            ))}
-          </div>
-        </div>
+  <body class="bg-orange-50 font-sans">
+    <!-- You can display details below here -->
+    <main class="px-6 py-12 max-w-3xl mx-auto space-y-4">
+      <h1 class="text-4xl font-bold text-orange-700">${name}</h1>
+      <p class="text-gray-600">${address}</p>
+      {logo_url && <img src={logo_url} alt={name} class="w-full rounded-lg shadow" />}
+      <p class="mt-4">${best_time_to_work_remotely || 'Work anytime that suits you!'}</p>
+      <div class="flex flex-wrap gap-2 mt-2">
+        {(tags || []).map(tag => <span class="bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full text-xs">{tag}</span>)}
       </div>
-
-      <!-- Remote Work Features -->
-      {location.remote_work_features && (
-        <div class="bg-white rounded-xl shadow p-6 border border-orange-100 space-y-4">
-          <h2 class="text-lg font-serif font-medium text-orange-700 mb-4">Remote Work Features</h2>
-          {Object.entries(location.remote_work_features).map(([key, value]) => {
-            const title = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-            const iconName = iconMap[title] || 'info';
-
-            return (
-              <div class="flex items-center gap-3 text-sm text-gray-800">
-                <LucideIcon name={iconName} size={18} className="text-orange-600" client:only="react" />
-                <span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-xs font-medium tracking-wide whitespace-nowrap border border-orange-300 shadow-sm">
-                  {title}
-                </span>
-                <span class="text-sm text-gray-700">{value}</span>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      <!-- Map Button -->
-      {location.latitude && location.longitude && (
-        <a href={`https://www.google.com/maps/search/?api=1&query=${location.latitude},${location.longitude}`} class="inline-flex items-center gap-2 bg-orange-100 text-orange-700 px-4 py-2 text-sm rounded-full hover:bg-orange-200 transition" target="_blank" rel="noopener">
-          <LucideIcon name="map-pin" size={16} className="text-orange-600" client:only="react" />
-          View on Map
-        </a>
-      )}
-
-      <!-- Nearby Spots -->
-      {nearbySpots.length > 0 && (
-        <div class="mt-10">
-          <h2 class="text-xl font-serif font-medium text-orange-700 mb-4">Nearby Spots</h2>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {nearbySpots.map(spot => (
-              <a href={`/locations/${spot.slug}`} class="block bg-white rounded-xl border border-orange-100 shadow-sm hover:shadow-md transition p-4">
-                {spot.logo_url && (
-                  <img src={spot.logo_url} alt={spot.name} class="w-full h-32 object-cover rounded-md mb-2" />
-                )}
-                <h3 class="text-lg font-serif font-medium text-orange-800 mb-1">{spot.name}</h3>
-                <p class="text-sm text-gray-500">{spot.address}</p>
-                <p class="text-xs text-gray-600 mt-1">{spot.distance.toFixed(1)} mi away</p>
-                <p class="text-sm">⭐ {spot.restaurant_score || 0}/10</p>
-                <div class="mt-2 flex flex-wrap gap-1">
-                  {(spot.tags || []).map(tag => (
-                    <span class="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full border border-orange-200">{tag}</span>
-                  ))}
-                </div>
-              </a>
-            ))}
-          </div>
-        </div>
-      )}
     </main>
   </body>
 </html>
