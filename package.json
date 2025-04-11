@@ -14,7 +14,6 @@
   "dependencies": {
     "@astrojs/react": "^4.2.3",
     "@astrojs/tailwind": "^6.0.2",
-    "@astrojs/vercel": "4.0.2",
     "@iconify-icons/lucide": "^1.2.135",
     "@iconify/react": "^5.2.1",
     "@tailwindcss/aspect-ratio": "^0.4.2",
