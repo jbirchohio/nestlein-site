@@ -41,9 +41,10 @@ export default async function handler(req) {
           justifyContent: 'center',
         }}
       >
-        <h1 style={{ fontSize: 60, color: '#ea580c', marginBottom: 20 }}>
-          {name}
-        </h1>
+       <h1 style="font-size:60px;color:#ea580c;margin-bottom:20px;">
+  ${name}
+</h1>
+
         <p style={{ fontSize: 30, color: '#1f2937', marginBottom: 10 }}>
           {address}
         </p>
