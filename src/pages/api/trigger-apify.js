@@ -1,13 +1,13 @@
-// /api/trigger-apify.js
+// /src/pages/api/trigger-apify.js
 
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method Not Allowed' });
-  }
+export async function POST({ request }) {
+  const { place_id } = await request.json();
 
-  const { place_id } = req.body;
   if (!place_id) {
-    return res.status(400).json({ error: 'Missing place_id' });
+    return new Response(JSON.stringify({ error: 'Missing place_id' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 
   try {
@@ -22,8 +22,14 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
-    return res.status(200).json({ success: true, runId: data.data?.id || 'Unknown', message: 'Apify actor started' });
+    return new Response(JSON.stringify({ success: true, runId: data.data?.id || 'Unknown' }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });
   } catch (err) {
-    return res.status(500).json({ error: 'Apify actor trigger failed', details: err.message });
+    return new Response(JSON.stringify({ error: 'Apify actor trigger failed', details: err.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 }
