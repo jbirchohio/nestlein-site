@@ -5,7 +5,9 @@ import vercel from "@astrojs/vercel/serverless";
 
 export default defineConfig({
   output: 'server',
-  adapter: vercel(),
+  adapter: vercel({
+    runtime: 'nodejs18@1.0.0' // Use a valid runtime string including a version tag
+  }),
   integrations: [tailwind(), react()],
   vite: {
     optimizeDeps: {
