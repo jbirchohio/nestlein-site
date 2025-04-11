@@ -1,4 +1,3 @@
-// src/pages/api/og/[slug].js
 import { ImageResponse } from '@vercel/og';
 import { getEntryBySlug } from 'astro:content';
 
@@ -8,7 +7,9 @@ export const config = {
 
 export default async function handler(req) {
   const url = new URL(req.url);
-  const slug = url.pathname.split('/').pop();
+  const slug = url.searchParams.get('slug');
+
+  if (!slug) return new Response('Missing slug', { status: 400 });
 
   const entry = await getEntryBySlug('locations', slug);
   if (!entry) return new Response('Not Found', { status: 404 });
