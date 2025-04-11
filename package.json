@@ -2,14 +2,15 @@
   "name": "nestlein-site",
   "type": "module",
   "scripts": {
-    "dev": "astro dev",
-    "build": "npm run clean:json && npm run copy-locations && npm run geocode-locations && astro build",
-    "copy-locations": "node copy-locations.cjs",
-    "geocode-locations": "node geocode-locations.js",
-    "preview": "astro preview",
-    "clean:json": "node ./scripts/clean-best-time-field.js",
-    "postinstall": "chmod +x ./node_modules/.bin/astro"
-  },
+  "dev": "astro dev",
+  "build": "npm run clean:json && npm run copy-locations && npm run geocode-locations && astro build",
+  "copy-locations": "node copy-locations.cjs",
+  "geocode-locations": "node geocode-locations.js",
+  "preview": "astro preview",
+  "clean:json": "node ./scripts/clean-best-time-field.js",
+  "postinstall": "chmod +x ./node_modules/.bin/astro",
+  "vercel:build": "npm install --legacy-peer-deps && npm run build"
+}
   "dependencies": {
     "@astrojs/react": "^4.2.3",
     "@astrojs/tailwind": "^6.0.2",
