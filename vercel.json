@@ -1,0 +1,10 @@
+{
+  "functions": {
+    "api/**/*.js": {
+      "runtime": "nodejs18"
+    },
+    "src/pages/**/*.astro": {
+      "runtime": "nodejs18"
+    }
+  }
+}
