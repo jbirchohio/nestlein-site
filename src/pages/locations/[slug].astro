@@ -1,7 +1,13 @@
 ---
 // src/pages/locations/[slug].astro
+import { getCollection, getEntryBySlug } from 'astro:content';
 
-import { getEntryBySlug } from 'astro:content';
+export async function getStaticPaths() {
+  const entries = await getCollection('locations');
+  return entries.map(entry => ({
+    params: { slug: entry.slug },
+  }));
+}
 
 const { slug } = Astro.params;
 const entry = await getEntryBySlug('locations', slug);
@@ -24,6 +30,7 @@ const description = `${name} is a great spot to work remotely in ${address.split
 const image = logo_url || '/images/nestlein%20logo.png';
 const pageUrl = `https://nestlein-site.vercel.app/locations/${slug}`;
 ---
+
 
 <html lang="en">
   <head>
