@@ -14,10 +14,19 @@ function toFrontmatter(obj, indent = 0) {
   const pad = "  ".repeat(indent);
   return Object.entries(obj)
     .map(([key, value]) => {
-      // Remove asterisks and force lowercase underscore format
       const cleanKey = key.replace(/\*/g, "").replace(/[\s-]/g, "_");
 
       if (value === null || value === undefined) return `${pad}${cleanKey}: ""`;
+
+      // ✅ Number as number
+      if (typeof value === "number") {
+        return `${pad}${cleanKey}: ${value}`;
+      }
+
+      // ✅ Convert numeric strings to actual numbers
+      if (typeof value === "string" && !isNaN(value) && value.trim() !== "") {
+        return `${pad}${cleanKey}: ${parseFloat(value)}`;
+      }
 
       if (typeof value === "object" && !Array.isArray(value)) {
         return `${pad}${cleanKey}:\n${toFrontmatter(value, indent + 1)}`;
@@ -43,7 +52,7 @@ function toFrontmatter(obj, indent = 0) {
     .join("\n");
 }
 
-// Loop through all .json files and convert to .md
+// Convert all .json files to .md
 fs.readdirSync(inputDir).forEach(file => {
   if (file.endsWith(".json")) {
     const jsonPath = path.join(inputDir, file);
