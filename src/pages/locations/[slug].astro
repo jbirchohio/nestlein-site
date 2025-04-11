@@ -2,8 +2,6 @@
 // src/pages/locations/[slug].astro
 import Layout from '../../layouts/Layout.astro';
 import { getCollection, getEntryBySlug } from 'astro:content';
-import { Fragment } from 'astro/jsx';
-
 
 export async function getStaticPaths() {
   const entries = await getCollection('locations');
@@ -35,50 +33,50 @@ const pageUrl = `https://nestlein-site.vercel.app/locations/${slug}`;
 ---
 
 <Layout title={`${name} – Remote Work Spot | NestleIn`}>
-<Fragment slot="head">
-  <title>{name} – Remote Work Spot | NestleIn</title>
-  <meta name="description" content={description} />
-  <link rel="canonical" href={pageUrl} />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/styles/tailwind.css" />
+  <head slot="head">
+    <title>{name} – Remote Work Spot | NestleIn</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={pageUrl} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles/tailwind.css" />
 
-  <!-- Open Graph -->
-  <meta property="og:title" content={name + " – Remote Work Spot"} />
-  <meta property="og:description" content={description} />
-  <meta property="og:image" content={"https://nestlein-site.vercel.app/api/og?slug=" + slug} />
-  <meta property="og:url" content={pageUrl} />
-  <meta property="og:type" content="place" />
+    <!-- Open Graph -->
+    <meta property="og:title" content={name + " – Remote Work Spot"} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={"https://nestlein-site.vercel.app/api/og?slug=" + slug} />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:type" content="place" />
 
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content={name + " – Remote Work Spot"} />
-  <meta name="twitter:description" content={description} />
-  <meta name="twitter:image" content={"https://nestlein-site.vercel.app/api/og?slug=" + slug} />
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={name + " – Remote Work Spot"} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={"https://nestlein-site.vercel.app/api/og?slug=" + slug} />
 
-  <!-- Schema.org LocalBusiness -->
-  <script type="application/ld+json">
-    {JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "CafeOrCoffeeShop",
-      name: name,
-      image: image,
-      address: address,
-      url: pageUrl,
-      telephone: phone_number || "",
-      aggregateRating: {
-        "@type": "AggregateRating",
-        ratingValue: restaurant_score || 0,
-        reviewCount: "1"
-      },
-      geo: {
-        "@type": "GeoCoordinates",
-        latitude: latitude || 0,
-        longitude: longitude || 0
-      }
-    })}
-  </script>
-</Fragment>
+    <!-- Schema.org LocalBusiness -->
+    <script type="application/ld+json">
+      {JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "CafeOrCoffeeShop",
+        name: name,
+        image: image,
+        address: address,
+        url: pageUrl,
+        telephone: phone_number || "",
+        aggregateRating: {
+          "@type": "AggregateRating",
+          ratingValue: restaurant_score || 0,
+          reviewCount: "1"
+        },
+        geo: {
+          "@type": "GeoCoordinates",
+          latitude: latitude || 0,
+          longitude: longitude || 0
+        }
+      })}
+    </script>
+  </head>
 
   <main class="px-6 py-12 max-w-3xl mx-auto space-y-4">
     <a href="/" class="text-sm text-orange-700 hover:underline">← Back to homepage</a>
