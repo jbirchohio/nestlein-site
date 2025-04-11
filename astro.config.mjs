@@ -1,13 +1,13 @@
 import { defineConfig } from 'astro/config';
-import tailwind from "@astrojs/tailwind";
-import react from "@astrojs/react";
-import vercel from "@astrojs/vercel/serverless";
+import tailwind from '@astrojs/tailwind';
+import react from '@astrojs/react';
+import vercel from '@astrojs/vercel';
 
 export default defineConfig({
-  output: 'server',
   adapter: vercel({
-    runtime: 'nodejs18.x' // ✅ Use valid runtime for Vercel
+    runtime: 'nodejs18.x' // ✅ Still valid
   }),
+  output: 'server',
   integrations: [tailwind(), react()],
   vite: {
     optimizeDeps: {
