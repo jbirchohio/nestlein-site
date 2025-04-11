@@ -1,44 +1,64 @@
-// copy-locations.js
+const fs = require("fs");
+const path = require("path");
 
-const fs = require('fs');
-const path = require('path');
+const inputDir = path.join("data", "locations");
+const outputDir = path.join("src", "content", "locations");
 
-const srcDir = path.join(__dirname, 'data', 'locations');
-const outDir = path.join(__dirname, 'src', 'content', 'locations');
-
-// Ensure output folder exists
-if (!fs.existsSync(outDir)) {
-  fs.mkdirSync(outDir, { recursive: true });
+// Ensure output dir exists
+if (!fs.existsSync(outputDir)) {
+  fs.mkdirSync(outputDir, { recursive: true });
 }
 
-const files = fs.readdirSync(srcDir).filter(file => file.endsWith('.json'));
+// Sanitize keys and convert JS object to YAML-like frontmatter
+function toFrontmatter(obj, indent = 0) {
+  const pad = "  ".repeat(indent);
+  return Object.entries(obj)
+    .map(([key, value]) => {
+      // Remove asterisks and force lowercase underscore format
+      const cleanKey = key.replace(/\*/g, "").replace(/[\s-]/g, "_");
 
-for (const file of files) {
-  const srcPath = path.join(srcDir, file);
-  const outPath = path.join(outDir, file.replace('.json', '.md'));
+      if (value === null || value === undefined) return `${pad}${cleanKey}: ""`;
 
-  try {
-    const data = JSON.parse(fs.readFileSync(srcPath, 'utf8'));
+      if (typeof value === "object" && !Array.isArray(value)) {
+        return `${pad}${cleanKey}:\n${toFrontmatter(value, indent + 1)}`;
+      }
 
-    // 🚫 Remove the 'slug' field before writing
-    const { slug, ...cleanedData } = data;
+      if (Array.isArray(value)) {
+        const formattedList = value
+          .map(item => `${pad}- "${String(item).replace(/"/g, '\\"')}"`)
+          .join("\n");
+        return `${pad}${cleanKey}:\n${formattedList}`;
+      }
 
-    const frontmatter = Object.entries(cleanedData)
-      .map(([key, value]) => {
-        if (typeof value === 'object') {
-          return `${key}: ${JSON.stringify(value, null, 2).replace(/\n/g, '\n  ')}`;
-        }
-        return `${key}: ${JSON.stringify(value)}`;
-      })
-      .join('\n');
+      const isMultiLine = typeof value === "string" && value.includes("\n");
+      if (isMultiLine) {
+        return `${pad}${cleanKey}: |\n${value
+          .split("\n")
+          .map(line => `${pad}  ${line}`)
+          .join("\n")}`;
+      }
 
-    const markdownContent = `---\n${frontmatter}\n---\n`;
+      return `${pad}${cleanKey}: "${String(value).replace(/"/g, '\\"')}"`;
+    })
+    .join("\n");
+}
 
-    fs.writeFileSync(outPath, markdownContent);
+// Loop through all .json files and convert to .md
+fs.readdirSync(inputDir).forEach(file => {
+  if (file.endsWith(".json")) {
+    const jsonPath = path.join(inputDir, file);
+    const rawData = fs.readFileSync(jsonPath, "utf8");
+    const data = JSON.parse(rawData);
+
+    const slug = data.slug || path.basename(file, ".json");
+    const mdPath = path.join(outputDir, `${slug}.md`);
+
+    const frontmatter = toFrontmatter(data);
+    const markdown = `---\n${frontmatter}\n---\n\nA great place to work remotely. (You can customize this later.)`;
+
+    fs.writeFileSync(mdPath, markdown);
     console.log(`✅ Converted: ${file}`);
-  } catch (err) {
-    console.error(`❌ Failed to convert ${file}: ${err.message}`);
   }
-}
+});
 
-console.log('✅ All JSON files converted and copied to src/content/locations'); 
+console.log("✅ All JSON files converted and copied to src/content/locations");
