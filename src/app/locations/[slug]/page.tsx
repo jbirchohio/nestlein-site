@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
-import { MapPin, Clock, Phone, Wifi, Power, Volume2, Sun, Coffee, ToiletPaper, ParkingSquare } from 'lucide-react';
+import { MapPin, Clock, Phone, Wifi, Power, Volume2, Sun, Coffee, ParkingSquare } from 'lucide-react';
 
 type Location = {
   name: string;
@@ -113,7 +113,7 @@ export default function LocationPage() {
           <p className="flex items-center gap-2"><Coffee size={18} /> Menu: {features.food_drink_options}</p>
         )}
         {features.bathroom_access && (
-          <p className="flex items-center gap-2"><ToiletPaper size={18} /> Bathroom: {features.bathroom_access}</p>
+          <p className="flex items-center gap-2">🚻 Bathroom: {features.bathroom_access}</p>
         )}
         {features.parking_availability && (
           <p className="flex items-center gap-2"><ParkingSquare size={18} /> Parking: {features.parking_availability}</p>
