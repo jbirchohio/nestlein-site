@@ -10,10 +10,7 @@ tags:
   - Artsy Atmosphere
   - "Family-Friendly"
   - Cozy Atmosphere
-tags_reasoning:
--_artsy_atmosphere: Multiple reviews praise the unique, artistic, and whimsical décor and ambiance of the cafe. The opportunity to paint while waiting for food further supports this tag.
--_family-friendly: "Reviews mention the cafe being kid-friendly, with high chairs available."
--_cozy_atmosphere: Several reviews describe the cafe as "cozy" and inviting.
+tags_reasoning: "- Artsy Atmosphere: Multiple reviews praise the unique, artistic, and whimsical décor and ambiance of the cafe. The opportunity to paint while waiting for food further supports this tag. - Family-Friendly: Reviews mention the cafe being kid-friendly, with high chairs available. - Cozy Atmosphere: Several reviews describe the cafe as \"cozy\" and inviting."
 final_score: 7.8/10
 name: A Walk In The Park Cafe
 remote_work_features:
@@ -29,4 +26,4 @@ remote_work_features:
 slug: "a-walk-in-the-park-cafe-44301"
 google_place_id: "ChIJrc-XPwcqMYgRlvrUifST5Xk"
 ---
-A remote work-friendly spot.
+This location is suitable for remote work.
