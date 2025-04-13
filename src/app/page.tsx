@@ -9,12 +9,12 @@ export default async function HomePage() {
   const locations = getAllLocations();
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-gray-50 text-gray-900">
       {/* Sidebar Filters */}
       <aside className="hidden md:block w-64 p-6 border-r border-gray-200 bg-white">
         <h2 className="text-lg font-semibold mb-4">Filter by</h2>
         {/* Tag checkboxes will go here */}
-        <div className="space-y-2">
+        <div className="space-y-2 text-sm text-gray-800">
           <label className="block">
             <input type="checkbox" className="mr-2" /> Quiet
           </label>
@@ -52,12 +52,17 @@ export default async function HomePage() {
                 height={200}
                 className="w-full h-40 object-cover rounded mb-2"
               />
-              <h2 className="text-xl font-semibold text-gray-900">{loc.title}</h2>
+              <h2 className="text-xl font-semibold">{loc.title}</h2>
               <p className="text-sm text-gray-600">{loc.address}</p>
-              <p className="text-sm text-violet-600 font-medium mt-1">Open now — until {loc.hours?.split('-')?.[1]?.trim()}</p>
+              <p className="text-sm text-violet-600 font-medium mt-1">
+                Open now — until {loc.hours?.split('-')?.[1]?.trim()}
+              </p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {loc.tags?.map((tag: string) => (
-                  <span key={tag} className="text-xs font-medium px-2 py-1 bg-violet-100 text-violet-800 rounded-full">
+                  <span
+                    key={tag}
+                    className="text-xs font-medium px-2 py-1 bg-violet-100 text-violet-800 rounded-full"
+                  >
                     {tag}
                   </span>
                 ))}
