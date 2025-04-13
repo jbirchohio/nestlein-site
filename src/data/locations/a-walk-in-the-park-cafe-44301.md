@@ -29,7 +29,7 @@ noise_level: Unknown
 seating_comfort: Unknown
 natural_light: Unknown
 stay_duration_friendliness: Unknown
-food_&_drink_options: Coffee, Comfort food, Healthy options, Quick bite, Small plates, Vegan options, Vegetarian options
+food___drink_options: Coffee, Comfort food, Healthy options, Quick bite, Small plates, Vegan options, Vegetarian options
 bathroom_access: Yes
 parking_availability: Free parking lot, Free street parking
 tags: Free Wi-Fi, Cozy Atmosphere, Family-Friendly, Black-Owned
