@@ -1,20 +1,6 @@
-import { getLocationBySlug } from '../../../lib/markdown';
-import { notFound } from 'next/navigation';
-import { Metadata } from 'next';
-import Image from 'next/image';
-
-type RouteParams = {
-  params: {
-    slug: string;
-  };
-};
-
-export async function generateStaticParams() {
-  const { getAllLocations } = await import('../../../lib/markdown');
-  return getAllLocations().map(loc => ({ slug: loc.slug }));
-}
-
-export async function generateMetadata({ params }: RouteParams): Promise<Metadata> {
+export async function generateMetadata(
+  { params }: { params: { slug: string } }
+): Promise<Metadata> {
   const { data } = getLocationBySlug(params.slug);
   return {
     title: `${data.title} | NestleIn`,
@@ -22,7 +8,9 @@ export async function generateMetadata({ params }: RouteParams): Promise<Metadat
   };
 }
 
-export default function LocationPage({ params }: RouteParams) {
+export default function LocationPage(
+  { params }: { params: { slug: string } }
+) {
   const { data, content } = getLocationBySlug(params.slug);
 
   if (!data) return notFound();
