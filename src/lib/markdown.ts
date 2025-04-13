@@ -20,3 +20,4 @@ export function getLocationBySlug(slug: string) {
   const { data, content } = matter(fileContents);
   return { data, content };
 }
+ 
