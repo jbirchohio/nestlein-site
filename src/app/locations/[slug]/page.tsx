@@ -33,7 +33,8 @@ export default function LocationPage({ params }) {
         <p>{content}</p>
       </div>
     );
-  } catch (_) {
+  } catch {
     return notFound();
   }
 }
+
