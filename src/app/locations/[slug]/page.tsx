@@ -3,12 +3,6 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import Image from 'next/image';
 
-type RouteParams = {
-  params: {
-    slug: string;
-  };
-};
-
 export async function generateMetadata(
   { params }: { params: { slug: string } }
 ): Promise<Metadata> {
