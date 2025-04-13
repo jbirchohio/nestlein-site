@@ -1,4 +1,4 @@
-// /src/app/locations/[slug]/page.tsx
+// /src/app/locations/[slug]/page.jsx
 import { getLocationBySlug } from '../../../lib/markdown';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
@@ -35,11 +35,12 @@ export default function LocationPage({ params }) {
       <p className="text-violet-600 text-sm font-medium mb-6">Open now — until {data.hours?.split('-')?.[1]?.trim()}</p>
 
       <div className="flex flex-wrap gap-2 mb-6">
-        {data.tags?.map((tag: string) => (
-          <span key={tag} className="text-xs font-medium px-2 py-1 bg-violet-100 text-violet-800 rounded-full">
-            {tag}
-          </span>
-        ))}
+      {data.tags?.map((tag) => (
+  <span key={tag} className="text-xs font-medium px-2 py-1 bg-violet-100 text-violet-800 rounded-full">
+    {tag}
+  </span>
+))}
+
       </div>
 
       <div className="prose prose-sm max-w-none text-gray-800">
