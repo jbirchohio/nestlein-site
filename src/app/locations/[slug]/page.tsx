@@ -1,7 +1,8 @@
 // /src/app/locations/[slug]/page.tsx
+
 import { getLocationBySlug } from "@/lib/locations";
 import { notFound } from "next/navigation";
-import Layout from "@/app/Layout"; // adjust if needed
+import Layout from "@/app/layout";
 import Image from "next/image";
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
@@ -13,7 +14,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default async function Page({ params }: { params: { slug: string } }) {
+export default async function LocationPage({ params }: { params: { slug: string } }) {
   const location = await getLocationBySlug(params.slug);
   if (!location) return notFound();
 
@@ -32,7 +33,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
           {location.address} — {location.hours}
         </p>
         <div className="mt-4 space-y-2">
-          {location.tags?.map((tag) => (
+          {location.tags?.map((tag: string) => (
             <span
               key={tag}
               className="inline-block text-xs font-medium px-2 py-1 bg-violet-100 text-violet-800 rounded-full mr-2"
