@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 
-const locationsDir = path.join(process.cwd(), 'data/locations');
+const locationsDir = path.join(process.cwd(), 'src', 'data', 'locations');
 
 export function getAllLocations() {
   const files = fs.readdirSync(locationsDir);
