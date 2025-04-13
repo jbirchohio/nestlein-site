@@ -1,51 +1,54 @@
-// /src/app/locations/[slug]/page.jsx
-import { getLocationBySlug } from '../../../lib/markdown';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
+import { getAllLocations, getLocationBySlug } from '@/lib/locations';
 
 export async function generateStaticParams() {
-  const { getAllLocations } = await import('../../../lib/markdown');
-  return getAllLocations().map(loc => ({ slug: loc.slug }));
+  const locations = await getAllLocations();
+  return locations.map(loc => ({ slug: loc.slug }));
 }
 
-export async function generateMetadata({ params }) {
-  const { data } = getLocationBySlug(params.slug);
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  const location = await getLocationBySlug(params.slug);
+  if (!location) return {};
+
   return {
-    title: `${data.title} | NestleIn`,
-    description: `${data.title} is a remote work-friendly location in ${data.address}`,
+    title: `${location.name} | NestleIn`,
+    description: `${location.name} is a remote work-friendly location in ${location.address}`,
   };
 }
 
-export default function LocationPage({ params }) {
-  const { data, content } = getLocationBySlug(params.slug);
-  if (!data) return notFound();
+export default async function LocationPage({ params }: { params: { slug: string } }) {
+  const location = await getLocationBySlug(params.slug);
+  if (!location) return notFound();
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-10">
+    <div className="max-w-3xl mx-auto p-6">
       <Image
-        src={data.logo_url}
-        alt={data.title}
+        src={location.logo_url || '/placeholder.jpg'}
+        alt={location.name}
         width={800}
         height={400}
-        className="w-full h-64 object-cover rounded-md mb-6"
+        className="w-full h-60 object-cover rounded mb-4"
       />
-
-      <h1 className="text-4xl font-bold text-gray-900 mb-2">{data.title}</h1>
-      <p className="text-gray-600 text-sm mb-4">{data.address}</p>
-      <p className="text-violet-600 text-sm font-medium mb-6">Open now — until {data.hours?.split('-')?.[1]?.trim()}</p>
-
-      <div className="flex flex-wrap gap-2 mb-6">
-      {data.tags?.map((tag) => (
-  <span key={tag} className="text-xs font-medium px-2 py-1 bg-violet-100 text-violet-800 rounded-full">
-    {tag}
-  </span>
-))}
-
+      <h1 className="text-3xl font-bold mb-2">{location.name}</h1>
+      <p className="text-gray-600 mb-4">
+        {location.address} — {location.hours || 'Hours not available'}
+      </p>
+      <div className="mb-4">
+        {location.tags?.map(tag => (
+          <span
+            key={tag}
+            className="inline-block bg-violet-100 text-violet-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded"
+          >
+            {tag}
+          </span>
+        ))}
       </div>
-
-      <div className="prose prose-sm max-w-none text-gray-800">
-        <p>{content}</p>
-      </div>
+      <pre className="bg-gray-100 text-sm text-gray-800 p-4 rounded overflow-x-auto whitespace-pre-wrap">
+        {location.remote_work_features
+          ? JSON.stringify(location.remote_work_features, null, 2)
+          : 'No additional details available.'}
+      </pre>
     </div>
   );
 }
