@@ -3,12 +3,18 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import Image from 'next/image';
 
+type Params = {
+  params: {
+    slug: string;
+  };
+};
+
 export async function generateStaticParams() {
   const { getAllLocations } = await import('../../../lib/markdown');
   return getAllLocations().map(loc => ({ slug: loc.slug }));
 }
 
-export async function generateMetadata({ params }): Promise<Metadata> {
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { data } = getLocationBySlug(params.slug);
   return {
     title: `${data.title} | NestleIn`,
@@ -16,7 +22,7 @@ export async function generateMetadata({ params }): Promise<Metadata> {
   };
 }
 
-export default function LocationPage({ params }) {
+export default function LocationPage({ params }: Params) {
   try {
     const { data, content } = getLocationBySlug(params.slug);
     return (
@@ -37,4 +43,3 @@ export default function LocationPage({ params }) {
     return notFound();
   }
 }
- 
