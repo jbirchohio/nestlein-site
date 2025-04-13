@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { getAllLocations } from '../../lib/markdown';
+import { getAllLocations } from '../lib/markdown';
+
 
 export const dynamic = 'force-static';
 
