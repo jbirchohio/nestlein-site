@@ -1,9 +1,9 @@
 import { notFound } from 'next/navigation';
-import { getLocationBySlug } from '@/lib/locations';
+import { getLocationBySlug, getAllLocations } from '@/lib/locations';
 import Image from 'next/image';
 
 export async function generateStaticParams() {
-  const locations = await import('@/lib/locations').then(m => m.getAllLocations());
+  const locations = await getAllLocations();
   return locations.map(loc => ({ slug: loc.slug }));
 }
 
