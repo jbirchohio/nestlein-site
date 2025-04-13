@@ -26,4 +26,5 @@ remote_work_features:
 slug: "a-walk-in-the-park-cafe-44301"
 google_place_id: "ChIJrc-XPwcqMYgRlvrUifST5Xk"
 ---
+
 This location is suitable for remote work.
