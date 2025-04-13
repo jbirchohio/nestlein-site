@@ -41,4 +41,3 @@ logo_url: "https://lh3.googleusercontent.com/gps-cs-s/AB5caB8PgWlTVOfn-KmvDKkXRI
 slug: "a-walk-in-the-park-cafe-44301"
 google_place_id: "ChIJrc-XPwcqMYgRlvrUifST5Xk"
 ---
-
