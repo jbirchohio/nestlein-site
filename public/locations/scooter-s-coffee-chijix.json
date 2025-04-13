@@ -1,0 +1,28 @@
+{
+  "website_url": "Unknown Logo URL: Unknown",
+  "address": "Unknown",
+  "phone_number": "Unknown",
+  "hours_of_operation": "Check Website for Updated Hours",
+  "restaurant_score": 0,
+  "best_time_to_work_remotely": "Unknown",
+  "tags": [
+    "Drive-Thru",
+    "Quick Bite"
+  ],
+  "tags_reasoning**:\n-_drive-thru:_the_business_is_described_as_a_drive-thru_chain,_suggesting_it_may_be_convenient_for_quick_work_sessions.\n-_quick_bite:__the_mention_of_pastries_suggests_a_quick_food_option_is_available,_beneficial_for_remote_workers_needing_a_snack_or_meal.\n\n\n**final_score": "Unknown/10",
+  "name": "Scooter's Coffee",
+  "remote_work_features": {
+    "wi_fi_quality": "Unknown",
+    "outlet_access": "Unknown",
+    "noise_level": "Unknown",
+    "seating_comfort": "Unknown",
+    "natural_light": "Unknown",
+    "stay_duration_friendliness": "Unknown",
+    "food_drink_options": "Coffee, Smoothies, Pastries",
+    "bathroom_access": "Unknown",
+    "parking_availability": "Unknown"
+  },
+  "logo_url": "https://lh3.googleusercontent.com/p/AF1QipNc9Fw5PhBa9_LkBZo5f_pIEWyZINZsOMrBoiXL=w408-h612-k-no",
+  "slug": "scooter-s-coffee-chijix",
+  "google_place_id": "ChIJIXDg97spMYgR6JCZXHyp_rs"
+}
