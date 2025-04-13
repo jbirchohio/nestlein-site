@@ -1,44 +1,10 @@
-'use client';
-
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { getLocationBySlug } from '@/lib/locations';
 import Image from 'next/image';
+import { notFound } from 'next/navigation';
 
-type Location = {
-  name: string;
-  address: string;
-  hours?: string;
-  logo_url?: string;
-  tags?: string[];
-};
-
-export default function LocationPage() {
-  const { slug } = useParams();
-  const [location, setLocation] = useState<Location | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchLocation() {
-      try {
-        const res = await fetch(`/locations/${slug}.json`);
-        if (!res.ok) throw new Error('Failed to load');
-        const data = await res.json();
-        setLocation(data);
-      } catch (err) {
-        console.error(err);
-        setLocation(null);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    if (slug) {
-      fetchLocation();
-    }
-  }, [slug]);
-
-  if (loading) return <div className="p-6">Loading...</div>;
-  if (!location) return <div className="p-6">Location not found.</div>;
+export default async function LocationPage({ params }: { params: { slug: string } }) {
+  const location = await getLocationBySlug(params.slug);
+  if (!location) return notFound();
 
   return (
     <div className="max-w-3xl mx-auto p-6">
