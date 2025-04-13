@@ -1,8 +1,5 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-expect-error: Next.js wrongly thinks params is a Promise
 import { getLocationBySlug } from '../../../lib/markdown';
 import { notFound } from 'next/navigation';
-import { Metadata } from 'next';
 import Image from 'next/image';
 
 export async function generateStaticParams() {
@@ -10,7 +7,7 @@ export async function generateStaticParams() {
   return getAllLocations().map(loc => ({ slug: loc.slug }));
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }) {
   const { data } = getLocationBySlug(params.slug);
   return {
     title: `${data.title} | NestleIn`,
@@ -18,7 +15,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default function LocationPage({ params }: { params: { slug: string } }) {
+export default function LocationPage({ params }) {
   const { data, content } = getLocationBySlug(params.slug);
 
   if (!data) return notFound();
