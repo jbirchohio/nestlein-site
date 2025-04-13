@@ -14,7 +14,7 @@ export function getAllLocations() {
   });
 }
 
-export function getLocationBySlug(slug) {
+export function getLocationBySlug(slug: string) {
   const fullPath = path.join(locationsDir, `${slug}.md`);
   const fileContents = fs.readFileSync(fullPath, 'utf8');
   const { data, content } = matter(fileContents);
