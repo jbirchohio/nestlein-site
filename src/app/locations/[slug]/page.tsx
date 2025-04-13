@@ -2,18 +2,12 @@ import { notFound } from 'next/navigation';
 import { getLocationBySlug } from '@/lib/locations';
 import Image from 'next/image';
 
-type PageProps = {
-  params: {
-    slug: string;
-  };
-};
-
 export async function generateStaticParams() {
   const locations = await import('@/lib/locations').then(m => m.getAllLocations());
   return locations.map(loc => ({ slug: loc.slug }));
 }
 
-export async function generateMetadata({ params }: PageProps) {
+export async function generateMetadata({ params }: { params: { slug: string } }) {
   const location = await getLocationBySlug(params.slug);
   if (!location) return {};
 
@@ -23,7 +17,7 @@ export async function generateMetadata({ params }: PageProps) {
   };
 }
 
-export default async function LocationPage({ params }: PageProps) {
+export default async function LocationPage({ params }: { params: { slug: string } }) {
   const location = await getLocationBySlug(params.slug);
   if (!location) return notFound();
 
