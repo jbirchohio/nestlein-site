@@ -1,4 +1,5 @@
-// @ts-nocheck
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-expect-error: Next.js wrongly thinks params is a Promise
 import { getLocationBySlug } from '../../../lib/markdown';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
