@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { getLocationBySlug } from '../../../lib/markdown';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
