@@ -1,10 +1,11 @@
-'use client';
-import { getAllLocations } from '@/lib/markdown';
 import Link from 'next/link';
+import { getAllLocations } from '../lib/markdown';
 
-const locations = getAllLocations();
+export const dynamic = 'force-static'; // Forces static generation
 
-export default function HomePage() {
+export default async function HomePage() {
+  const locations = getAllLocations();
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
       {locations.map(loc => (
