@@ -3,19 +3,12 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import Image from 'next/image';
 
-// This is the correct type structure Next.js expects
-interface PageProps {
-  params: {
-    slug: string;
-  };
-}
-
 export async function generateStaticParams() {
   const { getAllLocations } = await import('../../../lib/markdown');
   return getAllLocations().map(loc => ({ slug: loc.slug }));
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const { data } = getLocationBySlug(params.slug);
   return {
     title: `${data.title} | NestleIn`,
@@ -23,7 +16,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default function LocationPage({ params }: PageProps) {
+export default function LocationPage({ params }: { params: { slug: string } }) {
   const { data, content } = getLocationBySlug(params.slug);
 
   if (!data) return notFound();
