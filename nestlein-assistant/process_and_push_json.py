@@ -21,18 +21,29 @@ gc = gspread.service_account(filename=CREDENTIALS_FILE)
 sheet = gc.open_by_key(SHEET_ID).worksheet(SHEET_NAME)
 
 # --- Polling Logic for Apify ---
+import re
+
 def poll_apify(run_id):
     dataset_url = f"https://api.apify.com/v2/datasets/{run_id}/items?format=json&clean=true"
     headers = {"Authorization": f"Bearer {APIFY_TOKEN}"}
-
-    for _ in range(60):
-        dataset_res = requests.get(dataset_url, headers=headers)
-        if dataset_res.status_code == 200:
-            data = dataset_res.json()
+    
+    for attempt in range(60):
+        response = requests.get(dataset_url, headers=headers)
+        print(f"Attempt {attempt+1}: Status {response.status_code}")
+        if response.status_code == 200:
+            try:
+                data = response.json()
+                print("Data retrieved:", data)
+            except Exception as e:
+                print("Error parsing JSON:", e)
+                data = None
             if data:
-                return data[0]
+                # If you want to return the entire array:
+                return data  
+                # If you want only the first record, uncomment the next line:
+                # return data[0]
         time.sleep(5)
-
+    
     raise TimeoutError("Apify data fetch timed out or returned empty.")
 
 # --- Trigger Apify Actor ---

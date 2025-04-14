@@ -11,7 +11,6 @@ import {
   Power,
   Volume2,
   Sun,
-  Coffee,
   ParkingSquare,
   Bath,
   Sandwich,
