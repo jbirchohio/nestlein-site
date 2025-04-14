@@ -71,15 +71,15 @@ You are analyzing raw Google Business scraped data to generate a structured summ
 
 ### Scoring Algorithm:
 Please analyze the data for this place and assign scores for these categories:
- 1. Food/Quality (taste, freshness, presentation)  
- 2. Service (friendliness, speed, attentiveness)  
- 3. Ambiance/Atmosphere (cleanliness, décor, vibe, noise level)  
- 4. Value (worth the cost, portion size, overall pricing)  
+ 1. Food/Quality (taste, freshness, presentation)
+ 2. Service (friendliness, speed, attentiveness)
+ 3. Ambiance/Atmosphere (cleanliness, décor, vibe, noise level)
+ 4. Value (worth the cost, portion size, overall pricing)
  5. Experience (overall enjoyment, any standout moments or issues)
 
 Each category should be scored individually from 1 to 10. Then, calculate the **Final Score** as the average of these five categories, rounded to one decimal place.
 
-**Final Score**: X.X/10  
+**Final Score**: X.X/10
 **Do Not Give any Disclaimers** about the scores or how they were calculated.
 
 ---
