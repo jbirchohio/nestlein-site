@@ -52,13 +52,9 @@ def trigger_apify_actor(actor_slug, place_id):
 # --- Assistant Conversation ---
 def run_assistant_conversation(apify_output):
     thread = client.beta.threads.create()
-    content = json.dumps(apify_output, indent=2)
-    
-    # Updated prompt: Emphasize extraction from raw data.
-    client.beta.threads.messages.create(
-        thread_id=thread.id,
-        role="user",
-        content=f"""
+
+    # Full user instructions go here as the FIRST user message
+    full_prompt = """
 You are analyzing raw Google Business scraped data to generate a structured summary for a remote work-friendly location directory. Use ONLY the raw data provided below to extract the values for each field. Do NOT echo back the instructions; output only the extracted values in the requested format.
 
 ##Guidelines##
@@ -109,87 +105,34 @@ Output the final score as:
 DO NOT include any extraneous text or disclaimers in your output. Output only the key-value pairs exactly in this format (each field on one line):
 
 **[key]**: [value]
-
-This is the raw data:
-{content}
 """
+
+    # First user message — instructions
+    client.beta.threads.messages.create(
+        thread_id=thread.id,
+        role="user",
+        content=full_prompt
     )
-    
+
+    # Second user message — the raw data
+    client.beta.threads.messages.create(
+        thread_id=thread.id,
+        role="user",
+        content=json.dumps(apify_output, indent=2)
+    )
+
+    # Start the assistant run
     run = client.beta.threads.runs.create(
         thread_id=thread.id,
         assistant_id=ASSISTANT_ID
     )
-    
+
     while run.status not in ["completed", "failed"]:
         time.sleep(1)
         run = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
-    
+
     messages = client.beta.threads.messages.list(thread_id=thread.id)
     return messages.data[0].content[0].text.value
-
-# --- Push to GitHub ---
-def push_to_github(slug, markdown_output):
-    repo = os.getenv("GITHUB_REPO")
-    token = os.getenv("GITHUB_TOKEN")
-    filename = f"{slug}.json"
-    path = f"data/locations/{filename}"
-    
-    print("Assistant Output:\n", markdown_output)
-    
-    lines = markdown_output.splitlines()
-    json_data = {}
-    current_key = None
-    
-    for line in lines:
-        if line.startswith("- "):
-            if "tags_reasoning" not in json_data:
-                json_data["tags_reasoning"] = []
-            json_data["tags_reasoning"].append(line[2:])
-        elif line.startswith("**") and "**: " in line:
-            parts = line.split("**: ", 1)
-            if len(parts) == 2:
-                key = parts[0].strip("* ").lower().replace(" ", "_")
-                value = parts[1].strip()
-                if key == "tags":
-                    # Split the comma-separated tags into an array.
-                    json_data[key] = [tag.strip() for tag in value.split(",") if tag.strip()]
-                else:
-                    json_data[key] = value
-                current_key = key
-        elif current_key:
-            json_data[current_key] += " " + line.strip()
-    
-    json_str = json.dumps(json_data, indent=2)
-    encoded = base64.b64encode(json_str.encode()).decode()
-    
-    url = f"https://api.github.com/repos/{repo}/contents/{path}"
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Accept": "application/vnd.github+json"
-    }
-    
-    get_resp = requests.get(url, headers=headers)
-    sha = get_resp.json().get("sha") if get_resp.status_code == 200 else None
-    
-    payload = {
-        "message": f"Add or update {filename}",
-        "content": encoded,
-        "committer": {
-            "name": "Assistant Bot",
-            "email": "assistant@nestlein.ai"
-        }
-    }
-    if sha:
-        payload["sha"] = sha
-    
-    put_resp = requests.put(url, headers=headers, data=json.dumps(payload))
-    
-    if put_resp.status_code in [200, 201]:
-        print("✅ Successfully pushed to GitHub!")
-        return True
-    else:
-        print(f"❌ GitHub push failed: {put_resp.status_code} – {put_resp.text}")
-        return False
 
 # --- Orchestrator ---
 def get_all_place_ids():
