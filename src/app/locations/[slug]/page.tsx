@@ -3,7 +3,20 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
-import { MapPin, Clock, Phone, Wifi, Power, Volume2, Sun, Coffee, ParkingSquare } from 'lucide-react';
+import {
+  MapPin,
+  Clock,
+  Phone,
+  Wifi,
+  Power,
+  Volume2,
+  Sun,
+  Coffee,
+  ParkingSquare,
+  Bath,
+  Sandwich,
+  MonitorSmartphone
+} from 'lucide-react';
 
 type Location = {
   name: string;
@@ -104,16 +117,16 @@ export default function LocationPage() {
           <p className="flex items-center gap-2"><Volume2 size={18} /> Noise: {features.noise_level}</p>
         )}
         {features.seating_comfort && (
-          <p className="flex items-center gap-2"><Sun size={18} /> Seating: {features.seating_comfort}</p>
+          <p className="flex items-center gap-2"><MonitorSmartphone size={18} /> Seating: {features.seating_comfort}</p>
         )}
         {features.natural_light && (
           <p className="flex items-center gap-2"><Sun size={18} /> Light: {features.natural_light}</p>
         )}
         {features.food_drink_options && (
-          <p className="flex items-center gap-2"><Coffee size={18} /> Menu: {features.food_drink_options}</p>
+          <p className="flex items-center gap-2"><Sandwich size={18} /> Menu: {features.food_drink_options}</p>
         )}
         {features.bathroom_access && (
-          <p className="flex items-center gap-2">🚻 Bathroom: {features.bathroom_access}</p>
+          <p className="flex items-center gap-2"><Bath size={18} /> Bathroom: {features.bathroom_access}</p>
         )}
         {features.parking_availability && (
           <p className="flex items-center gap-2"><ParkingSquare size={18} /> Parking: {features.parking_availability}</p>
