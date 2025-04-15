@@ -56,7 +56,7 @@ export default function LocationCard({ location }: { location: Location }) {
   const [flipped, setFlipped] = useState(false);
   const [shuffledFeatures, setShuffledFeatures] = useState<[string, string][]>([]);
   const router = useRouter();
-  const tapTimeout = useRef<NodeJS.Timeout | null>(null);
+  const lastTapTime = useRef<number | null>(null);
 
   const { slug, name, address, hours, logo_url, tags = [] } = location;
   const closingTime = hours?.split('-')?.[1]?.trim() || 'N/A';
@@ -65,16 +65,15 @@ export default function LocationCard({ location }: { location: Location }) {
   const extraTagCount = tags.length - visibleTags.length;
 
   function handleCardClick() {
-    if (window.innerWidth < 768) {
-      if (tapTimeout.current) {
-        clearTimeout(tapTimeout.current);
-        tapTimeout.current = null;
+    const isMobile = window.innerWidth < 768;
+    const now = Date.now();
+
+    if (isMobile) {
+      if (lastTapTime.current && now - lastTapTime.current < 300) {
         router.push(`/locations/${slug}`);
       } else {
-        tapTimeout.current = setTimeout(() => {
-          setFlipped((prev) => !prev);
-          tapTimeout.current = null;
-        }, 300);
+        lastTapTime.current = now;
+        setFlipped((prev) => !prev);
       }
     } else {
       router.push(`/locations/${slug}`);
