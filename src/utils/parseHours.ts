@@ -6,7 +6,7 @@ export function parseHours(hours: string): {
   if (!hours || !hours.includes('-')) {
     return { open: false, message: 'Hours unavailable', status: 'closed' };
   }
-
+ 
   const [startStr, endStr] = hours.split('-').map(str => str.trim());
 
   const toMinutes = (str: string): number => {
