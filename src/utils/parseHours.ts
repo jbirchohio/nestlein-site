@@ -11,10 +11,10 @@ export function parseHours(hours: string): {
 
   const toMinutes = (str: string): number => {
     const [time, period] = str.split(' ');
-    let [hour, minute] = time.split(':').map(Number);
+    let [hour, min] = time.split(':').map(Number);
     if (period === 'PM' && hour !== 12) hour += 12;
     if (period === 'AM' && hour === 12) hour = 0;
-    return hour * 60 + minute;
+    return hour * 60 + min;
   };
 
   const now = new Date();
