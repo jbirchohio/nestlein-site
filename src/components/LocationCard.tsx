@@ -11,6 +11,18 @@ interface Location {
   hours?: string;
   logo_url?: string;
   tags?: string[];
+  best_time_to_work_remotely?: string;
+  remote_work_features?: {
+    wi_fi_quality?: string;
+    outlet_access?: string;
+    noise_level?: string;
+    seating_comfort?: string;
+    natural_light?: string;
+    stay_duration_friendliness?: string;
+    food_drink_options?: string;
+    bathroom_access?: string;
+    parking_availability?: string;
+  };
 }
 
 function isOpenNow(hours?: string): boolean {
@@ -83,10 +95,41 @@ export default function LocationCard({ location }: { location: Location }) {
         </Link>
 
         {/* Back */}
-        <div className="flip-card-back absolute w-full h-full bg-blue-50 rounded-xl shadow-inner flex items-center justify-center text-blue-700 text-sm px-4 [transform:rotateY(180deg)]">
-          Tap to flip back or view more info
-        </div>
-      </div>
-    </div>
+        <div className="flip-card-back absolute w-full h-full bg-blue-50 rounded-xl shadow-inner px-4 py-5 text-sm text-blue-800 overflow-y-auto [transform:rotateY(180deg)]">
+  <h3 className="font-semibold mb-2">Remote Work Info</h3>
+
+  {location.best_time_to_work_remotely && (
+    <p className="mb-2">
+      <strong>Best Time:</strong> {location.best_time_to_work_remotely}
+    </p>
+  )}
+
+  <ul className="space-y-1 text-sm">
+    {location.remote_work_features?.wi_fi_quality && (
+      <li><strong>Wi-Fi:</strong> {location.remote_work_features.wi_fi_quality}</li>
+    )}
+    {location.remote_work_features?.outlet_access && (
+      <li><strong>Outlets:</strong> {location.remote_work_features.outlet_access}</li>
+    )}
+    {location.remote_work_features?.noise_level && (
+      <li><strong>Noise:</strong> {location.remote_work_features.noise_level}</li>
+    )}
+    {location.remote_work_features?.seating_comfort && (
+      <li><strong>Seating:</strong> {location.remote_work_features.seating_comfort}</li>
+    )}
+    {location.remote_work_features?.natural_light && (
+      <li><strong>Light:</strong> {location.remote_work_features.natural_light}</li>
+    )}
+    {location.remote_work_features?.food_drink_options && (
+      <li><strong>Menu:</strong> {location.remote_work_features.food_drink_options}</li>
+    )}
+    {location.remote_work_features?.bathroom_access && (
+      <li><strong>Bathroom:</strong> {location.remote_work_features.bathroom_access}</li>
+    )}
+    {location.remote_work_features?.parking_availability && (
+      <li><strong>Parking:</strong> {location.remote_work_features.parking_availability}</li>
+    )}
+  </ul>
+</div>
   );
 }
