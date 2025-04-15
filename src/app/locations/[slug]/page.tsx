@@ -93,15 +93,20 @@ export default function LocationPage() {
           </div>
 
           {/* Tags */}
-          {location.tags?.length > 0 && (
-            <div className="flex flex-wrap gap-2 pt-2">
-              {location.tags.map((tag) => (
-                <span key={tag} className="text-xs font-semibold px-3 py-1 bg-blue-100 text-blue-700 rounded-full">
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
+          const hasTags = Array.isArray(location.tags) && location.tags.length > 0;
+
+{hasTags && (
+  <div className="flex flex-wrap gap-2 pt-2">
+    {location.tags!.map((tag) => (
+      <span
+        key={tag}
+        className="text-xs font-semibold px-3 py-1 bg-blue-100 text-blue-700 rounded-full"
+      >
+        {tag}
+      </span>
+    ))}
+  </div>
+)}
 
           {/* Remote Work Features */}
           <div>
