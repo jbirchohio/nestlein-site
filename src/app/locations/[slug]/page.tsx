@@ -25,7 +25,7 @@ type Location = {
   logo_url?: string;
   tags?: string[];
   best_time_to_work_remotely?: string;
-  remote_work_features?: {
+   remote_work_features?: {
     wi_fi_quality?: string;
     outlet_access?: string;
     noise_level?: string;
@@ -94,6 +94,11 @@ export default function LocationPage() {
           <Phone size={18} /> {location.phone_number}
         </p>
       )}
+{location.best_time_to_work_remotely && (
+  <p className="text-gray-600 mb-4 flex items-center gap-2">
+    <Clock size={18} /> Best Time to Work: {location.best_time_to_work_remotely}
+  </p>
+)}
 
       <div className="mt-4 space-y-2">
         {location.tags?.map((tag) => (
