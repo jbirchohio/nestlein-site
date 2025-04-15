@@ -146,12 +146,12 @@ export default function LocationCard({ location }: { location: Location }) {
             {location.remote_work_features && (
               <ul className="space-y-1">
                 {Object.entries(location.remote_work_features)
-                  .filter(
-                    ([_, value]) =>
-                      value &&
-                      typeof value === 'string' &&
-                      value.toLowerCase() !== 'unknown'
-                  )
+                  .filter(([, value]) =>
+  value &&
+  typeof value === 'string' &&
+  value.toLowerCase() !== 'unknown'
+)
+
                   .sort(() => 0.5 - Math.random())
                   .slice(0, 6)
                   .map(([key, value]) => (
