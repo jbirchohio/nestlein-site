@@ -67,7 +67,7 @@ def flatten_business_data(bd):
     # Popularity Histogram
     hist = bd.get("popularTimesHistogram", [])
     if isinstance(hist, list):
-       out.append("Popular Times:")
+       out.append("POPULAR TIMES DATA:")
        for day in hist:
            if isinstance(day, dict) and "day" in day:
               out.append(f"  {day['day']}:")
