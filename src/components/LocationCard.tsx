@@ -3,6 +3,18 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import {
+  Wifi,
+  Power,
+  Volume2,
+  MonitorSmartphone,
+  Sun,
+  Sandwich,
+  Bath,
+  ParkingSquare,
+  Clock,
+} from 'lucide-react';
 
 interface Location {
   slug: string;
@@ -25,34 +37,60 @@ interface Location {
   };
 }
 
+const featureIcons: { [key: string]: React.ReactNode } = {
+  wi_fi_quality: <Wifi size={16} />,
+  outlet_access: <Power size={16} />,
+  noise_level: <Volume2 size={16} />,
+  seating_comfort: <MonitorSmartphone size={16} />,
+  natural_light: <Sun size={16} />,
+  stay_duration_friendliness: <Clock size={16} />,
+  food_drink_options: <Sandwich size={16} />,
+  bathroom_access: <Bath size={16} />,
+  parking_availability: <ParkingSquare size={16} />,
+};
+
 function isOpenNow(hours?: string): boolean {
-  if (!hours) return false;
-  // Placeholder logic: always open
-  return true;
+  return Boolean(hours); // Placeholder logic
 }
 
 export default function LocationCard({ location }: { location: Location }) {
   const [flipped, setFlipped] = useState(false);
-
-  const { name, address, hours, logo_url, tags = [], slug } = location;
+  const router = useRouter();
+  const { slug, name, address, hours, logo_url, tags = [] } = location;
   const closingTime = hours?.split('-')?.[1]?.trim() || 'N/A';
   const open = isOpenNow(hours);
   const visibleTags = tags.slice(0, 3);
   const extraTagCount = tags.length - visibleTags.length;
 
+  let tapTimeout: NodeJS.Timeout | null = null;
+
+  function handleCardClick() {
+    if (window.innerWidth < 768) {
+      if (tapTimeout) {
+        clearTimeout(tapTimeout);
+        tapTimeout = null;
+        router.push(`/locations/${slug}`);
+      } else {
+        tapTimeout = setTimeout(() => {
+          setFlipped(!flipped);
+          tapTimeout = null;
+        }, 300);
+      }
+    } else {
+      setFlipped(!flipped);
+    }
+  }
+
   return (
     <div
-      onClick={() => setFlipped(!flipped)}
+      onClick={handleCardClick}
       className={`flip-card cursor-pointer group transition-transform duration-300 transform ${
         flipped ? 'rotate-y-180' : ''
       }`}
     >
       <div className="flip-card-inner relative w-full h-80 [transform-style:preserve-3d]">
         {/* Front */}
-        <Link
-          href={`/locations/${slug}`}
-          className="flip-card-front absolute w-full h-full bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden"
-        >
+        <div className="flip-card-front absolute w-full h-full bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
           <Image
             src={logo_url || '/placeholder.jpg'}
             alt={name}
@@ -76,11 +114,11 @@ export default function LocationCard({ location }: { location: Location }) {
             </p>
 
             <div className="flex flex-wrap gap-2 pt-2">
-              {visibleTags.map((tag, index) => (
+              {visibleTags.map((tag, i) => (
                 <span
                   key={tag}
                   className="text-xs font-semibold px-3 py-1 bg-blue-100 text-blue-700 rounded-full animate-fade-in-up"
-                  style={{ animationDelay: `${index * 50}ms`, animationFillMode: 'forwards' }}
+                  style={{ animationDelay: `${i * 50}ms`, animationFillMode: 'forwards' }}
                 >
                   {tag}
                 </span>
@@ -92,44 +130,39 @@ export default function LocationCard({ location }: { location: Location }) {
               )}
             </div>
           </div>
-        </Link>
+        </div>
 
         {/* Back */}
-        <div className="flip-card-back absolute w-full h-full bg-blue-50 rounded-xl shadow-inner px-4 py-5 text-sm text-blue-800 overflow-y-auto [transform:rotateY(180deg)]">
-  <h3 className="font-semibold mb-2">Remote Work Info</h3>
-
-  {location.best_time_to_work_remotely && (
-    <p className="mb-2">
-      <strong>Best Time:</strong> {location.best_time_to_work_remotely}
-    </p>
-  )}
-
-  <ul className="space-y-1 text-sm">
-    {location.remote_work_features?.wi_fi_quality && (
-      <li><strong>Wi-Fi:</strong> {location.remote_work_features.wi_fi_quality}</li>
-    )}
-    {location.remote_work_features?.outlet_access && (
-      <li><strong>Outlets:</strong> {location.remote_work_features.outlet_access}</li>
-    )}
-    {location.remote_work_features?.noise_level && (
-      <li><strong>Noise:</strong> {location.remote_work_features.noise_level}</li>
-    )}
-    {location.remote_work_features?.seating_comfort && (
-      <li><strong>Seating:</strong> {location.remote_work_features.seating_comfort}</li>
-    )}
-    {location.remote_work_features?.natural_light && (
-      <li><strong>Light:</strong> {location.remote_work_features.natural_light}</li>
-    )}
-    {location.remote_work_features?.food_drink_options && (
-      <li><strong>Menu:</strong> {location.remote_work_features.food_drink_options}</li>
-    )}
-    {location.remote_work_features?.bathroom_access && (
-      <li><strong>Bathroom:</strong> {location.remote_work_features.bathroom_access}</li>
-    )}
-    {location.remote_work_features?.parking_availability && (
-      <li><strong>Parking:</strong> {location.remote_work_features.parking_availability}</li>
-    )}
-  </ul>
-</div>
+        <div
+          className="flip-card-back absolute w-full h-full bg-blue-50 rounded-xl shadow-inner px-4 py-5 text-sm text-slate-700 [transform:rotateY(180deg)] overflow-y-auto"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="space-y-2">
+            {location.best_time_to_work_remotely && (
+              <p className="font-semibold text-blue-700">
+                Best time to work:{' '}
+                <span className="font-normal">{location.best_time_to_work_remotely}</span>
+              </p>
+            )}
+            {location.remote_work_features && (
+              <ul className="space-y-1">
+                {Object.entries(location.remote_work_features).map(([key, value]) =>
+                  value ? (
+                    <li key={key} className="flex items-center gap-2">
+                      {featureIcons[key] || null}
+                      <span className="capitalize">{key.replace(/_/g, ' ')}:</span>
+                      <span className="font-medium">{value}</span>
+                    </li>
+                  ) : null
+                )}
+              </ul>
+            )}
+            <p className="text-xs text-center mt-4 text-slate-500">
+              Tap to flip back<br />Double tap to view full listing
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
