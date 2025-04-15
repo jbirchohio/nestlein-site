@@ -24,6 +24,7 @@ type Location = {
   phone_number?: string;
   logo_url?: string;
   tags?: string[];
+  best_time_to_work_remotely?: string;
   remote_work_features?: {
     wi_fi_quality?: string;
     outlet_access?: string;
