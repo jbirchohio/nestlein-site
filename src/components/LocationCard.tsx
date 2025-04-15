@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { parseHours } from '@/utils/parseHours';
 
 interface Location {
   slug: string;
@@ -33,7 +34,7 @@ export default function LocationCard({ location }: { location: Location }) {
   const { slug, name, address, hours, logo_url, tags = [] } = location;
 
   const closingTime = hours?.split('-')?.[1]?.trim() || 'N/A';
-  const isOpen = isOpenNow(hours);
+const { open: isOpen, message: openMessage } = parseHours(location.hours || '');
   const visibleTags = tags.slice(0, 3);
   const extraTagCount = (tags.length || 0) - visibleTags.length;
 
@@ -55,12 +56,14 @@ export default function LocationCard({ location }: { location: Location }) {
       <div className="p-5 space-y-2">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-bold text-slate-900">{name}</h2>
-          <span
-            className={`w-2.5 h-2.5 rounded-full ${
-              isOpen ? 'bg-green-500' : 'bg-red-500'
-            }`}
-            title={isOpen ? 'Open Now' : 'Closed'}
-          />
+        <span
+  className={`w-2.5 h-2.5 rounded-full ${isOpen ? 'bg-green-500' : 'bg-red-500'}`}
+  title={isOpen ? 'Open Now' : 'Closed'}
+/>
+
+<p className="text-sm text-blue-600 font-medium">
+  {openMessage}
+</p>
         </div>
 
         <p className="text-sm text-slate-500 truncate">{address}</p>
