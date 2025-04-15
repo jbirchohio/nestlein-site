@@ -1,6 +1,9 @@
-import Link from 'next/link';
-import Image from 'next/image';
+'use client';
+
+import { useEffect, useState } from 'react';
 import { getAllLocations } from '@/lib/locations';
+import FilterBar from '@/components/FilterBar';
+import LocationCard from '@/components/LocationCard';
 
 export const dynamic = 'force-static';
 
@@ -14,75 +17,51 @@ interface Location {
 }
 
 function isOpenNow(hours?: string): boolean {
-  // Placeholder logic — replace with actual time parsing later
-  return Boolean(hours);
+  return Boolean(hours); // Placeholder for future enhancement
 }
 
-export default async function HomePage() {
-  const locations: Location[] = await getAllLocations();
+export default function HomePage() {
+  const [allLocations, setAllLocations] = useState<Location[]>([]);
+  const [filtered, setFiltered] = useState<Location[]>([]);
+  const [activeFilters, setActiveFilters] = useState<string[]>([]);
+
+  // Fetch all locations on mount
+  useEffect(() => {
+    async function loadLocations() {
+      const data = await getAllLocations();
+      setAllLocations(data);
+      setFiltered(data);
+    }
+    loadLocations();
+  }, []);
+
+  // Apply filters
+  useEffect(() => {
+    if (activeFilters.length === 0) {
+      setFiltered(allLocations);
+    } else {
+      setFiltered(
+        allLocations.filter(loc =>
+          loc.tags?.some(tag => activeFilters.includes(tag))
+        )
+      );
+    }
+  }, [activeFilters, allLocations]);
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] text-slate-800 px-4 py-10">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-        {locations.map((loc) => {
-          const closingTime = loc.hours?.split('-')?.[1]?.trim() || 'N/A';
-          const isOpen = isOpenNow(loc.hours);
-          const visibleTags = loc.tags?.slice(0, 3) || [];
-          const extraTagCount = (loc.tags?.length || 0) - visibleTags.length;
+    <div className="min-h-screen bg-[#F9FAFB] text-slate-800 pt-8 pb-16">
+      {/* Filter Bar */}
+      <FilterBar activeFilters={activeFilters} setActiveFilters={setActiveFilters} />
 
-          return (
-            <Link
-              key={loc.slug}
-              href={`/locations/${loc.slug}`}
-              className="bg-white rounded-xl shadow-md border border-slate-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
-            >
-              <div className="overflow-hidden rounded-t-xl h-44">
-                <Image
-                  src={loc.logo_url || '/placeholder.jpg'}
-                  alt={loc.name}
-                  width={400}
-                  height={200}
-                  className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-300"
-                />
-              </div>
-
-              <div className="p-5 space-y-2">
-                <div className="flex justify-between items-center">
-                  <h2 className="text-xl font-bold text-slate-900">{loc.name}</h2>
-                  <span
-                    className={`w-2.5 h-2.5 rounded-full ${
-                      isOpen ? 'bg-green-500' : 'bg-red-500'
-                    }`}
-                    title={isOpen ? 'Open Now' : 'Closed'}
-                  />
-                </div>
-
-                <p className="text-sm text-slate-500 truncate">{loc.address}</p>
-                <p className="text-sm text-blue-600 font-medium">
-                  {isOpen ? 'Open now' : 'Closed'} — until {closingTime}
-                </p>
-
-                {/* Tags */}
-                <div className="flex flex-wrap gap-2 pt-2">
-                  {visibleTags.map((tag, i) => (
-                    <span
-                      key={tag}
-                      className="text-xs font-semibold px-3 py-1 bg-blue-100 text-blue-700 rounded-full animate-fade-in-up"
-                      style={{ animationDelay: `${i * 50}ms`, animationFillMode: 'forwards' }}
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                  {extraTagCount > 0 && (
-                    <span className="text-xs font-semibold px-3 py-1 bg-slate-200 text-slate-600 rounded-full">
-                      +{extraTagCount} more
-                    </span>
-                  )}
-                </div>
-              </div>
-            </Link>
-          );
-        })}
+      {/* Card Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto px-4">
+        {filtered.length > 0 ? (
+          filtered.map((loc) => (
+            <LocationCard key={loc.slug} location={loc} />
+          ))
+        ) : (
+          <p className="text-center col-span-full text-slate-500">No locations match your filters.</p>
+        )}
       </div>
     </div>
   );
