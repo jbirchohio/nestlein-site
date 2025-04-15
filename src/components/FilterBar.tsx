@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React from 'react';
 
 const FILTER_TAGS = ['Quiet', 'Free Wi-Fi', 'Outlets', 'Natural Light', 'Parking'];
 
