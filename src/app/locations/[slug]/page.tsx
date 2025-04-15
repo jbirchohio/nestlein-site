@@ -60,6 +60,7 @@ export default function LocationPage() {
   if (!location) return <div className="p-6">Location not found.</div>;
 
   const features = location.remote_work_features || {};
+const hasTags = Array.isArray(location.tags) && location.tags.length > 0;
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-10">
@@ -93,7 +94,6 @@ export default function LocationPage() {
           </div>
 
           {/* Tags */}
-const hasTags = Array.isArray(location.tags) && location.tags.length > 0;
 
 {hasTags && (
   <div className="flex flex-wrap gap-2 pt-2">
