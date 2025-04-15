@@ -49,6 +49,8 @@ def flatten_business_data(bd):
     for h in bd.get("openingHours", []):
         out.append(f"  - {h.get('day')}: {h.get('hours')}")
     out.append(f"Tags: {', '.join(bd.get('categories', []))}")
+
+    # Additional Info (checkbox-style fields)
     ai = bd.get("additionalInfo", {})
     out.append(f"Amenities: {', '.join(yes_list(ai.get('Amenities', [])))}")
     out.append(f"Atmosphere: {', '.join(yes_list(ai.get('Atmosphere', [])))}")
@@ -61,6 +63,31 @@ def flatten_business_data(bd):
     out.append(f"Crowd: {', '.join(yes_list(ai.get('Crowd', [])))}")
     out.append(f"Planning: {', '.join(yes_list(ai.get('Planning', [])))}")
     out.append(f"Payments: {', '.join(yes_list(ai.get('Payments', [])))}")
+
+    # Popularity Histogram
+    hist = bd.get("popularTimesHistogram", [])
+    if hist:
+        out.append("Popular Times:")
+        for day in hist:
+            out.append(f"  {day['day']}:")
+            for hour in day.get("hours", []):
+                out.append(f"    - {hour['hour']}: {hour['occupancyPercent']}%")
+
+    # Current Crowd Level
+    current = bd.get("currentPopularHour", {})
+    if current:
+        out.append(f"Current Popular Hour: {current.get('hour')} — {current.get('occupancyPercent')}% busy")
+
+    # Review Summary
+    if bd.get("reviewSummary"):
+        out.append(f"Review Summary: {bd['reviewSummary']}")
+
+    # Extra fields from the raw data if present
+    if bd.get("plusCode"):
+        out.append(f"Plus Code: {bd['plusCode']}")
+    if bd.get("googleMapsUrl"):
+        out.append(f"Google Maps URL: {bd['googleMapsUrl']}")
+
     return "\n".join(out)
 
 def poll_apify(run_id):
@@ -113,7 +140,7 @@ Output the final score as:
 **Phone Number**: Extract the phone number in standard U.S. format.
 **Hours of Operation**: Extract the business hours (in 12-hour format). If inconsistent, output "Check Website for Updated Hours".
 **Restaurant Score**: Extract and output the final score out of 10, to two decimal places.
-**Best Time to Work Remotely**: Extract the best time to work there.
+**Best Time to Work Remotely: Based on the popularity or crowd data, suggest the best low-traffic time for remote work (e.g., "Weekday mornings before 11 AM").
 
 ---
 
