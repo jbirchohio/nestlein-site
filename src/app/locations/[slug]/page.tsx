@@ -25,7 +25,7 @@ type Location = {
   logo_url?: string;
   tags?: string[];
   best_time_to_work_remotely?: string;
-   remote_work_features?: {
+  remote_work_features?: {
     wi_fi_quality?: string;
     outlet_access?: string;
     noise_level?: string;
@@ -83,10 +83,10 @@ export default function LocationPage() {
             />
           </div>
         )}
-  
+
         <div className="p-6 space-y-4">
           <h1 className="text-4xl font-bold text-zinc-900 dark:text-white">{location.name}</h1>
-  
+
           <div className="space-y-1 text-gray-700 dark:text-zinc-300 text-sm">
             <p className="flex items-center gap-2">
               <MapPin size={18} /> {location.address}
@@ -107,7 +107,7 @@ export default function LocationPage() {
               </p>
             )}
           </div>
-  
+
           {location.tags?.length > 0 && (
             <div className="flex flex-wrap gap-2 pt-4">
               {location.tags.map((tag) => (
@@ -120,7 +120,7 @@ export default function LocationPage() {
               ))}
             </div>
           )}
-  
+
           <h2 className="text-lg font-semibold text-zinc-800 dark:text-zinc-100 mt-6">Remote Work Features</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-zinc-700 dark:text-zinc-300">
             {features.wi_fi_quality && (
@@ -152,4 +152,4 @@ export default function LocationPage() {
       </div>
     </div>
   );
-  
+}
