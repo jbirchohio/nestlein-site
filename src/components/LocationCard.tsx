@@ -49,20 +49,23 @@ const featureIcons: { [key: string]: React.ReactNode } = {
 };
 
 function isOpenNow(hours?: string): boolean {
-  return Boolean(hours); // Placeholder logic
+  return Boolean(hours);
 }
 
 export default function LocationCard({ location }: { location: Location }) {
   const [flipped, setFlipped] = useState(false);
-  const [shuffledFeatures, setShuffledFeatures] = useState<[string, string][]>([]);
   const router = useRouter();
   const lastTapTime = useRef<number | null>(null);
 
-  const { slug, name, address, hours, logo_url, tags = [] } = location;
+  const { slug, name, address, hours, logo_url, tags = [], remote_work_features = {} } = location;
   const closingTime = hours?.split('-')?.[1]?.trim() || 'N/A';
   const open = isOpenNow(hours);
   const visibleTags = tags.slice(0, 3);
   const extraTagCount = tags.length - visibleTags.length;
+
+  const features = Object.entries(remote_work_features)
+    .filter(([, value]) => value && value.toLowerCase() !== 'unknown')
+    .slice(0, 6);
 
   function handleCardClick() {
     const isMobile = window.innerWidth < 768;
@@ -79,32 +82,6 @@ export default function LocationCard({ location }: { location: Location }) {
       router.push(`/locations/${slug}`);
     }
   }
-
-  useEffect(() => {
-    if (!location.remote_work_features) return;
-
-    const entries = Object.entries(location.remote_work_features).filter(
-      ([, value]) =>
-        value &&
-        typeof value === 'string' &&
-        value.toLowerCase() !== 'unknown'
-    );
-
-    setShuffledFeatures(entries.sort(() => 0.5 - Math.random()).slice(0, 6));
-  }, [location.remote_work_features]);
-
-  useEffect(() => {
-    if (!flipped || !location.remote_work_features) return;
-
-    const entries = Object.entries(location.remote_work_features).filter(
-      ([, value]) =>
-        value &&
-        typeof value === 'string' &&
-        value.toLowerCase() !== 'unknown'
-    );
-
-    setShuffledFeatures(entries.sort(() => 0.5 - Math.random()).slice(0, 6));
-  }, [flipped, location.remote_work_features]);
 
   return (
     <div onClick={handleCardClick} className="flip-card cursor-pointer group">
@@ -168,9 +145,9 @@ export default function LocationCard({ location }: { location: Location }) {
                 <span className="font-normal">{location.best_time_to_work_remotely}</span>
               </p>
             )}
-            {shuffledFeatures.length > 0 && (
+            {features.length > 0 && (
               <ul className="space-y-1">
-                {shuffledFeatures.map(([key, value]) => (
+                {features.map(([key, value]) => (
                   <li key={key} className="flex items-center gap-2">
                     {featureIcons[key] || null}
                     <span className="capitalize">{key.replace(/_/g, ' ')}:</span>
