@@ -95,18 +95,20 @@ const hasTags = Array.isArray(location.tags) && location.tags.length > 0;
 
           {/* Tags */}
 
-{hasTags && (
+{{hasTags && (
   <div className="flex flex-wrap gap-2 pt-2">
-    {location.tags!.map((tag: string) => (
+    {location.tags!.map((tag: string, index) => (
       <span
         key={tag}
-        className="text-xs font-semibold px-3 py-1 bg-blue-100 text-blue-700 rounded-full"
+        className="text-xs font-semibold px-3 py-1 bg-blue-100 text-blue-700 rounded-full animate-fade-in-up"
+        style={{ animationDelay: `${index * 50}ms` }}
       >
         {tag}
       </span>
     ))}
   </div>
 )}
+
 
 
           {/* Remote Work Features */}
