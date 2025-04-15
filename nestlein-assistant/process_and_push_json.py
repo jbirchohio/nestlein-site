@@ -3,9 +3,10 @@ import json
 import base64
 import requests
 import gspread
+import time
+import yaml
 from openai import OpenAI
 from dotenv import load_dotenv
-import time
 from github import Github
 
 load_dotenv()
@@ -25,7 +26,11 @@ sheet = gc.open_by_key(SHEET_ID).worksheet(SHEET_NAME)
 
 def flatten_business_data(bd):
     def yes_list(category):
-        return [list(item.keys())[0] for item in category if list(item.values())[0] is True]
+        return [
+            list(item.keys())[0]
+            for item in category
+            if item is not None and isinstance(item, dict) and list(item.values())[0] is True
+        ]
 
     out = []
     out.append(f"Title: {bd.get('title', '')}")
@@ -79,6 +84,7 @@ def trigger_apify_actor(actor_slug, place_id):
 
 def run_assistant_conversation(business_data):
     thread = client.beta.threads.create()
+
     prompt = """You are analyzing raw Google Business scraped data to generate a structured summary for a remote work-friendly location directory. Use ONLY the raw data provided below to extract the values for each field. Do NOT echo back the instructions; output only the extracted values in the requested format.
 
 ##Guidelines##
@@ -126,11 +132,20 @@ Output the final score as:
 **Parking Availability**: Extract information about available parking.
 **Tags**: Based on the data, suggest 3–5 relevant tags as a comma-separated list (for example, Quiet Space, Pet-Friendly, LGBTQ+ Friendly, Fast Wi-Fi, Study Spot).
 
-DO NOT include any extraneous text or disclaimers in your output. Output only the key-value pairs exactly in this format (each field on one line):"""
+DO NOT include any extraneous text or disclaimers in your output. Output only the key-value pairs exactly in this format:
+
+Raw Data:
+"""
 
     flattened = flatten_business_data(business_data)
-    client.beta.threads.messages.create(thread_id=thread.id, role="user", content=prompt)
-    client.beta.threads.messages.create(thread_id=thread.id, role="user", content=flattened)
+    full_input = f"{prompt}\n\n{flattened}"
+
+    client.beta.threads.messages.create(
+        thread_id=thread.id,
+        role="user",
+        content=full_input
+    )
+
     run = client.beta.threads.runs.create(thread_id=thread.id, assistant_id=ASSISTANT_ID)
 
     while run.status not in ["completed", "failed"]:
@@ -138,7 +153,20 @@ DO NOT include any extraneous text or disclaimers in your output. Output only th
         run = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
 
     messages = client.beta.threads.messages.list(thread_id=thread.id)
-    return messages.data[0].content[0].text.value.strip()
+    raw_output = messages.data[0].content[0].text.value.strip()
+
+        try:
+        cleaned = raw_output.strip()
+        if cleaned.startswith("```json"):
+            cleaned = cleaned[7:]  # remove ```json
+        if cleaned.endswith("```"):
+            cleaned = cleaned[:-3]  # remove ending ```
+        return json.loads(cleaned.strip())
+    except Exception as e:
+        print("🟡 Output not structured as expected. Raw text:")
+        print(raw_output)
+        return {"output": raw_output}
+
 
 def push_to_github(slug, content):
     repo = Github(GITHUB_TOKEN).get_repo(GITHUB_REPO)
@@ -184,7 +212,7 @@ def process_all():
 
         response = run_assistant_conversation(raw_data)
         slug = place_id.replace(":", "-")
-        push_to_github(slug, json.dumps({"output": response}, indent=2))
+        push_to_github(slug, json.dumps(response, indent=2))
         already_done.append(place_id)
         save_processed(already_done)
 
