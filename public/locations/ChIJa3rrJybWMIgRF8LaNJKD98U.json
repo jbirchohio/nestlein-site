@@ -1,0 +1,264 @@
+{
+  "business_data": {
+    "title": "Starbucks",
+    "description": "Seattle-based coffeehouse chain known for its signature roasts, light bites and WiFi availability.",
+    "price": "$1\u201310",
+    "categoryName": "Coffee shop",
+    "address": "225 S Main St, Akron, OH 44325",
+    "neighborhood": "Downtown",
+    "street": "225 S Main St",
+    "city": "Akron",
+    "postalCode": "44325",
+    "state": "Ohio",
+    "countryCode": "US",
+    "website": "https://www.starbucks.com/store-locator/store/10333",
+    "phone": "(330) 972-2113",
+    "phoneUnformatted": "+13309722113",
+    "claimThisBusiness": false,
+    "location": {
+      "lat": 41.07886,
+      "lng": -81.51971
+    },
+    "plusCode": "3FHJ+G4 Akron, Ohio",
+    "menu": "http://www.starbucks.com/menu",
+    "totalScore": 3.7,
+    "permanentlyClosed": false,
+    "temporarilyClosed": false,
+    "placeId": "ChIJa3rrJybWMIgRF8LaNJKD98U",
+    "categories": [
+      "Coffee shop",
+      "Cafe",
+      "Coffee store",
+      "Espresso bar"
+    ],
+    "fid": "0x8830d62627eb7a6b:0xc5f7839234dac217",
+    "cid": "14265015008694551063",
+    "reviewsCount": 56,
+    "reviewsDistribution": {
+      "oneStar": 8,
+      "twoStar": 5,
+      "threeStar": 5,
+      "fourStar": 14,
+      "fiveStar": 24
+    },
+    "imagesCount": 5,
+    "imageCategories": [
+      "All",
+      "Food & drink",
+      "By owner",
+      "Street View & 360\u00b0"
+    ],
+    "scrapedAt": "2025-04-15T01:48:33.105Z",
+    "googleFoodUrl": null,
+    "hotelAds": [],
+    "openingHours": [
+      {
+        "day": "Monday",
+        "hours": "7:30\u202fAM to 4\u202fPM"
+      },
+      {
+        "day": "Tuesday",
+        "hours": "7:30\u202fAM to 4\u202fPM"
+      },
+      {
+        "day": "Wednesday",
+        "hours": "7:30\u202fAM to 4\u202fPM"
+      },
+      {
+        "day": "Thursday",
+        "hours": "7:30\u202fAM to 4\u202fPM"
+      },
+      {
+        "day": "Friday",
+        "hours": "7:30\u202fAM to 2:30\u202fPM"
+      },
+      {
+        "day": "Saturday",
+        "hours": "Closed"
+      },
+      {
+        "day": "Sunday",
+        "hours": "Closed"
+      }
+    ],
+    "peopleAlsoSearch": [
+      {
+        "category": "People also search for",
+        "title": "ACR Coffee Lab",
+        "reviewsCount": 6,
+        "totalScore": 5
+      },
+      {
+        "category": "People also search for",
+        "title": "Akron Coffee Roasters",
+        "reviewsCount": 414,
+        "totalScore": 4.8
+      },
+      {
+        "category": "People also search for",
+        "title": "Ili\u0107 Caf\u00e9",
+        "reviewsCount": 25,
+        "totalScore": 5
+      },
+      {
+        "category": "People also search for",
+        "title": "Muggswigz Coffee & Tea",
+        "reviewsCount": 70,
+        "totalScore": 4.5
+      },
+      {
+        "category": "People also search for",
+        "title": "Broadway Marketplace & Caf\u00e9",
+        "reviewsCount": 0,
+        "totalScore": 0
+      }
+    ],
+    "placesTags": [],
+    "reviewsTags": [
+      {
+        "title": "baristas",
+        "count": 4
+      }
+    ],
+    "additionalInfo": {
+      "Service options": [
+        {
+          "Drive-through": true
+        },
+        {
+          "Takeout": true
+        },
+        {
+          "Dine-in": true
+        },
+        {
+          "Delivery": false
+        }
+      ],
+      "Highlights": [
+        {
+          "Great coffee": true
+        },
+        {
+          "Great tea selection": true
+        }
+      ],
+      "Popular for": [
+        {
+          "Breakfast": true
+        },
+        {
+          "Solo dining": true
+        },
+        {
+          "Good for working on laptop": true
+        }
+      ],
+      "Accessibility": [
+        {
+          "Wheelchair accessible entrance": true
+        },
+        {
+          "Wheelchair accessible parking lot": true
+        },
+        {
+          "Wheelchair accessible restroom": true
+        },
+        {
+          "Wheelchair accessible seating": true
+        }
+      ],
+      "Offerings": [
+        {
+          "Coffee": true
+        },
+        {
+          "Prepared foods": true
+        },
+        {
+          "Quick bite": true
+        },
+        {
+          "Small plates": true
+        },
+        {
+          "Vegetarian options": true
+        }
+      ],
+      "Dining options": [
+        {
+          "Breakfast": true
+        },
+        {
+          "Lunch": true
+        },
+        {
+          "Dessert": true
+        }
+      ],
+      "Amenities": [
+        {
+          "Restroom": true
+        },
+        {
+          "Wi-Fi": true
+        },
+        {
+          "Free Wi-Fi": true
+        }
+      ],
+      "Atmosphere": [
+        {
+          "Casual": true
+        },
+        {
+          "Trendy": true
+        }
+      ],
+      "Crowd": [
+        {
+          "College students": true
+        },
+        {
+          "Family-friendly": true
+        },
+        {
+          "Groups": true
+        },
+        {
+          "Transgender safespace": true
+        }
+      ],
+      "Planning": [
+        {
+          "Usually a wait": true
+        },
+        {
+          "Accepts reservations": false
+        }
+      ],
+      "Payments": [
+        {
+          "Credit cards": true
+        },
+        {
+          "Debit cards": true
+        }
+      ],
+      "Parking": [
+        {
+          "Free parking lot": true
+        }
+      ]
+    },
+    "gasPrices": [],
+    "url": "https://www.google.com/maps/search/?api=1&query=Starbucks&query_place_id=ChIJa3rrJybWMIgRF8LaNJKD98U",
+    "searchString": "Direct Detail URL: https://www.google.com/maps/search/?api=1&query=ChIJa3rrJybWMIgRF8LaNJKD98U&query_place_id=ChIJa3rrJybWMIgRF8LaNJKD98U",
+    "language": "en",
+    "isAdvertisement": false,
+    "imageUrl": "https://lh3.googleusercontent.com/p/AF1QipN33bvG46SXZKsY8aEtl173Xbqhes0B0peLxUIb=w426-h240-k-no",
+    "kgmid": "/g/1thf961c",
+    "ownerUpdates": []
+  },
+  "review_summary": ""
+}
