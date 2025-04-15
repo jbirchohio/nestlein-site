@@ -1,14 +1,20 @@
-export function parseHours(hours: string): { open: boolean; message: string } {
-  if (!hours || !hours.includes('-')) return { open: false, message: 'Hours unavailable' };
+export function parseHours(hours: string): {
+  open: boolean;
+  message: string;
+  status: 'open' | 'openingSoon' | 'closed';
+} {
+  if (!hours || !hours.includes('-')) {
+    return { open: false, message: 'Hours unavailable', status: 'closed' };
+  }
 
   const [startStr, endStr] = hours.split('-').map(str => str.trim());
 
   const toMinutes = (str: string): number => {
     const [time, period] = str.split(' ');
-    let [hour, minute] = time.split(':').map(Number);
+    let [hour, min] = time.split(':').map(Number);
     if (period === 'PM' && hour !== 12) hour += 12;
     if (period === 'AM' && hour === 12) hour = 0;
-    return hour * 60 + (minute || 0);
+    return hour * 60 + (min || 0);
   };
 
   const now = new Date();
@@ -22,8 +28,11 @@ export function parseHours(hours: string): { open: boolean; message: string } {
       : currentMinutes >= startMin || currentMinutes < endMin;
 
   let message = '';
+  let status: 'open' | 'openingSoon' | 'closed' = 'closed';
+
   if (open) {
     message = `Open now — until ${endStr}`;
+    status = 'open';
   } else {
     const minutesUntilOpen =
       startMin > currentMinutes
@@ -38,7 +47,8 @@ export function parseHours(hours: string): { open: boolean; message: string } {
     if (mins > 0) parts.push(`${mins} minute${mins > 1 ? 's' : ''}`);
 
     message = `Closed — opens in ${parts.join(' ')}`;
+    status = minutesUntilOpen <= 60 ? 'openingSoon' : 'closed';
   }
 
-  return { open, message };
+  return { open, message, status };
 }
