@@ -6,6 +6,7 @@ import gspread
 from openai import OpenAI
 from dotenv import load_dotenv
 import time
+from github import Github
 
 load_dotenv()
 
@@ -15,47 +16,70 @@ SHEET_ID = os.getenv("SHEET_ID")
 SHEET_NAME = os.getenv("SHEET_NAME")
 CREDENTIALS_FILE = os.getenv("GOOGLE_CREDENTIALS_JSON")
 APIFY_TOKEN = os.getenv("APIFY_TOKEN")
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
+GITHUB_REPO = "jbirchohio/nestlein-site"
+GITHUB_PATH_PREFIX = "public/locations"
 
-# --- Google Sheets Setup ---
 gc = gspread.service_account(filename=CREDENTIALS_FILE)
 sheet = gc.open_by_key(SHEET_ID).worksheet(SHEET_NAME)
 
-# --- Polling Logic for Apify ---
+def flatten_business_data(bd):
+    def yes_list(category):
+        return [list(item.keys())[0] for item in category if list(item.values())[0] is True]
+
+    out = []
+    out.append(f"Title: {bd.get('title', '')}")
+    out.append(f"Description: {bd.get('description', '')}")
+    out.append(f"Price: {bd.get('price', '')}")
+    out.append(f"Category: {bd.get('categoryName', '')}")
+    out.append(f"Address: {bd.get('address', '')}")
+    out.append(f"Phone: {bd.get('phone', '')}")
+    out.append(f"Website: {bd.get('website', '')}")
+    out.append(f"Image URL: {bd.get('imageUrl', '')}")
+    out.append("Opening Hours:")
+    for h in bd.get("openingHours", []):
+        out.append(f"  - {h.get('day')}: {h.get('hours')}")
+    out.append(f"Tags: {', '.join(bd.get('categories', []))}")
+    ai = bd.get("additionalInfo", {})
+    out.append(f"Amenities: {', '.join(yes_list(ai.get('Amenities', [])))}")
+    out.append(f"Atmosphere: {', '.join(yes_list(ai.get('Atmosphere', [])))}")
+    out.append(f"Popular For: {', '.join(yes_list(ai.get('Popular for', [])))}")
+    out.append(f"Offerings: {', '.join(yes_list(ai.get('Offerings', [])))}")
+    out.append(f"Service Options: {', '.join(yes_list(ai.get('Service options', [])))}")
+    out.append(f"Dining Options: {', '.join(yes_list(ai.get('Dining options', [])))}")
+    out.append(f"Parking: {', '.join(yes_list(ai.get('Parking', [])))}")
+    out.append(f"Accessibility: {', '.join(yes_list(ai.get('Accessibility', [])))}")
+    out.append(f"Crowd: {', '.join(yes_list(ai.get('Crowd', [])))}")
+    out.append(f"Planning: {', '.join(yes_list(ai.get('Planning', [])))}")
+    out.append(f"Payments: {', '.join(yes_list(ai.get('Payments', [])))}")
+    return "\n".join(out)
+
 def poll_apify(run_id):
-    dataset_url = f"https://api.apify.com/v2/datasets/{run_id}/items?format=json&clean=true"
+    url = f"https://api.apify.com/v2/datasets/{run_id}/items?format=json&clean=true"
     headers = {"Authorization": f"Bearer {APIFY_TOKEN}"}
-    
     for _ in range(60):
-        dataset_res = requests.get(dataset_url, headers=headers)
-        if dataset_res.status_code == 200:
+        res = requests.get(url, headers=headers)
+        if res.status_code == 200:
             try:
-                data = dataset_res.json()
-            except Exception as e:
-                print("Error parsing JSON:", e)
-                data = None
-            if data:
-                return data[0]  # Change this to return the full array if needed
+                data = res.json()
+                if data:
+                    return data[0]
+            except:
+                pass
         time.sleep(5)
-    raise TimeoutError("Apify data fetch timed out or returned empty.")
+    raise TimeoutError("Apify polling timed out.")
 
-# --- Trigger Apify Actor ---
 def trigger_apify_actor(actor_slug, place_id):
-    actor_url = f"https://api.apify.com/v2/acts/{actor_slug}/runs"
-    payload = {"placeIds": [place_id]}
-    response = requests.post(actor_url, params={"token": APIFY_TOKEN}, json=payload)
-    if response.status_code in [200, 201]:
-        return response.json().get("data", {}).get("defaultDatasetId")
-    else:
-        print(f"❌ Apify failed for {place_id} on actor {actor_slug}: {response.text}")
-        return None
+    url = f"https://api.apify.com/v2/acts/{actor_slug}/runs"
+    res = requests.post(url, params={"token": APIFY_TOKEN}, json={"placeIds": [place_id]})
+    if res.status_code in [200, 201]:
+        return res.json().get("data", {}).get("defaultDatasetId")
+    print(f"❌ Apify failed for {place_id}: {res.text}")
+    return None
 
-# --- Assistant Conversation ---
-def run_assistant_conversation(apify_output):
+def run_assistant_conversation(business_data):
     thread = client.beta.threads.create()
-
-    # Full user instructions go here as the FIRST user message
-    full_prompt = """
-You are analyzing raw Google Business scraped data to generate a structured summary for a remote work-friendly location directory. Use ONLY the raw data provided below to extract the values for each field. Do NOT echo back the instructions; output only the extracted values in the requested format.
+    prompt = """You are analyzing raw Google Business scraped data to generate a structured summary for a remote work-friendly location directory. Use ONLY the raw data provided below to extract the values for each field. Do NOT echo back the instructions; output only the extracted values in the requested format.
 
 ##Guidelines##
 0. Your output must be based solely on the raw data provided below.
@@ -102,39 +126,30 @@ Output the final score as:
 **Parking Availability**: Extract information about available parking.
 **Tags**: Based on the data, suggest 3–5 relevant tags as a comma-separated list (for example, Quiet Space, Pet-Friendly, LGBTQ+ Friendly, Fast Wi-Fi, Study Spot).
 
-DO NOT include any extraneous text or disclaimers in your output. Output only the key-value pairs exactly in this format (each field on one line):
+DO NOT include any extraneous text or disclaimers in your output. Output only the key-value pairs exactly in this format (each field on one line):"""
 
-**[key]**: [value]
-"""
-
-    # First user message — instructions
-    client.beta.threads.messages.create(
-        thread_id=thread.id,
-        role="user",
-        content=full_prompt
-    )
-
-    # Second user message — the raw data
-    client.beta.threads.messages.create(
-        thread_id=thread.id,
-        role="user",
-        content=json.dumps(apify_output, indent=2)
-    )
-
-    # Start the assistant run
-    run = client.beta.threads.runs.create(
-        thread_id=thread.id,
-        assistant_id=ASSISTANT_ID
-    )
+    flattened = flatten_business_data(business_data)
+    client.beta.threads.messages.create(thread_id=thread.id, role="user", content=prompt)
+    client.beta.threads.messages.create(thread_id=thread.id, role="user", content=flattened)
+    run = client.beta.threads.runs.create(thread_id=thread.id, assistant_id=ASSISTANT_ID)
 
     while run.status not in ["completed", "failed"]:
         time.sleep(1)
         run = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
 
     messages = client.beta.threads.messages.list(thread_id=thread.id)
-    return messages.data[0].content[0].text.value
+    return messages.data[0].content[0].text.value.strip()
 
-# --- Orchestrator ---
+def push_to_github(slug, content):
+    repo = Github(GITHUB_TOKEN).get_repo(GITHUB_REPO)
+    filepath = f"{GITHUB_PATH_PREFIX}/{slug}.json"
+    encoded = base64.b64encode(content.encode("utf-8")).decode("utf-8")
+    try:
+        existing = repo.get_contents(filepath)
+        repo.update_file(filepath, f"Update {slug}", content, existing.sha)
+    except:
+        repo.create_file(filepath, f"Add {slug}", content)
+
 def get_all_place_ids():
     return sheet.col_values(1)[1:]
 
@@ -153,34 +168,26 @@ def process_all():
     place_ids = get_all_place_ids()
     already_done = get_already_processed()
     new_ids = [pid for pid in place_ids if pid not in already_done]
-    
+
     if not new_ids:
         print("✅ No new Place IDs found.")
         return
-    
+
     for place_id in new_ids:
-        print(f"🔍 Handling: {place_id}")
-        biz_run_id = trigger_apify_actor("compass~google-places-api", place_id)
-        if not biz_run_id:
+        print(f"🔍 Processing: {place_id}")
+        run_id = trigger_apify_actor("compass~google-places-api", place_id)
+        if not run_id:
             continue
-        
-        business_data = poll_apify(biz_run_id)
-        if not business_data:
-            print("❌ Business data not available.")
+        raw_data = poll_apify(run_id)
+        if not raw_data:
             continue
-        
-        combined = {
-            "business_data": business_data,
-            "review_summary": ""
-        }
-        
-        summary = run_assistant_conversation(combined)
+
+        response = run_assistant_conversation(raw_data)
         slug = place_id.replace(":", "-")
-        push_to_github(slug, summary)
-        
+        push_to_github(slug, json.dumps({"output": response}, indent=2))
         already_done.append(place_id)
         save_processed(already_done)
-    
+
     print("🎉 All locations processed.")
 
 if __name__ == "__main__":
