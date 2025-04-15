@@ -81,17 +81,32 @@ export default function LocationCard({ location }: { location: Location }) {
     }
   }
 
+  // Shuffle initially on mount
   useEffect(() => {
-    if (flipped && location.remote_work_features) {
-      const entries = Object.entries(location.remote_work_features).filter(
-        ([, value]) =>
-          value &&
-          typeof value === 'string' &&
-          value.toLowerCase() !== 'unknown'
-      );
-      const shuffled = entries.sort(() => 0.5 - Math.random()).slice(0, 6);
-      setShuffledFeatures(shuffled);
-    }
+    if (!location.remote_work_features) return;
+
+    const entries = Object.entries(location.remote_work_features).filter(
+      ([, value]) =>
+        value &&
+        typeof value === 'string' &&
+        value.toLowerCase() !== 'unknown'
+    );
+
+    setShuffledFeatures(entries.sort(() => 0.5 - Math.random()).slice(0, 6));
+  }, [location.remote_work_features]);
+
+  // Reshuffle every flip
+  useEffect(() => {
+    if (!flipped || !location.remote_work_features) return;
+
+    const entries = Object.entries(location.remote_work_features).filter(
+      ([, value]) =>
+        value &&
+        typeof value === 'string' &&
+        value.toLowerCase() !== 'unknown'
+    );
+
+    setShuffledFeatures(entries.sort(() => 0.5 - Math.random()).slice(0, 6));
   }, [flipped, location.remote_work_features]);
 
   return (
