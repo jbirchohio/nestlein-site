@@ -4,9 +4,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { getAllLocations } from '@/lib/locations';
-
-export const dynamic = 'force-static';
 
 interface Location {
   slug: string;
@@ -18,8 +15,21 @@ interface Location {
   best_time_to_work_remotely?: string;
 }
 
-export default async function HomePage() {
-  const locations: Location[] = await getAllLocations();
+export default function HomePage() {
+  const [locations, setLocations] = useState<Location[]>([]);
+
+  useEffect(() => {
+    async function fetchLocations() {
+      try {
+        const res = await fetch('/locations/index.json');
+        const data = await res.json();
+        setLocations(data);
+      } catch (err) {
+        console.error('Failed to load locations', err);
+      }
+    }
+    fetchLocations();
+  }, []);
 
   return (
     <div className="flex min-h-screen">
