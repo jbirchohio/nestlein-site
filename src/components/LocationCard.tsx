@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
@@ -55,24 +55,24 @@ function isOpenNow(hours?: string): boolean {
 export default function LocationCard({ location }: { location: Location }) {
   const [flipped, setFlipped] = useState(false);
   const router = useRouter();
+  const tapTimeout = useRef<NodeJS.Timeout | null>(null);
+
   const { slug, name, address, hours, logo_url, tags = [] } = location;
   const closingTime = hours?.split('-')?.[1]?.trim() || 'N/A';
   const open = isOpenNow(hours);
   const visibleTags = tags.slice(0, 3);
   const extraTagCount = tags.length - visibleTags.length;
 
-  let tapTimeout: NodeJS.Timeout | null = null;
-
   function handleCardClick() {
     if (window.innerWidth < 768) {
-      if (tapTimeout) {
-        clearTimeout(tapTimeout);
-        tapTimeout = null;
+      if (tapTimeout.current) {
+        clearTimeout(tapTimeout.current);
+        tapTimeout.current = null;
         router.push(`/locations/${slug}`);
       } else {
-        tapTimeout = setTimeout(() => {
+        tapTimeout.current = setTimeout(() => {
           setFlipped(!flipped);
-          tapTimeout = null;
+          tapTimeout.current = null;
         }, 300);
       }
     } else {
@@ -145,15 +145,22 @@ export default function LocationCard({ location }: { location: Location }) {
             )}
             {location.remote_work_features && (
               <ul className="space-y-1">
-                {Object.entries(location.remote_work_features).map(([key, value]) =>
-                  value ? (
+                {Object.entries(location.remote_work_features)
+                  .filter(
+                    ([_, value]) =>
+                      value &&
+                      typeof value === 'string' &&
+                      value.toLowerCase() !== 'unknown'
+                  )
+                  .sort(() => 0.5 - Math.random())
+                  .slice(0, 6)
+                  .map(([key, value]) => (
                     <li key={key} className="flex items-center gap-2">
                       {featureIcons[key] || null}
                       <span className="capitalize">{key.replace(/_/g, ' ')}:</span>
                       <span className="font-medium">{value}</span>
                     </li>
-                  ) : null
-                )}
+                  ))}
               </ul>
             )}
             <p className="text-xs text-center mt-4 text-slate-500">
