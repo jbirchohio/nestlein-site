@@ -2,17 +2,6 @@
 
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import {
-  Wifi,
-  Power,
-  Volume2,
-  MonitorSmartphone,
-  Sun,
-  Sandwich,
-  Bath,
-  ParkingSquare,
-  Clock,
-} from 'lucide-react';
 
 interface Location {
   slug: string;
