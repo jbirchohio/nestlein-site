@@ -8,13 +8,14 @@
     "Coffee shop",
     "Cafe",
     "Coffee store",
-    "Espresso bar"
+    "Espresso bar",
+    "Fast Wi-Fi"
   ],
   "remote_work_features": {
     "wi_fi_quality": "Good",
     "outlet_access": "Moderate",
     "noise_level": "Casual",
-    "seating_comfort": "basic",
+    "seating_comfort": "Casual",
     "natural_light": "Some natural light",
     "stay_duration_friendliness": "Welcoming for long stays",
     "food_drink_options": "Coffee, Prepared foods, Quick bite, Small plates, Vegetarian options",
