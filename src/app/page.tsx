@@ -19,21 +19,7 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#F9FAFB] text-slate-800 px-4 py-8">
-      {/* Header */}
-      <div className="mb-10 text-center">
-        <h1 className="text-3xl font-bold mb-2 text-blue-600">NestleIn</h1>
-        <p className="text-lg text-slate-600">Find your perfect remote work spot.</p>
-      </div>
-
-      {/* Search Bar */}
-      <div className="max-w-2xl mx-auto mb-10">
-        <input
-          type="text"
-          placeholder="Search for locations..."
-          className="w-full px-5 py-3 rounded-lg border border-slate-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
-        />
-      </div>
-
+   
       {/* Location Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {locations.map((loc) => {

@@ -7,7 +7,7 @@ export default function Header() {
   const [query, setQuery] = useState('');
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm">
+    <header className="sticky top-0 z-50 backdrop-blur-md bg-white/80 border-b border-slate-200 shadow-sm transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         {/* Logo */}
         <Link href="/" className="text-blue-600 font-bold text-2xl">
@@ -20,7 +20,7 @@ export default function Header() {
           placeholder="Search locations..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="flex-1 max-w-xl w-full px-4 py-2 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="flex-1 max-w-xl w-full px-4 py-2 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
         />
 
         {/* Right side */}
