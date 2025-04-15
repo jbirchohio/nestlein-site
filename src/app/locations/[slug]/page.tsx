@@ -108,7 +108,7 @@ export default function LocationPage() {
             )}
           </div>
 
-          {location.tags?.length > 0 && (
+          {Array.isArray(location.tags) && location.tags.length > 0 && (
             <div className="flex flex-wrap gap-2 pt-4">
               {location.tags.map((tag) => (
                 <span
