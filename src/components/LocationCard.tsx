@@ -11,32 +11,21 @@ interface Location {
   hours?: string;
   logo_url?: string;
   tags?: string[];
-  best_time_to_work_remotely?: string;
-  remote_work_features?: {
-    wi_fi_quality?: string;
-    outlet_access?: string;
-    noise_level?: string;
-    seating_comfort?: string;
-    natural_light?: string;
-    stay_duration_friendliness?: string;
-    food_drink_options?: string;
-    bathroom_access?: string;
-    parking_availability?: string;
-  };
-}
-
-function isOpenNow(hours?: string): boolean {
-  return Boolean(hours); // Placeholder
 }
 
 export default function LocationCard({ location }: { location: Location }) {
   const router = useRouter();
   const { slug, name, address, hours, logo_url, tags = [] } = location;
 
-  const closingTime = hours?.split('-')?.[1]?.trim() || 'N/A';
-const { open: isOpen, message: openMessage } = parseHours(location.hours || '');
+  const { open, message, status } = parseHours(hours || '');
+
   const visibleTags = tags.slice(0, 3);
-  const extraTagCount = (tags.length || 0) - visibleTags.length;
+  const extraTagCount = tags.length - visibleTags.length;
+
+  const statusColor =
+    status === 'open' ? 'text-green-600' : status === 'openingSoon' ? 'text-yellow-600' : 'text-red-600';
+  const dotColor =
+    status === 'open' ? 'bg-green-500' : status === 'openingSoon' ? 'bg-yellow-500' : 'bg-red-500';
 
   return (
     <div
@@ -56,22 +45,12 @@ const { open: isOpen, message: openMessage } = parseHours(location.hours || '');
       <div className="p-5 space-y-2">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-bold text-slate-900">{name}</h2>
-        <span
-  className={`w-2.5 h-2.5 rounded-full ${isOpen ? 'bg-green-500' : 'bg-red-500'}`}
-  title={isOpen ? 'Open Now' : 'Closed'}
-/>
-
-<p className="text-sm text-blue-600 font-medium">
-  {openMessage}
-</p>
+          <span className={`w-2.5 h-2.5 rounded-full ${dotColor}`} title={message} />
         </div>
 
         <p className="text-sm text-slate-500 truncate">{address}</p>
-        <p className="text-sm text-blue-600 font-medium">
-          {isOpen ? 'Open now' : 'Closed'} — until {closingTime}
-        </p>
+        <p className={`text-sm font-medium ${statusColor}`}>{message}</p>
 
-        {/* Tags */}
         <div className="flex flex-wrap gap-2 pt-2">
           {visibleTags.map((tag, i) => (
             <span
