@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
@@ -54,6 +54,7 @@ function isOpenNow(hours?: string): boolean {
 
 export default function LocationCard({ location }: { location: Location }) {
   const [flipped, setFlipped] = useState(false);
+  const [shuffledFeatures, setShuffledFeatures] = useState<[string, string][]>([]);
   const router = useRouter();
   const tapTimeout = useRef<NodeJS.Timeout | null>(null);
 
@@ -76,9 +77,22 @@ export default function LocationCard({ location }: { location: Location }) {
         }, 300);
       }
     } else {
-      setFlipped(!flipped);
+      router.push(`/locations/${slug}`);
     }
   }
+
+  useEffect(() => {
+    if (flipped && location.remote_work_features) {
+      const entries = Object.entries(location.remote_work_features).filter(
+        ([, value]) =>
+          value &&
+          typeof value === 'string' &&
+          value.toLowerCase() !== 'unknown'
+      );
+      const shuffled = entries.sort(() => 0.5 - Math.random()).slice(0, 6);
+      setShuffledFeatures(shuffled);
+    }
+  }, [flipped, location.remote_work_features]);
 
   return (
     <div
@@ -143,24 +157,15 @@ export default function LocationCard({ location }: { location: Location }) {
                 <span className="font-normal">{location.best_time_to_work_remotely}</span>
               </p>
             )}
-            {location.remote_work_features && (
+            {shuffledFeatures.length > 0 && (
               <ul className="space-y-1">
-                {Object.entries(location.remote_work_features)
-                  .filter(([, value]) =>
-  value &&
-  typeof value === 'string' &&
-  value.toLowerCase() !== 'unknown'
-)
-
-                  .sort(() => 0.5 - Math.random())
-                  .slice(0, 6)
-                  .map(([key, value]) => (
-                    <li key={key} className="flex items-center gap-2">
-                      {featureIcons[key] || null}
-                      <span className="capitalize">{key.replace(/_/g, ' ')}:</span>
-                      <span className="font-medium">{value}</span>
-                    </li>
-                  ))}
+                {shuffledFeatures.map(([key, value]) => (
+                  <li key={key} className="flex items-center gap-2">
+                    {featureIcons[key] || null}
+                    <span className="capitalize">{key.replace(/_/g, ' ')}:</span>
+                    <span className="font-medium">{value}</span>
+                  </li>
+                ))}
               </ul>
             )}
             <p className="text-xs text-center mt-4 text-slate-500">
