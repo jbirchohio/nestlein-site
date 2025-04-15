@@ -18,7 +18,7 @@ CREDENTIALS_FILE = os.getenv("GOOGLE_CREDENTIALS_JSON")
 APIFY_TOKEN = os.getenv("APIFY_TOKEN")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 GITHUB_REPO = "jbirchohio/nestlein-site"
-GITHUB_PATH_PREFIX = "data/locations"
+GITHUB_PATH_PREFIX = "public/locations"
 
 # --- Google Sheets Setup ---
 gc = gspread.service_account(filename=CREDENTIALS_FILE)
