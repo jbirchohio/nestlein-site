@@ -9,7 +9,7 @@ import time
 from github import Github
 import logging
 
-# Set up basic logging configuration; adjust the level or output as needed.
+# Set up basic logging configuration; adjust the level as needed.
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
 
 load_dotenv()
@@ -42,7 +42,6 @@ def poll_apify(run_id):
                 logging.error("Error parsing JSON: %s", e)
                 data = None
             if data:
-                logging.debug("Data successfully fetched from Apify: %s", data[0])
                 return data[0]
         time.sleep(5)
     raise TimeoutError("Apify data fetch timed out or returned empty.")
@@ -53,9 +52,7 @@ def trigger_apify_actor(actor_slug, place_id):
     payload = {"placeIds": [place_id]}
     response = requests.post(actor_url, params={"token": APIFY_TOKEN}, json=payload)
     if response.status_code in [200, 201]:
-        dataset_id = response.json().get("data", {}).get("defaultDatasetId")
-        logging.debug("Triggered Apify actor for %s. Dataset ID: %s", place_id, dataset_id)
-        return dataset_id
+        return response.json().get("data", {}).get("defaultDatasetId")
     else:
         logging.error("❌ Apify failed for %s on actor %s: %s", place_id, actor_slug, response.text)
         return None
@@ -63,8 +60,9 @@ def trigger_apify_actor(actor_slug, place_id):
 # --- Assistant Conversation ---
 def run_assistant_conversation(apify_output):
     thread = client.beta.threads.create()
-    logging.debug("Created thread with id: %s", thread.id)
+    logging.debug(f"Created thread with id: {thread.id}")
 
+    # Prompt with extraction instructions
     full_prompt = """
 You are analyzing raw Google Business scraped data to generate a structured summary for a remote work-friendly location directory. Use ONLY the raw data provided below to extract the values for each field. Do NOT echo back the instructions; output only the extracted values in the requested format.
 
@@ -117,57 +115,52 @@ DO NOT include any extraneous text or disclaimers in your output. Output only th
 
 **[key]**: [value]
 """
-    # Send prompt instructions
-    msg_resp1 = client.beta.threads.messages.create(
+    # First user message — instructions
+    client.beta.threads.messages.create(
         thread_id=thread.id,
         role="user",
         content=full_prompt
     )
-    logging.debug("Sent prompt instructions. Response: %s", msg_resp1)
+    logging.debug("Sent prompt instructions to thread.")
 
-    # Send raw JSON message
+    # Second user message — raw JSON
     json_content = json.dumps(apify_output, indent=2)
-    msg_resp2 = client.beta.threads.messages.create(
+    client.beta.threads.messages.create(
         thread_id=thread.id,
         role="user",
         content=json_content
     )
-    logging.debug("Sent raw JSON. Response: %s", msg_resp2)
+    logging.debug("Sent raw JSON to thread.")
 
-    # Run the assistant
+    # Run Assistant
     run = client.beta.threads.runs.create(
         thread_id=thread.id,
         assistant_id=ASSISTANT_ID
     )
-    logging.debug("Started assistant run. Run response: %s", run)
+    logging.debug("Started assistant run.")
 
-    # Poll run status until completed or failed
     while run.status not in ["completed", "failed"]:
         time.sleep(1)
         run = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
-        logging.debug("Run status: %s", run.status)
+        logging.debug(f"Run status: {run.status}")
 
-    # If the run failed, log the error details (if available)
-    if run.status == "failed":
-        logging.error("Assistant run failed. Run details: %s", run)
-
-    logging.debug("Assistant run completed. Final run status: %s", run.status)
+    logging.debug("Assistant run completed.")
     messages = client.beta.threads.messages.list(thread_id=thread.id)
-    logging.debug("Retrieved messages from thread. Total messages: %d", len(messages.data))
     
     # Log entire conversation for debugging
+    logging.debug("Full conversation messages:")
     for idx, msg in enumerate(messages.data):
         try:
             content = msg.content[0].text.value
         except Exception as e:
             content = "Could not extract content."
-        logging.debug("Message %d - Role: %s, Content: %s", idx, msg.role, content)
+        logging.debug(f"Message {idx} - Role: {msg.role}, Content: {content}")
     
     # Filter messages to only select those from the assistant
     assistant_msgs = [msg for msg in messages.data if msg.role.lower() == "assistant"]
     if assistant_msgs:
         result = assistant_msgs[-1].content[0].text.value.strip()
-        logging.debug("Returning assistant result: %s", result)
+        logging.debug(f"Returning assistant result: {result}")
         return result
     else:
         logging.debug("No assistant response received.")
@@ -181,10 +174,10 @@ def push_to_github(slug, content):
     try:
         existing = repo.get_contents(filepath)
         repo.update_file(filepath, f"Update {slug}", content, existing.sha)
-        logging.debug("Updated file %s on GitHub.", filepath)
+        logging.debug(f"Updated file {filepath} on GitHub.")
     except Exception as e:
         repo.create_file(filepath, f"Add {slug}", content)
-        logging.debug("Created file %s on GitHub. Exception: %s", filepath, e)
+        logging.debug(f"Created file {filepath} on GitHub. Exception: {e}")
 
 # --- Orchestrator ---
 def get_all_place_ids():
@@ -211,7 +204,7 @@ def process_all():
         return
 
     for place_id in new_ids:
-        logging.info("🔍 Handling: %s", place_id)
+        logging.info(f"🔍 Handling: {place_id}")
         biz_run_id = trigger_apify_actor("compass~google-places-api", place_id)
         if not biz_run_id:
             continue
