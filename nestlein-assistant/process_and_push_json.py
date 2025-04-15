@@ -6,6 +6,7 @@ import gspread
 from openai import OpenAI
 from dotenv import load_dotenv
 import time
+from github import Github
 
 load_dotenv()
 
@@ -15,6 +16,9 @@ SHEET_ID = os.getenv("SHEET_ID")
 SHEET_NAME = os.getenv("SHEET_NAME")
 CREDENTIALS_FILE = os.getenv("GOOGLE_CREDENTIALS_JSON")
 APIFY_TOKEN = os.getenv("APIFY_TOKEN")
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
+GITHUB_REPO = "jbirchohio/nestlein-site"
+GITHUB_PATH_PREFIX = "data/locations"
 
 # --- Google Sheets Setup ---
 gc = gspread.service_account(filename=CREDENTIALS_FILE)
@@ -34,7 +38,7 @@ def poll_apify(run_id):
                 print("Error parsing JSON:", e)
                 data = None
             if data:
-                return data[0]  # Change this to return the full array if needed
+                return data[0]
         time.sleep(5)
     raise TimeoutError("Apify data fetch timed out or returned empty.")
 
@@ -53,7 +57,7 @@ def trigger_apify_actor(actor_slug, place_id):
 def run_assistant_conversation(apify_output):
     thread = client.beta.threads.create()
 
-    # Full user instructions go here as the FIRST user message
+    # Prompt with extraction instructions
     full_prompt = """
 You are analyzing raw Google Business scraped data to generate a structured summary for a remote work-friendly location directory. Use ONLY the raw data provided below to extract the values for each field. Do NOT echo back the instructions; output only the extracted values in the requested format.
 
@@ -114,14 +118,14 @@ DO NOT include any extraneous text or disclaimers in your output. Output only th
         content=full_prompt
     )
 
-    # Second user message — the raw data
+    # Second user message — raw JSON
     client.beta.threads.messages.create(
         thread_id=thread.id,
         role="user",
         content=json.dumps(apify_output, indent=2)
     )
 
-    # Start the assistant run
+    # Run Assistant
     run = client.beta.threads.runs.create(
         thread_id=thread.id,
         assistant_id=ASSISTANT_ID
@@ -132,7 +136,18 @@ DO NOT include any extraneous text or disclaimers in your output. Output only th
         run = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
 
     messages = client.beta.threads.messages.list(thread_id=thread.id)
-    return messages.data[0].content[0].text.value
+    return messages.data[0].content[0].text.value.strip()
+
+# --- GitHub Push Logic ---
+def push_to_github(slug, content):
+    repo = Github(GITHUB_TOKEN).get_repo(GITHUB_REPO)
+    filepath = f"{GITHUB_PATH_PREFIX}/{slug}.json"
+    b64_content = base64.b64encode(content.encode("utf-8")).decode("utf-8")
+    try:
+        existing = repo.get_contents(filepath)
+        repo.update_file(filepath, f"Update {slug}", content, existing.sha)
+    except:
+        repo.create_file(filepath, f"Add {slug}", content)
 
 # --- Orchestrator ---
 def get_all_place_ids():
@@ -153,34 +168,34 @@ def process_all():
     place_ids = get_all_place_ids()
     already_done = get_already_processed()
     new_ids = [pid for pid in place_ids if pid not in already_done]
-    
+
     if not new_ids:
         print("✅ No new Place IDs found.")
         return
-    
+
     for place_id in new_ids:
         print(f"🔍 Handling: {place_id}")
         biz_run_id = trigger_apify_actor("compass~google-places-api", place_id)
         if not biz_run_id:
             continue
-        
+
         business_data = poll_apify(biz_run_id)
         if not business_data:
             print("❌ Business data not available.")
             continue
-        
+
         combined = {
             "business_data": business_data,
             "review_summary": ""
         }
-        
+
         summary = run_assistant_conversation(combined)
         slug = place_id.replace(":", "-")
         push_to_github(slug, summary)
-        
+
         already_done.append(place_id)
         save_processed(already_done)
-    
+
     print("🎉 All locations processed.")
 
 if __name__ == "__main__":
