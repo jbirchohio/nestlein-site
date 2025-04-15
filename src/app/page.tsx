@@ -1,4 +1,3 @@
-// /src/app/page.tsx
 import Link from 'next/link';
 import Image from 'next/image';
 import { getAllLocations } from '@/lib/locations';
@@ -14,45 +13,71 @@ interface Location {
   tags?: string[];
 }
 
+function isOpenNow(hours?: string): boolean {
+  // Placeholder logic — replace with actual time parsing later
+  return Boolean(hours);
+}
+
 export default async function HomePage() {
   const locations: Location[] = await getAllLocations();
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] text-slate-800 px-4 py-8">
-   
-      {/* Location Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div className="min-h-screen bg-[#F9FAFB] text-slate-800 px-4 py-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
         {locations.map((loc) => {
           const closingTime = loc.hours?.split('-')?.[1]?.trim() || 'N/A';
-          const isOpen = true; // This should be replaced by dynamic time-based logic
+          const isOpen = isOpenNow(loc.hours);
+          const visibleTags = loc.tags?.slice(0, 3) || [];
+          const extraTagCount = (loc.tags?.length || 0) - visibleTags.length;
+
           return (
             <Link
               key={loc.slug}
               href={`/locations/${loc.slug}`}
-              className="bg-white rounded-xl shadow-md border border-slate-200 hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200 block"
+              className="bg-white rounded-xl shadow-md border border-slate-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
             >
-              <Image
-                src={loc.logo_url || '/placeholder.jpg'}
-                alt={loc.name}
-                width={400}
-                height={200}
-                className="w-full h-44 object-cover rounded-t-xl"
-              />
-              <div className="p-5">
-                <h2 className="text-xl font-semibold text-slate-900">{loc.name}</h2>
-                <p className="text-sm text-slate-500">{loc.address}</p>
-                <p className={`text-sm font-medium mt-2 ${isOpen ? 'text-green-600' : 'text-red-600'}`}>
+              <div className="overflow-hidden rounded-t-xl h-44">
+                <Image
+                  src={loc.logo_url || '/placeholder.jpg'}
+                  alt={loc.name}
+                  width={400}
+                  height={200}
+                  className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-300"
+                />
+              </div>
+
+              <div className="p-5 space-y-2">
+                <div className="flex justify-between items-center">
+                  <h2 className="text-xl font-bold text-slate-900">{loc.name}</h2>
+                  <span
+                    className={`w-2.5 h-2.5 rounded-full ${
+                      isOpen ? 'bg-green-500' : 'bg-red-500'
+                    }`}
+                    title={isOpen ? 'Open Now' : 'Closed'}
+                  />
+                </div>
+
+                <p className="text-sm text-slate-500 truncate">{loc.address}</p>
+                <p className="text-sm text-blue-600 font-medium">
                   {isOpen ? 'Open now' : 'Closed'} — until {closingTime}
                 </p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {loc.tags?.map(tag => (
+
+                {/* Tags */}
+                <div className="flex flex-wrap gap-2 pt-2">
+                  {visibleTags.map((tag, i) => (
                     <span
                       key={tag}
-                      className="text-xs font-semibold px-3 py-1 rounded-full bg-blue-100 text-blue-700"
+                      className="text-xs font-semibold px-3 py-1 bg-blue-100 text-blue-700 rounded-full animate-fade-in-up"
+                      style={{ animationDelay: `${i * 50}ms`, animationFillMode: 'forwards' }}
                     >
                       {tag}
                     </span>
                   ))}
+                  {extraTagCount > 0 && (
+                    <span className="text-xs font-semibold px-3 py-1 bg-slate-200 text-slate-600 rounded-full">
+                      +{extraTagCount} more
+                    </span>
+                  )}
                 </div>
               </div>
             </Link>
