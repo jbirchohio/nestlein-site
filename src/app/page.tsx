@@ -18,67 +18,61 @@ export default async function HomePage() {
   const locations: Location[] = await getAllLocations();
 
   return (
-    <div className="flex min-h-screen">
-      {/* Sidebar Filters */}
-      <aside className="hidden md:block w-64 p-6 border-r border-gray-200 bg-white">
-        <h2 className="text-lg font-semibold mb-4">Filter by</h2>
-        <div className="space-y-2">
-          <label className="block">
-            <input type="checkbox" className="mr-2" /> Quiet
-          </label>
-          <label className="block">
-            <input type="checkbox" className="mr-2" /> Free Wi-Fi
-          </label>
-          <label className="block">
-            <input type="checkbox" className="mr-2" /> Outlets
-          </label>
-        </div>
-      </aside>
+    <div className="min-h-screen bg-[#F9FAFB] text-slate-800 px-4 py-8">
+      {/* Header */}
+      <div className="mb-10 text-center">
+        <h1 className="text-3xl font-bold mb-2 text-blue-600">NestleIn</h1>
+        <p className="text-lg text-slate-600">Find your perfect remote work spot.</p>
+      </div>
 
-      <main className="flex-1 p-6">
-        {/* Search Bar */}
-        <div className="mb-6">
-          <input
-            type="text"
-            placeholder="Search locations..."
-            className="w-full max-w-xl px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
-          />
-        </div>
+      {/* Search Bar */}
+      <div className="max-w-2xl mx-auto mb-10">
+        <input
+          type="text"
+          placeholder="Search for locations..."
+          className="w-full px-5 py-3 rounded-lg border border-slate-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+        />
+      </div>
 
-        {/* Location Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {locations.map((loc: Location) => (
+      {/* Location Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {locations.map((loc) => {
+          const closingTime = loc.hours?.split('-')?.[1]?.trim() || 'N/A';
+          const isOpen = true; // This should be replaced by dynamic time-based logic
+          return (
             <Link
               key={loc.slug}
               href={`/locations/${loc.slug}`}
-              className="block bg-white border border-gray-200 rounded-md shadow hover:shadow-lg hover:-translate-y-1 transform transition p-4"
+              className="bg-white rounded-xl shadow-md border border-slate-200 hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200 block"
             >
               <Image
                 src={loc.logo_url || '/placeholder.jpg'}
                 alt={loc.name}
                 width={400}
                 height={200}
-                className="w-full h-40 object-cover rounded mb-2"
+                className="w-full h-44 object-cover rounded-t-xl"
               />
-              <h2 className="text-xl font-semibold text-gray-900">{loc.name}</h2>
-              <p className="text-sm text-gray-600">{loc.address}</p>
-              <p className="text-sm text-violet-600 font-medium mt-1">
-                Open now — until {loc.hours?.split('-')?.[1]?.trim() || 'N/A'}
-              </p>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {loc.tags?.map(tag => (
-                  <span
-                    key={tag}
-                    className="text-xs font-medium px-2 py-1 bg-violet-100 text-violet-800 rounded-full"
-                  >
-                    {tag}
-                  </span>
-                ))}
+              <div className="p-5">
+                <h2 className="text-xl font-semibold text-slate-900">{loc.name}</h2>
+                <p className="text-sm text-slate-500">{loc.address}</p>
+                <p className={`text-sm font-medium mt-2 ${isOpen ? 'text-green-600' : 'text-red-600'}`}>
+                  {isOpen ? 'Open now' : 'Closed'} — until {closingTime}
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {loc.tags?.map(tag => (
+                    <span
+                      key={tag}
+                      className="text-xs font-semibold px-3 py-1 rounded-full bg-blue-100 text-blue-700"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               </div>
             </Link>
-          ))}
-        </div>
-      </main>
+          );
+        })}
+      </div>
     </div>
   );
 }
