@@ -1,18 +1,18 @@
 {
   "name": "The Lounge Uptown",
   "address": "18 Eswin St, Cincinnati, OH 45218",
-  "hours": "Monday to Thursday: 11 AM to 12 AM, Friday and Saturday: 11 AM to 2:30 AM, Sunday: 1 PM to 12 AM",
+  "hours": "Monday: 11 AM to 12 AM, Tuesday: 11 AM to 12 AM, Wednesday: 11 AM to 12 AM, Thursday: 11 AM to 12 AM, Friday: 11 AM to 2:30 AM, Saturday: 11 AM to 2:30 AM, Sunday: 1 PM to 12 AM",
   "phone_number": "(513) 514-0000",
   "logo_url": "https://lh3.googleusercontent.com/p/AF1QipPMirQ_jUce6g9garcIdFwZaoyM276TlHhaIFhf=w408-h544-k-no",
   "tags": [
     "Bar & grill"
   ],
-  "best_time_to_work_remotely": "Weekday mornings before 11 AM",
+  "best_time_to_work_remotely": "Weekday afternoons after 11 AM",
   "remote_work_features": {
     "wi_fi_quality": "Unknown",
     "outlet_access": "Moderate",
-    "noise_level": "Casual",
-    "seating_comfort": "Basic",
+    "noise_level": "Moderate",
+    "seating_comfort": "Modern",
     "natural_light": "Some natural light",
     "stay_duration_friendliness": "Welcoming for long stays",
     "food_drink_options": "Alcohol, Beer, Cocktails, Comfort food, Food, Food at bar, Happy hour drinks, Hard liquor, Late-night food, Quick bite, Small plates, Wine",
