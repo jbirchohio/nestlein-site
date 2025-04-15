@@ -66,12 +66,15 @@ def flatten_business_data(bd):
 
     # Popularity Histogram
     hist = bd.get("popularTimesHistogram", [])
-    if hist:
-        out.append("Popular Times:")
-        for day in hist:
-            out.append(f"  {day['day']}:")
-            for hour in day.get("hours", []):
-                out.append(f"    - {hour['hour']}: {hour['occupancyPercent']}%")
+    if isinstance(hist, list):
+       out.append("Popular Times:")
+       for day in hist:
+           if isinstance(day, dict) and "day" in day:
+              out.append(f"  {day['day']}:")
+              for hour in day.get("hours", []):
+                  if isinstance(hour, dict) and "hour" in hour and "occupancyPercent" in hour:
+                     out.append(f"    - {hour['hour']}: {hour['occupancyPercent']}%")
+
 
     # Current Crowd Level
     current = bd.get("currentPopularHour", {})
