@@ -11,10 +11,10 @@ export function parseHours(hours: string): {
 
   const toMinutes = (str: string): number => {
     const [time, period] = str.split(' ');
-    let [hour, min] = time.split(':').map(Number);
+    let [hour, minute] = time.split(':').map(Number);
     if (period === 'PM' && hour !== 12) hour += 12;
     if (period === 'AM' && hour === 12) hour = 0;
-    return hour * 60 + (min || 0);
+    return hour * 60 + minute;
   };
 
   const now = new Date();
@@ -40,11 +40,11 @@ export function parseHours(hours: string): {
         : 1440 - currentMinutes + startMin;
 
     const hours = Math.floor(minutesUntilOpen / 60);
-    const mins = minutesUntilOpen % 60;
+    const minutes = minutesUntilOpen % 60;
 
     const parts = [];
     if (hours > 0) parts.push(`${hours} hour${hours > 1 ? 's' : ''}`);
-    if (mins > 0) parts.push(`${mins} minute${mins > 1 ? 's' : ''}`);
+    if (minutes > 0) parts.push(`${minutes} minute${minutes > 1 ? 's' : ''}`);
 
     message = `Closed — opens in ${parts.join(' ')}`;
     status = minutesUntilOpen <= 60 ? 'openingSoon' : 'closed';

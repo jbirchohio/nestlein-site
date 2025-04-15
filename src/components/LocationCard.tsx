@@ -17,7 +17,7 @@ export default function LocationCard({ location }: { location: Location }) {
   const router = useRouter();
   const { slug, name, address, hours, logo_url, tags = [] } = location;
 
-  const { open, message, status } = parseHours(hours || '');
+  const { message, status } = parseHours(hours || '');
 
   const visibleTags = tags.slice(0, 3);
   const extraTagCount = tags.length - visibleTags.length;
