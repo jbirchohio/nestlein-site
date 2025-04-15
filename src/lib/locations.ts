@@ -1,24 +1,33 @@
-// /lib/locations.ts
+// /src/lib/locations.ts
 import fs from 'fs';
 import path from 'path';
 
-const locationsDir = path.join(process.cwd(), 'data/locations');
-
-export function getAllLocations() {
-  const files = fs.readdirSync(locationsDir);
-  return files
-    .filter((file) => file.endsWith('.json'))
-    .map((filename) => {
-      const filePath = path.join(locationsDir, filename);
-      const fileContents = fs.readFileSync(filePath, 'utf8');
-      const data = JSON.parse(fileContents);
-      return data;
-    });
+interface Location {
+  slug: string;
+  name: string;
+  address: string;
+  hours?: string;
+  logo_url?: string;
+  tags?: string[];
 }
 
-export function getLocationBySlug(slug: string) {
-  const filePath = path.join(locationsDir, `${slug}.json`);
-  const fileContents = fs.readFileSync(filePath, 'utf8');
-  const data = JSON.parse(fileContents);
-  return { data };
+export async function getAllLocations(): Promise<Location[]> {
+  const dir = path.join(process.cwd(), 'public/locations');
+  let files: string[] = [];
+
+  if (fs.existsSync(dir)) {
+    files = fs.readdirSync(dir);
+  } else {
+    console.warn(`Directory not found: ${dir}`);
+    return [];
+  }
+
+  return files
+    .filter(file => file.endsWith('.json'))
+    .map(file => {
+      const filePath = path.join(dir, file);
+      const raw = fs.readFileSync(filePath, 'utf-8');
+      const data = JSON.parse(raw);
+      return data as Location;
+    });
 }
