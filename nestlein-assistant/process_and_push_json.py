@@ -5,6 +5,7 @@ import requests
 import gspread
 import time
 import yaml
+import re
 from openai import OpenAI
 from dotenv import load_dotenv
 from github import Github
@@ -23,6 +24,9 @@ GITHUB_PATH_PREFIX = "public/locations"
 
 gc = gspread.service_account(filename=CREDENTIALS_FILE)
 sheet = gc.open_by_key(SHEET_ID).worksheet(SHEET_NAME)
+
+def slugify(name):
+    return re.sub(r'[^a-z0-9]+', '-', name.lower().strip()).strip('-')
 
 def flatten_business_data(bd):
     def yes_list(category):
@@ -85,7 +89,7 @@ def trigger_apify_actor(actor_slug, place_id):
 def run_assistant_conversation(business_data):
     thread = client.beta.threads.create()
 
-    prompt = """You are analyzing raw Google Business scraped data to generate a structured summary for a remote work-friendly location directory. Use ONLY the raw data provided below to extract the values for each field. Do NOT echo back the instructions; output only the extracted values in the requested format.
+    prompt = """You are analyzing raw Google Business scraped data to generate a structured summary for a remote work-friendly location directory. Use ONLY the raw data provided below to extract the values for each field. Do NOT echo back the instructions; output only the extracted values in the requested format. DO NOT wrap the output in triple backticks. Output pure JSON only.
 
 ##Guidelines##
 0. Your output must be based solely on the raw data provided below.
@@ -93,14 +97,7 @@ def run_assistant_conversation(business_data):
 2. Do NOT include any of the scoring algorithm guidelines text in your final output.
 3. For each field, extract the data from the raw content.
 4. If a piece of data is not available, output "Unknown" (for Logo URL, output an empty string if not available).
-
-### Scoring Algorithm ###
-Analyze the data and assign scores (from 1 to 10) for the following categories:
- 1. Food/Quality (taste, freshness, presentation)
- 2. Service (friendliness, speed, attentiveness)
- 3. Ambiance/Atmosphere (cleanliness, décor, vibe, noise level)
- 4. Value (worth the cost, portion size, overall pricing)
- 5. Experience (overall enjoyment, standout moments or issues)
+5. Experience (overall enjoyment, standout moments or issues)
 
 Calculate the **Final Score** as the average of these five categories, rounded to one decimal place.
 Output the final score as:
@@ -133,7 +130,6 @@ Output the final score as:
 **Tags**: Based on the data, suggest 3–5 relevant tags as a comma-separated list (for example, Quiet Space, Pet-Friendly, LGBTQ+ Friendly, Fast Wi-Fi, Study Spot).
 
 DO NOT include any extraneous text or disclaimers in your output. Output only the key-value pairs exactly in this format:
-
 Raw Data:
 """
 
@@ -155,18 +151,19 @@ Raw Data:
     messages = client.beta.threads.messages.list(thread_id=thread.id)
     raw_output = messages.data[0].content[0].text.value.strip()
 
-        try:
+    try:
         cleaned = raw_output.strip()
         if cleaned.startswith("```json"):
-            cleaned = cleaned[7:]  # remove ```json
+            cleaned = cleaned[7:]
         if cleaned.endswith("```"):
-            cleaned = cleaned[:-3]  # remove ending ```
-        return json.loads(cleaned.strip())
+            cleaned = cleaned[:-3]
+        response = json.loads(cleaned.strip())
+        response["slug"] = slugify(response.get("name", "location"))
+        return response
     except Exception as e:
         print("🟡 Output not structured as expected. Raw text:")
         print(raw_output)
         return {"output": raw_output}
-
 
 def push_to_github(slug, content):
     repo = Github(GITHUB_TOKEN).get_repo(GITHUB_REPO)
@@ -211,7 +208,7 @@ def process_all():
             continue
 
         response = run_assistant_conversation(raw_data)
-        slug = place_id.replace(":", "-")
+        slug = response.get("slug", place_id.replace(":", "-"))
         push_to_github(slug, json.dumps(response, indent=2))
         already_done.append(place_id)
         save_processed(already_done)
