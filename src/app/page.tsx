@@ -80,32 +80,35 @@ export default function HomePage() {
   
 
   return (
-    <div className="max-w-7xl mx-auto px-4 pb-4 flex items-center justify-between">
-  <FilterBar
-  locations={allLocations.map(loc => ({
-    ...loc,
-    tags: loc.tags ?? [] // ensure fallback
-  }))}
-  activeFilters={activeFilters}
-  setActiveFilters={setActiveFilters}
-/>
- // or `allLocations` if you're storing unfiltered master list
-  activeFilters={activeFilters}
-  setActiveFilters={setActiveFilters}
-/>
-
+    <div className="max-w-7xl mx-auto px-4 pb-4">
+      <div className="flex items-center justify-between mb-4">
+        <FilterBar
+          locations={filtered.map(loc => ({
+            ...loc,
+            tags: loc.tags ?? [],
+          }))}
+          activeFilters={activeFilters}
+          setActiveFilters={setActiveFilters}
+        />
   
-  {userCoords && (
-    <label className="text-sm flex items-center gap-2">
-      <input
-        type="checkbox"
-        checked={nearMeOnly}
-        onChange={(e) => setNearMeOnly(e.target.checked)}
-      />
-      Near me (2 mi)
-    </label>)}<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto px-4">
-
-</div>
+        {userCoords && (
+          <label className="text-sm flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={nearMeOnly}
+              onChange={(e) => setNearMeOnly(e.target.checked)}
+            />
+            Near me (2 mi)
+          </label>
+        )}
+      </div>
+  
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* location cards go here */}
+      </div>
+    </div>
+  );
+  
 
 
 
