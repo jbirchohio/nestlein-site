@@ -20,7 +20,6 @@ ASSISTANT_ID = os.getenv("OPENAI_ASSISTANT_ID")
 SHEET_ID = os.getenv("SHEET_ID")
 SHEET_NAME = os.getenv("SHEET_NAME")
 CREDENTIALS_FILE = os.getenv("GOOGLE_CREDENTIALS_JSON")
-APIFY_TOKEN = os.getenv("APIFY_TOKEN")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 GITHUB_REPO = "jbirchohio/nestlein-site"
 GITHUB_PATH_PREFIX = "public/locations"
@@ -28,6 +27,26 @@ GITHUB_PATH_PREFIX = "public/locations"
 # Google Sheets
 gc = gspread.service_account(filename=CREDENTIALS_FILE)
 sheet = gc.open_by_key(SHEET_ID).worksheet(SHEET_NAME)
+
+def convert_to_remote_tags(categories):
+    tag_map = {
+        "cafe": ["free wi-fi", "coffee served", "long stay friendly"],
+        "coffee shop": ["coffee served", "outlets available", "natural light"],
+        "bakery": ["grab & go food", "casual meetings"],
+        "coworking space": ["great for solo work", "networking spot"],
+        "library": ["quiet environment", "study friendly"],
+        "restaurant": ["food & drink available"],
+        "event venue": ["open seating", "group-friendly"],
+    }
+
+    result = set()
+    for cat in categories:
+        key = cat.lower()
+        for term, tags in tag_map.items():
+            if term in key:
+                result.update(tags)
+    return list(result)
+
 
 def slugify(name):
     return re.sub(r'[^a-z0-9]+', '-', name.lower().strip()).strip('-')
@@ -87,10 +106,6 @@ def flatten_business_data(bd):
         out.append(f"Plus Code: {bd['plusCode']}")
     if bd.get("googleMapsUrl"):
         out.append(f"Google Maps URL: {bd['googleMapsUrl']}")
-    if "reviews" in bd:
-        out.append("Recent Reviews:")
-        for r in bd["reviews"][:5]:
-            out.append(f"- {r.get('title', '')}: {r.get('text', '')}")
     return "\n".join(out)
 
 def add_ref_param(url, ref="nestlein"):
@@ -117,7 +132,7 @@ def build_structured_json(bd):
         "longitude": bd.get("location", {}).get("lng"),
         "hours": format_hours(bd.get("openingHours", [])),
         "price": bd.get("price"),
-        "tags": bd.get("categories", []),
+        "tags": convert_to_remote_tags(bd.get("categories", []))
         "neighborhood": bd.get("neighborhood"),
         "review_score": bd.get("totalScore"),
         "review_count": bd.get("reviewsCount"),
@@ -133,35 +148,6 @@ def build_structured_json(bd):
             "parking_availability": "Free parking lot" if "Free parking lot" in yes_list(ai.get("Parking", [])) else "Unknown"
         }
     }
-
-def trigger_apify_actor(actor_slug, place_id):
-    url = f"https://api.apify.com/v2/acts/{actor_slug}/runs"
-    body = {"placeIds": [place_id]}
-    if "reviews" in actor_slug:
-        body["maxReviews"] = 12
-    res = requests.post(url, params={"token": APIFY_TOKEN}, json=body)
-    if res.status_code in [200, 201]:
-        return res.json().get("data", {}).get("defaultDatasetId")
-    print(f"❌ Apify failed for {place_id}: {res.text}")
-    return None
-
-def poll_apify(run_id):
-    url = f"https://api.apify.com/v2/datasets/{run_id}/items?format=json&clean=true"
-    headers = {"Authorization": f"Bearer {APIFY_TOKEN}"}
-    for _ in range(60):
-        res = requests.get(url, headers=headers)
-        if res.status_code == 200:
-            try:
-                data = res.json()
-                if data:
-                    all_reviews = []
-                    for item in data:
-                        all_reviews.extend(item.get("reviews", []))
-                    return {"reviews": all_reviews[:12]}
-            except:
-                pass
-        time.sleep(5)
-    raise TimeoutError("Apify polling timed out.")
 
 def batch_push_to_github(file_data_list, commit_message="Batch update locations"):
     repo = Github(GITHUB_TOKEN).get_repo(GITHUB_REPO)
@@ -197,7 +183,7 @@ def save_processed(ids):
 
 def run_assistant_conversation(business_data):
     thread = client.beta.threads.create()
-    prompt = """You are analyzing structured business data and recent Google Maps reviews to generate a summary for a remote work–friendly location directory. Use ONLY the data provided below.\n\nReturn valid JSON with these fields:\n\n- best_time_to_work_remotely\n- remote_work_summary\n- Optional block: scores { food_quality, service, ambiance, value, experience }\n\nDo not return any commentary or markdown. JSON only."""
+    prompt = """You are analyzing structured business data to generate a summary for a remote work–friendly location directory. Use ONLY the data provided below.\n\nReturn valid JSON with these fields:\n\n- best_time_to_work_remotely\n- remote_work_summary\n- Optional block: scores { food_quality, service, ambiance, value, experience }\n\nDo not return any commentary or markdown. JSON only."""
     flattened = flatten_business_data(business_data)
     full_input = f"{prompt}\n\n{flattened}"
     client.beta.threads.messages.create(
@@ -222,6 +208,30 @@ def run_assistant_conversation(business_data):
         print(raw_output)
         return {"output": raw_output}
 
+def trigger_apify_actor(actor_slug, place_id):
+    url = f"https://api.apify.com/v2/acts/{actor_slug}/runs"
+    body = {"placeIds": [place_id]}
+    res = requests.post(url, params={"token": os.getenv("APIFY_TOKEN")}, json=body)
+    if res.status_code in [200, 201]:
+        return res.json().get("data", {}).get("defaultDatasetId")
+    print(f"❌ Apify failed for {place_id}: {res.text}")
+    return None
+
+def poll_apify(run_id):
+    url = f"https://api.apify.com/v2/datasets/{run_id}/items?format=json&clean=true"
+    headers = {"Authorization": f"Bearer {os.getenv('APIFY_TOKEN')}"}
+    for _ in range(60):
+        res = requests.get(url, headers=headers)
+        if res.status_code == 200:
+            try:
+                data = res.json()
+                if data:
+                    return data[0]
+            except:
+                pass
+        time.sleep(5)
+    raise TimeoutError("Apify polling timed out.")
+
 def process_all():
     print("🚀 Starting full assistant pipeline")
     place_ids = get_all_place_ids()
@@ -230,9 +240,7 @@ def process_all():
     if not new_ids:
         print("✅ No new Place IDs found.")
         return
-
     batched_files = []
-
     for place_id in new_ids:
         print(f"🔍 Processing: {place_id}")
         run_id = trigger_apify_actor("compass~google-places-api", place_id)
@@ -241,14 +249,6 @@ def process_all():
         raw_data = poll_apify(run_id)
         if not raw_data:
             continue
-
-        review_run_id = trigger_apify_actor("compass~google-maps-reviews-scraper", place_id)
-        if review_run_id:
-            review_data = poll_apify(review_run_id)
-            if review_data:
-                print(f"📝 Pulled {len(review_data['reviews'])} reviews")
-                raw_data["reviews"] = review_data.get("reviews", [])
-
         structured = build_structured_json(raw_data)
         ai_fields = run_assistant_conversation(raw_data)
         merged = {**structured, **ai_fields}
@@ -257,11 +257,8 @@ def process_all():
         file_content = json.dumps(merged, indent=2)
         batched_files.append({"path": file_path, "content": file_content})
         already_done.append(place_id)
-
     if batched_files:
-        print(f"📦 Pushing {len(batched_files)} files to GitHub...")
         batch_push_to_github(batched_files)
-
     save_processed(already_done)
     print("🎉 All locations processed.")
 
