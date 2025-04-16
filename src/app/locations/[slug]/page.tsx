@@ -1,3 +1,5 @@
+// Updated version of page.tsx with new schema rendering
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -5,7 +7,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import {
   MapPin, Clock, Phone, Wifi, Power, Volume2,
-  Sun, ParkingSquare, Bath, Sandwich, MonitorSmartphone
+  Sun, ParkingSquare, Bath, Sandwich, MonitorSmartphone, Star
 } from 'lucide-react';
 
 type Location = {
@@ -14,8 +16,20 @@ type Location = {
   hours?: string;
   phone_number?: string;
   logo_url?: string;
+  website?: string;
+  menu_url?: string;
+  review_score?: number;
+  review_count?: number;
   tags?: string[];
   best_time_to_work_remotely?: string;
+  remote_work_summary?: string;
+  scores?: {
+    food_quality?: number;
+    service?: number;
+    ambiance?: number;
+    value?: number;
+    experience?: number;
+  };
   remote_work_features?: {
     wi_fi_quality?: string;
     outlet_access?: string;
@@ -60,7 +74,8 @@ export default function LocationPage() {
   if (!location) return <div className="p-6">Location not found.</div>;
 
   const features = location.remote_work_features || {};
-const hasTags = Array.isArray(location.tags) && location.tags.length > 0;
+  const scores = location.scores || {};
+  const hasTags = Array.isArray(location.tags) && location.tags.length > 0;
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-10">
@@ -91,24 +106,32 @@ const hasTags = Array.isArray(location.tags) && location.tags.length > 0;
                 <Clock size={18} /> Best Time to Work: {location.best_time_to_work_remotely}
               </p>
             )}
+            {location.review_score && (
+              <p className="flex items-center gap-2 text-yellow-600 font-medium mt-1">
+                <Star size={18} /> Rating: {location.review_score} ({location.review_count} reviews)
+              </p>
+            )}
           </div>
 
-          {/* Tags */}
+          {location.remote_work_summary && (
+            <div className="pt-4 text-slate-700 text-sm">
+              <p>{location.remote_work_summary}</p>
+            </div>
+          )}
 
-{hasTags && (
-  <div className="flex flex-wrap gap-2 pt-2">
-    {location.tags!.map((tag: string, index) => (
-      <span
-        key={tag}
-        className="text-xs font-semibold px-3 py-1 bg-blue-100 text-blue-700 rounded-full animate-fade-in-up"
-        style={{ animationDelay: `${index * 50}ms`, animationFillMode: 'forwards' }}
-      >
-        {tag}
-      </span>
-    ))}
-  </div>
-)}
-
+          {hasTags && (
+            <div className="flex flex-wrap gap-2 pt-2">
+              {location.tags!.map((tag: string, index) => (
+                <span
+                  key={tag}
+                  className="text-xs font-semibold px-3 py-1 bg-blue-100 text-blue-700 rounded-full animate-fade-in-up"
+                  style={{ animationDelay: `${index * 50}ms`, animationFillMode: 'forwards' }}
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
 
           {/* Remote Work Features */}
           <div>
@@ -125,7 +148,20 @@ const hasTags = Array.isArray(location.tags) && location.tags.length > 0;
             </div>
           </div>
 
-          {/* Back Button */}
+          {/* Scores */}
+          {Object.keys(scores).length > 0 && (
+            <div>
+              <h2 className="text-lg font-semibold text-slate-700 mt-6 mb-2">Scores</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-slate-600">
+                {scores.food_quality && <p>🍽️ Food Quality: {scores.food_quality}/10</p>}
+                {scores.service && <p>👥 Service: {scores.service}/10</p>}
+                {scores.ambiance && <p>🎧 Ambiance: {scores.ambiance}/10</p>}
+                {scores.value && <p>💵 Value: {scores.value}/10</p>}
+                {scores.experience && <p>⭐ Experience: {scores.experience}/10</p>}
+              </div>
+            </div>
+          )}
+
           <div className="pt-6 text-center">
             <button
               onClick={() => router.back()}
