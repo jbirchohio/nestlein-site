@@ -9,7 +9,7 @@ import time
 import re
 from openai import OpenAI
 from dotenv import load_dotenv
-from github import Github
+from github import Github, InputGitTreeElement
 from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
 
 # Load .env credentials
@@ -29,10 +29,8 @@ GITHUB_PATH_PREFIX = "public/locations"
 gc = gspread.service_account(filename=CREDENTIALS_FILE)
 sheet = gc.open_by_key(SHEET_ID).worksheet(SHEET_NAME)
 
-
 def slugify(name):
     return re.sub(r'[^a-z0-9]+', '-', name.lower().strip()).strip('-')
-
 
 def yes_list(category):
     return [
@@ -40,16 +38,14 @@ def yes_list(category):
         for item in category
         if item and isinstance(item, dict) and list(item.values())[0] is True
     ]
+
 def format_hours(opening_hours):
     days_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     hours_map = {h['day']: h['hours'] for h in opening_hours if 'day' in h and 'hours' in h}
-
-    # Sort and normalize
     sorted_days = [d for d in days_order if d in hours_map]
     grouped = []
     last_hours = None
     group = []
-
     for day in sorted_days:
         current_hours = hours_map[day]
         if current_hours == last_hours:
@@ -59,17 +55,13 @@ def format_hours(opening_hours):
                 grouped.append((group, last_hours))
             group = [day]
             last_hours = current_hours
-
     if group:
         grouped.append((group, last_hours))
-
     def label_range(days):
         if len(days) == 1:
             return days[0]
         return f"{days[0][:3]}–{days[-1][:3]}"
-
     return ", ".join([f"{label_range(group)}: {hours}" for group, hours in grouped])
-
 
 def flatten_business_data(bd):
     out = []
@@ -101,7 +93,6 @@ def flatten_business_data(bd):
             out.append(f"- {r.get('title', '')}: {r.get('text', '')}")
     return "\n".join(out)
 
-
 def add_ref_param(url, ref="nestlein"):
     try:
         parts = urlparse(url)
@@ -112,10 +103,6 @@ def add_ref_param(url, ref="nestlein"):
     except:
         return url
 
-# Then in build_structured_json:
-"website": add_ref_param(bd.get("website")) if bd.get("website") else None,
-
-
 def build_structured_json(bd):
     ai = bd.get("additionalInfo", {})
     return {
@@ -125,7 +112,7 @@ def build_structured_json(bd):
         "phone_number": bd.get("phone"),
         "logo_url": bd.get("imageUrl", ""),
         "website": add_ref_param(bd.get("website")) if bd.get("website") else None,
-	"menu_url": add_ref_param(bd.get("menu")) if bd.get("menu") else None,
+        "menu_url": add_ref_param(bd.get("menu")) if bd.get("menu") else None,
         "latitude": bd.get("location", {}).get("lat"),
         "longitude": bd.get("location", {}).get("lng"),
         "hours": format_hours(bd.get("openingHours", [])),
@@ -147,15 +134,16 @@ def build_structured_json(bd):
         }
     }
 
-
 def trigger_apify_actor(actor_slug, place_id):
     url = f"https://api.apify.com/v2/acts/{actor_slug}/runs"
-    res = requests.post(url, params={"token": APIFY_TOKEN}, json={"placeIds": [place_id]})
+    body = {"placeIds": [place_id]}
+    if "reviews" in actor_slug:
+        body["maxReviews"] = 12
+    res = requests.post(url, params={"token": APIFY_TOKEN}, json=body)
     if res.status_code in [200, 201]:
         return res.json().get("data", {}).get("defaultDatasetId")
     print(f"❌ Apify failed for {place_id}: {res.text}")
     return None
-
 
 def poll_apify(run_id):
     url = f"https://api.apify.com/v2/datasets/{run_id}/items?format=json&clean=true"
@@ -166,44 +154,63 @@ def poll_apify(run_id):
             try:
                 data = res.json()
                 if data:
-                    return data[0]
+                    all_reviews = []
+                    for item in data:
+                        all_reviews.extend(item.get("reviews", []))
+                    return {"reviews": all_reviews[:12]}
             except:
                 pass
         time.sleep(5)
     raise TimeoutError("Apify polling timed out.")
 
+def batch_push_to_github(file_data_list, commit_message="Batch update locations"):
+    repo = Github(GITHUB_TOKEN).get_repo(GITHUB_REPO)
+    master_ref = repo.get_git_ref("heads/main")
+    base_tree = repo.get_git_tree(master_ref.object.sha)
+    elements = []
+    for f in file_data_list:
+        blob = repo.create_git_blob(f["content"], "utf-8")
+        element = InputGitTreeElement(
+            path=f["path"],
+            mode="100644",
+            type="blob",
+            sha=blob.sha
+        )
+        elements.append(element)
+    tree = repo.create_git_tree(elements, base_tree)
+    parent = repo.get_git_commit(master_ref.object.sha)
+    commit = repo.create_git_commit(commit_message, tree, [parent])
+    master_ref.edit(commit.sha)
+
+def get_all_place_ids():
+    return sheet.col_values(1)[1:]
+
+def get_already_processed():
+    if os.path.exists("processed_ids.json"):
+        with open("processed_ids.json", "r") as f:
+            return json.load(f)
+    return []
+
+def save_processed(ids):
+    with open("processed_ids.json", "w") as f:
+        json.dump(ids, f)
 
 def run_assistant_conversation(business_data):
     thread = client.beta.threads.create()
-
-    prompt = """You are analyzing structured business data and recent Google Maps reviews to generate a summary for a remote work–friendly location directory. Use ONLY the data provided below.
-
-Return valid JSON with these fields:
-
-- best_time_to_work_remotely
-- remote_work_summary
-- Optional block: scores { food_quality, service, ambiance, value, experience }
-
-Do not return any commentary or markdown. JSON only."""
-
+    prompt = """You are analyzing structured business data and recent Google Maps reviews to generate a summary for a remote work–friendly location directory. Use ONLY the data provided below.\n\nReturn valid JSON with these fields:\n\n- best_time_to_work_remotely\n- remote_work_summary\n- Optional block: scores { food_quality, service, ambiance, value, experience }\n\nDo not return any commentary or markdown. JSON only."""
     flattened = flatten_business_data(business_data)
     full_input = f"{prompt}\n\n{flattened}"
-
     client.beta.threads.messages.create(
         thread_id=thread.id,
         role="user",
         content=full_input
     )
-
     run = client.beta.threads.runs.create(thread_id=thread.id, assistant_id=ASSISTANT_ID)
-
     while run.status not in ["completed", "failed"]:
         time.sleep(1)
         run = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
-
     messages = client.beta.threads.messages.list(thread_id=thread.id)
     raw_output = messages.data[0].content[0].text.value.strip()
-
     try:
         if raw_output.startswith("```json"):
             raw_output = raw_output[7:]
@@ -215,43 +222,16 @@ Do not return any commentary or markdown. JSON only."""
         print(raw_output)
         return {"output": raw_output}
 
-
-def push_to_github(slug, content):
-    repo = Github(GITHUB_TOKEN).get_repo(GITHUB_REPO)
-    filepath = f"{GITHUB_PATH_PREFIX}/{slug}.json"
-    encoded = base64.b64encode(content.encode("utf-8")).decode("utf-8")
-    try:
-        existing = repo.get_contents(filepath)
-        repo.update_file(filepath, f"Update {slug}", content, existing.sha)
-    except:
-        repo.create_file(filepath, f"Add {slug}", content)
-
-
-def get_all_place_ids():
-    return sheet.col_values(1)[1:]
-
-
-def get_already_processed():
-    if os.path.exists("processed_ids.json"):
-        with open("processed_ids.json", "r") as f:
-            return json.load(f)
-    return []
-
-
-def save_processed(ids):
-    with open("processed_ids.json", "w") as f:
-        json.dump(ids, f)
-
-
 def process_all():
     print("🚀 Starting full assistant pipeline")
     place_ids = get_all_place_ids()
     already_done = get_already_processed()
     new_ids = [pid for pid in place_ids if pid not in already_done]
-
     if not new_ids:
         print("✅ No new Place IDs found.")
         return
+
+    batched_files = []
 
     for place_id in new_ids:
         print(f"🔍 Processing: {place_id}")
@@ -266,18 +246,24 @@ def process_all():
         if review_run_id:
             review_data = poll_apify(review_run_id)
             if review_data:
+                print(f"📝 Pulled {len(review_data['reviews'])} reviews")
                 raw_data["reviews"] = review_data.get("reviews", [])
 
         structured = build_structured_json(raw_data)
         ai_fields = run_assistant_conversation(raw_data)
         merged = {**structured, **ai_fields}
         slug = merged.get("slug", place_id.replace(":", "-"))
-        push_to_github(slug, json.dumps(merged, indent=2))
+        file_path = f"{GITHUB_PATH_PREFIX}/{slug}.json"
+        file_content = json.dumps(merged, indent=2)
+        batched_files.append({"path": file_path, "content": file_content})
         already_done.append(place_id)
-        save_processed(already_done)
 
+    if batched_files:
+        print(f"📦 Pushing {len(batched_files)} files to GitHub...")
+        batch_push_to_github(batched_files)
+
+    save_processed(already_done)
     print("🎉 All locations processed.")
-
 
 if __name__ == "__main__":
     process_all()
