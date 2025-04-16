@@ -1,26 +1,65 @@
+const daysOfWeek = [
+  'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
+];
+
 export function parseHours(hours: string): {
   open: boolean;
   message: string;
   status: 'open' | 'openingSoon' | 'closed';
 } {
-  if (!hours || !hours.includes('-')) {
+  if (!hours || typeof hours !== 'string') {
     return { open: false, message: 'Hours unavailable', status: 'closed' };
   }
- 
-  const [startStr, endStr] = hours.split('-').map(str => str.trim());
 
-const toMinutes = (str: string): number => {
-  const [time, period] = str.split(' ');
-  const [hourStr, minuteStr] = time.split(':');
-  let hour = Number(hourStr);
-  const minute = Number(minuteStr);
+  const today = daysOfWeek[new Date().getDay()];
+  const blocks = hours.split(',').map(h => h.trim());
 
-  if (period === 'PM' && hour !== 12) hour += 12;
-  if (period === 'AM' && hour === 12) hour = 0;
+  let todayHours: string | null = null;
 
-  return hour * 60 + minute;
-};
+  for (const block of blocks) {
+    if (block.includes(':')) {
+      // Handle format: "Tuesday: 7:30 AM to 4 PM"
+      const [day, times] = block.split(':').map(s => s.trim());
+      if (day === today) {
+        todayHours = times;
+        break;
+      }
+    } else if (block.includes('-') && block.includes('to')) {
+      // Handle format: "Monday - Friday 8:00 AM to 2 PM"
+      const [dayRange, timeRange] = block.split(/(?<=\w)\s(?=\d)/); // split on first space before time
+      const [startDay, endDay] = dayRange.split('-').map(d => d.trim());
 
+      const startIndex = daysOfWeek.indexOf(startDay);
+      const endIndex = daysOfWeek.indexOf(endDay);
+      const todayIndex = daysOfWeek.indexOf(today);
+
+      if (
+        (startIndex <= todayIndex && todayIndex <= endIndex) ||
+        (startIndex > endIndex && (todayIndex >= startIndex || todayIndex <= endIndex))
+      ) {
+        todayHours = timeRange.trim();
+        break;
+      }
+    }
+  }
+
+  if (!todayHours || !todayHours.includes('to')) {
+    return { open: false, message: 'Closed today', status: 'closed' };
+  }
+
+  const [startStr, endStr] = todayHours.split('to').map(s => s.trim());
+
+  const toMinutes = (str: string): number => {
+    const [time, period] = str.split(' ');
+    const [hourStr, minuteStr] = time.split(':');
+    let hour = Number(hourStr);
+    const minute = Number(minuteStr || '0');
+
+    if (period === 'PM' && hour !== 12) hour += 12;
+    if (period === 'AM' && hour === 12) hour = 0;
+
+    return hour * 60 + minute;
+  };
 
   const now = new Date();
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
