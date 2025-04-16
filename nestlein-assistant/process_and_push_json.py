@@ -39,6 +39,35 @@ def yes_list(category):
         for item in category
         if item and isinstance(item, dict) and list(item.values())[0] is True
     ]
+def format_hours(opening_hours):
+    days_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    hours_map = {h['day']: h['hours'] for h in opening_hours if 'day' in h and 'hours' in h}
+
+    # Sort and normalize
+    sorted_days = [d for d in days_order if d in hours_map]
+    grouped = []
+    last_hours = None
+    group = []
+
+    for day in sorted_days:
+        current_hours = hours_map[day]
+        if current_hours == last_hours:
+            group.append(day)
+        else:
+            if group:
+                grouped.append((group, last_hours))
+            group = [day]
+            last_hours = current_hours
+
+    if group:
+        grouped.append((group, last_hours))
+
+    def label_range(days):
+        if len(days) == 1:
+            return days[0]
+        return f"{days[0][:3]}–{days[-1][:3]}"
+
+    return ", ".join([f"{label_range(group)}: {hours}" for group, hours in grouped])
 
 
 def flatten_business_data(bd):
@@ -84,7 +113,7 @@ def build_structured_json(bd):
         "menu_url": bd.get("menu"),
         "latitude": bd.get("location", {}).get("lat"),
         "longitude": bd.get("location", {}).get("lng"),
-        "hours": ", ".join([f"{h['day']}: {h['hours']}" for h in bd.get("openingHours", [])]),
+        "hours": format_hours(bd.get("openingHours", [])),
         "price": bd.get("price"),
         "tags": bd.get("categories", []),
         "neighborhood": bd.get("neighborhood"),
