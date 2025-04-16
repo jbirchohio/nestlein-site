@@ -81,7 +81,12 @@ export default function HomePage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 pb-4 flex items-center justify-between">
-  <FilterBar activeFilters={activeFilters} setActiveFilters={setActiveFilters} />
+  <FilterBar
+  locations={filtered} // or `allLocations` if you're storing unfiltered master list
+  activeFilters={activeFilters}
+  setActiveFilters={setActiveFilters}
+/>
+
   
   {userCoords && (
     <label className="text-sm flex items-center gap-2">
