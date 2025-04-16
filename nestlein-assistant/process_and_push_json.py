@@ -10,6 +10,7 @@ import re
 from openai import OpenAI
 from dotenv import load_dotenv
 from github import Github
+from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
 
 # Load .env credentials
 load_dotenv()
@@ -101,6 +102,20 @@ def flatten_business_data(bd):
     return "\n".join(out)
 
 
+def add_ref_param(url, ref="nestlein"):
+    try:
+        parts = urlparse(url)
+        query = parse_qs(parts.query)
+        query["ref"] = [ref]
+        new_query = urlencode(query, doseq=True)
+        return urlunparse(parts._replace(query=new_query))
+    except:
+        return url
+
+# Then in build_structured_json:
+"website": add_ref_param(bd.get("website")) if bd.get("website") else None,
+
+
 def build_structured_json(bd):
     ai = bd.get("additionalInfo", {})
     return {
@@ -109,8 +124,8 @@ def build_structured_json(bd):
         "slug": slugify(bd.get("title", "")),
         "phone_number": bd.get("phone"),
         "logo_url": bd.get("imageUrl", ""),
-        "website": bd.get("website"),
-        "menu_url": bd.get("menu"),
+        "website": add_ref_param(bd.get("website")) if bd.get("website") else None,
+	"menu_url": add_ref_param(bd.get("menu")) if bd.get("menu") else None,
         "latitude": bd.get("location", {}).get("lat"),
         "longitude": bd.get("location", {}).get("lng"),
         "hours": format_hours(bd.get("openingHours", [])),

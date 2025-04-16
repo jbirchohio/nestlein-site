@@ -11,7 +11,11 @@ interface Location {
   hours?: string;
   logo_url?: string;
   tags?: string[];
+  latitude?: number;
+  longitude?: number;
+  distance?: number;
 }
+
 
 export default function LocationCard({ location }: { location: Location }) {
   const router = useRouter();
@@ -49,6 +53,10 @@ export default function LocationCard({ location }: { location: Location }) {
         </div>
 
         <p className="text-sm text-slate-500 truncate">{address}</p>
+        {typeof location.distance === 'number' && (
+        <p className="text-xs text-blue-600">{location.distance.toFixed(1)} mi from you</p>
+        )}
+
         <p className={`text-sm font-medium ${statusColor}`}>{message}</p>
 
         <div className="flex flex-wrap gap-2 pt-2">
