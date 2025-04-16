@@ -37,7 +37,7 @@ export default function LocationPage() {
   const [location, setLocation] = useState<Location | null>(null);
   const [loading, setLoading] = useState(true);
   const [showHours, setShowHours] = useState(false);
-const expandedHours = expandHours(location.hours || '');
+  const expandedHours = expandHours(location?.hours || '');
 
 
   useEffect(() => {
