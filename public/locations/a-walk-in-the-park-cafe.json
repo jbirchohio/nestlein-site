@@ -1,0 +1,46 @@
+{
+  "name": "A Walk In The Park Cafe",
+  "address": "1491 Aster Ave, Akron, OH 44301",
+  "slug": "a-walk-in-the-park-cafe",
+  "phone_number": "(330) 536-9255",
+  "logo_url": "https://lh3.googleusercontent.com/gps-cs-s/AB5caB_5VcNPFB1VnFD385MpHKPoaFACaBHstkba1OtyXM5uWmnoocKcLRs7Ux1q8WmQP4uE26a5NP1_KBINMzDzq-_2QIi69Y9rrcFCr4wYyRhmpEm8CL2gb5-25SuSDcw2ekuOLmRh4Q=w408-h544-k-no",
+  "website": "http://awalkintheparkcafe.com/?ref=nestlein",
+  "menu_url": "http://order.awalkintheparkcafe.com/?ref=nestlein",
+  "latitude": 41.042384,
+  "longitude": -81.514299,
+  "hours": "Mon\u2013Sun: 8\u202fAM to 2\u202fPM",
+  "price": "$10\u201320",
+  "tags": [
+    "Breakfast restaurant",
+    "American restaurant",
+    "Brunch restaurant",
+    "Coffee shop",
+    "Family restaurant",
+    "Hamburger restaurant",
+    "Lunch restaurant",
+    "Sandwich shop"
+  ],
+  "neighborhood": "Firestone Park",
+  "review_score": 4.4,
+  "review_count": 765,
+  "remote_work_features": {
+    "wi_fi_quality": "Free Wi-Fi",
+    "bathroom_access": "Yes",
+    "outlet_access": "Limited",
+    "seating_comfort": "Basic",
+    "noise_level": "Casual",
+    "natural_light": "Some natural light",
+    "stay_duration_friendliness": "Welcoming for long stays",
+    "food_drink_options": "Coffee, Comfort food, Healthy options, Quick bite, Small plates, Vegan options, Vegetarian options",
+    "parking_availability": "Free parking lot"
+  },
+  "best_time_to_work_remotely": "Before 10 AM",
+  "remote_work_summary": "A cozy and trendy caf\u00e9 offering free Wi-Fi and a casual atmosphere. It's ideal for solo dining and working remotely in the mornings, with a variety of seating options and access to restrooms.",
+  "scores": {
+    "food_quality": 8,
+    "service": 7,
+    "ambiance": 8,
+    "value": 7,
+    "experience": 8
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "name": "Starbucks",
+  "address": "225 S Main St, Akron, OH 44325",
+  "slug": "starbucks",
+  "phone_number": "(330) 972-2113",
+  "logo_url": "https://lh3.googleusercontent.com/p/AF1QipN33bvG46SXZKsY8aEtl173Xbqhes0B0peLxUIb=w426-h240-k-no",
+  "website": "https://www.starbucks.com/store-locator/store/10333?ref=nestlein",
+  "menu_url": "http://www.starbucks.com/menu?ref=nestlein",
+  "latitude": 41.07886,
+  "longitude": -81.51971,
+  "hours": "Mon\u2013Thu: 7:30\u202fAM to 4\u202fPM, Friday: 7:30\u202fAM to 2:30\u202fPM, Sat\u2013Sun: Closed",
+  "price": "$1\u201310",
+  "tags": [
+    "Coffee shop",
+    "Cafe",
+    "Coffee store",
+    "Espresso bar"
+  ],
+  "neighborhood": "Downtown",
+  "review_score": 3.7,
+  "review_count": 56,
+  "remote_work_features": {
+    "wi_fi_quality": "Free Wi-Fi",
+    "bathroom_access": "Yes",
+    "outlet_access": "Moderate",
+    "seating_comfort": "Basic",
+    "noise_level": "Casual",
+    "natural_light": "Some natural light",
+    "stay_duration_friendliness": "Welcoming for long stays",
+    "food_drink_options": "Coffee, Prepared foods, Quick bite, Small plates, Vegetarian options",
+    "parking_availability": "Free parking lot"
+  },
+  "best_time_to_work_remotely": "Before 10 AM",
+  "remote_work_summary": "Starbucks offers a casual and trendy atmosphere with free Wi-Fi and a variety of seating options. It's popular for solo dining and working on a laptop, though there might be a wait during peak times.",
+  "scores": {
+    "food_quality": 7,
+    "service": 6,
+    "ambiance": 8,
+    "value": 7,
+    "experience": 8
+  }
+}

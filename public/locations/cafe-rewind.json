@@ -1,0 +1,45 @@
+{
+  "name": "Cafe Rewind",
+  "address": "1763 Goodyear Blvd, Akron, OH 44305",
+  "slug": "cafe-rewind",
+  "phone_number": "(234) 208-9262",
+  "logo_url": "https://lh3.googleusercontent.com/p/AF1QipMJmt5kMdWZpu5iln2TXhi1eVf1UE2HLiUrsdBH=w408-h334-k-no",
+  "website": "https://www.caferewind.com/?ref=nestlein",
+  "menu_url": null,
+  "latitude": 41.0738854,
+  "longitude": -81.4636931,
+  "hours": "Mon\u2013Tue: Closed, Wed\u2013Sat: 4\u202fPM to 12\u202fAM, Sunday: Closed",
+  "price": "$10\u201320",
+  "tags": [
+    "Udon noodle restaurant",
+    "Cafe",
+    "Event venue",
+    "Live music venue",
+    "Salad shop",
+    "Sandwich shop",
+    "Video arcade"
+  ],
+  "neighborhood": "Goodyear Heights",
+  "review_score": 4.7,
+  "review_count": 76,
+  "remote_work_features": {
+    "wi_fi_quality": "Free Wi-Fi",
+    "bathroom_access": "Yes",
+    "outlet_access": "Limited",
+    "seating_comfort": "Basic",
+    "noise_level": "Casual",
+    "natural_light": "Some natural light",
+    "stay_duration_friendliness": "Welcoming for long stays",
+    "food_drink_options": "Alcohol, Beer, Coffee, Comfort food, Hard liquor, Late-night food, Quick bite, Vegetarian options, Wine",
+    "parking_availability": "Free parking lot"
+  },
+  "best_time_to_work_remotely": "Mid-evening",
+  "remote_work_summary": "Cafe Rewind offers a cozy and trendy atmosphere with free Wi-Fi, making it suitable for remote work. It is ideal for solo dining with moderate crowd levels in the evenings, although live music may affect noise levels.",
+  "scores": {
+    "food_quality": 7,
+    "service": 7,
+    "ambiance": 8,
+    "value": 6,
+    "experience": 7
+  }
+}
