@@ -132,7 +132,7 @@ def build_structured_json(bd):
         "longitude": bd.get("location", {}).get("lng"),
         "hours": format_hours(bd.get("openingHours", [])),
         "price": bd.get("price"),
-        "tags": convert_to_remote_tags(bd.get("categories", []))
+        "tags": convert_to_remote_tags(bd.get("categories", [])),
         "neighborhood": bd.get("neighborhood"),
         "review_score": bd.get("totalScore"),
         "review_count": bd.get("reviewsCount"),
