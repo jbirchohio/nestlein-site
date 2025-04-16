@@ -160,8 +160,6 @@ Add final score as: **Final Score**: X.X/10
 --- Raw Data (business info and reviews) ---
 """
 
-"""
-
     flattened = flatten_business_data(business_data)
     full_input = f"{prompt}\n\n{flattened}"
 
@@ -228,25 +226,26 @@ def process_all():
         return
 
     for place_id in new_ids:
-        print(f"🔍 Processing: {place_id}")
-        run_id = trigger_apify_actor("compass~google-places-api", place_id)
-        if not run_id:
-            continue
-        raw_data = poll_apify(run_id)
-review_run_id = trigger_apify_actor("compass~google-maps-reviews-scraper", place_id)
-if review_run_id:
-    review_data = poll_apify(review_run_id)
-    if review_data:
-        raw_data["reviews"] = review_data.get("reviews", [])
+    print(f"🔍 Processing: {place_id}")
+    run_id = trigger_apify_actor("compass~google-places-api", place_id)
+    if not run_id:
+        continue
+    raw_data = poll_apify(run_id)
+    if not raw_data:
+        continue
 
-        if not raw_data:
-            continue
+    review_run_id = trigger_apify_actor("compass~google-maps-reviews-scraper", place_id)
+    if review_run_id:
+        review_data = poll_apify(review_run_id)
+        if review_data:
+            raw_data["reviews"] = review_data.get("reviews", [])
 
-        response = run_assistant_conversation(raw_data)
-        slug = response.get("slug", place_id.replace(":", "-"))
-        push_to_github(slug, json.dumps(response, indent=2))
-        already_done.append(place_id)
-        save_processed(already_done)
+    response = run_assistant_conversation(raw_data)
+    slug = response.get("slug", place_id.replace(":", "-"))
+    push_to_github(slug, json.dumps(response, indent=2))
+    already_done.append(place_id)
+    save_processed(already_done)
+
 
     print("🎉 All locations processed.")
 
