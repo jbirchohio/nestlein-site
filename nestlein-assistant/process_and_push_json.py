@@ -119,48 +119,47 @@ def trigger_apify_actor(actor_slug, place_id):
 def run_assistant_conversation(business_data):
     thread = client.beta.threads.create()
 
-    prompt = """You are analyzing raw Google Business scraped data to generate a structured summary for a remote work-friendly location directory. Use ONLY the raw data provided below to extract the values for each field. Do NOT echo back the instructions; output only the extracted values in the requested format. DO NOT wrap the output in triple backticks. Output pure JSON only.
+    prompt = """You are analyzing raw Google Business data and recent Google Maps reviews to generate a structured summary for a remote work–friendly location directory. Use ONLY the data provided below.
 
 ##Guidelines##
-0. Your output must be based solely on the raw data provided below.
-1. Express all information in American English.
-2. Do NOT include any of the scoring algorithm guidelines text in your final output.
-3. For each field, extract the data from the raw content.
-4. If a piece of data is not available, output "Unknown" (for Logo URL, output an empty string if not available).
-5. Experience (overall enjoyment, standout moments or issues)
+0. Use only the raw scraped data and reviews to infer answers.
+1. Write in American English.
+2. Output only structured JSON — no commentary, markdown, or extra text.
+3. For missing data, write "Unknown". For Logo URL, use "" if not available.
 
-Calculate the **Final Score** as the average of these five categories, rounded to one decimal place.
-Output the final score as:
-**Final Score**: [score]/10
+--- BASIC INFO ---
+**Restaurant Name**: Full name.
+**Website URL**: Base URL with ?ref=nestlein appended.
+**Logo URL**: Full URL or "".
+**Address**: Full street address.
+**Phone Number**: US format.
+**Hours of Operation**: If day-by-day is inconsistent, use "Check Website for Updated Hours".
+**Restaurant Score**: Average from the 5 categories below.
+**Best Time to Work Remotely**: Use popularity and review info to suggest a quiet time block (e.g., “Weekday mornings before 11 AM”).
 
----
+--- CATEGORY RATINGS (Score 1-10) ---
+**Food/Quality**
+**Service**
+**Ambiance/Atmosphere**
+**Value**
+**Experience**
+Add final score as: **Final Score**: X.X/10
 
-##Basic Information##
-**Restaurant Name**: Extract the restaurant's name.
-**Website URL**: Extract the base URL of the restaurant’s website from the raw data and append ?ref=nestlein.
-**Logo URL**: Extract the full image URL for the restaurant logo; if not available, output an empty string ("").
-**Address**: Extract the full business address (street number, street name, city, state, ZIP).
-**Phone Number**: Extract the phone number in standard U.S. format.
-**Hours of Operation**: Extract the business hours (in 12-hour format). If inconsistent, output "Check Website for Updated Hours".
-**Restaurant Score**: Extract and output the final score out of 10, to two decimal places.
-**Best Time to Work Remotely: Based on the popularity or crowd data, suggest the best low-traffic time for remote work (e.g., "Weekday mornings before 11 AM").
+--- REMOTE WORK FEATURES ---
+**Wi-Fi Quality**
+**Outlet Access**
+**Noise Level**
+**Seating Comfort**
+**Natural Light**
+**Stay Duration Friendliness**
+**Food & Drink Options**
+**Bathroom Access**
+**Parking Availability**
+**Tags**: 3–5 comma-separated keywords like "Study Spot, Pet-Friendly, Chill Vibe".
 
----
+--- Raw Data (business info and reviews) ---
+"""
 
-##Remote Work Features##
-**Wi-Fi Quality**: Extract a description of the Wi-Fi quality (e.g., Fast, Spotty, Slow, Secure).
-**Outlet Access**: Extract the availability of outlets (e.g., Lots, Few, None, Some under seats).
-**Noise Level**: Extract a description of the noise level (e.g., Quiet, Moderate, Loud).
-**Seating Comfort**: Extract the comfort level of seating (e.g., Cozy couches, Padded booths, Uncomfortable chairs, Spacious tables).
-**Natural Light**: Extract if there is ample natural light (Yes/No/Some).
-**Stay Duration Friendliness**: Extract if customers can stay for long periods (e.g., "Yes, Encouraged" or "No, 1-hour max").
-**Food & Drink Options**: Extract a summary of the available food and drinks.
-**Bathroom Access**: Extract whether bathrooms are available and accessible.
-**Parking Availability**: Extract information about available parking.
-**Tags**: Based on the data, suggest 3–5 relevant tags as a comma-separated list (for example, Quiet Space, Pet-Friendly, LGBTQ+ Friendly, Fast Wi-Fi, Study Spot).
-
-DO NOT include any extraneous text or disclaimers in your output. Output only the key-value pairs exactly in this format:
-Raw Data:
 """
 
     flattened = flatten_business_data(business_data)
@@ -234,6 +233,12 @@ def process_all():
         if not run_id:
             continue
         raw_data = poll_apify(run_id)
+review_run_id = trigger_apify_actor("compass~google-maps-reviews-scraper", place_id)
+if review_run_id:
+    review_data = poll_apify(review_run_id)
+    if review_data:
+        raw_data["reviews"] = review_data.get("reviews", [])
+
         if not raw_data:
             continue
 
