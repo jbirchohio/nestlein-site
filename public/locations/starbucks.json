@@ -1,26 +1,42 @@
 {
   "name": "Starbucks",
   "address": "225 S Main St, Akron, OH 44325",
-  "hours": "Monday: 7:30 AM to 4 PM, Tuesday: 7:30 AM to 4 PM, Wednesday: 7:30 AM to 4 PM, Thursday: 7:30 AM to 4 PM, Friday: 7:30 AM to 2:30 PM, Saturday: Closed, Sunday: Closed",
+  "slug": "starbucks",
   "phone_number": "(330) 972-2113",
   "logo_url": "https://lh3.googleusercontent.com/p/AF1QipN33bvG46SXZKsY8aEtl173Xbqhes0B0peLxUIb=w426-h240-k-no",
+  "website": "https://www.starbucks.com/store-locator/store/10333",
+  "menu_url": "http://www.starbucks.com/menu",
+  "latitude": 41.07886,
+  "longitude": -81.51971,
+  "hours": "Monday: 7:30\u202fAM to 4\u202fPM, Tuesday: 7:30\u202fAM to 4\u202fPM, Wednesday: 7:30\u202fAM to 4\u202fPM, Thursday: 7:30\u202fAM to 4\u202fPM, Friday: 7:30\u202fAM to 2:30\u202fPM, Saturday: Closed, Sunday: Closed",
+  "price": "$1\u201310",
   "tags": [
     "Coffee shop",
     "Cafe",
     "Coffee store",
     "Espresso bar"
   ],
-  "best_time_to_work_remotely": "Unknown",
+  "neighborhood": "Downtown",
+  "review_score": 3.7,
+  "review_count": 56,
   "remote_work_features": {
-    "wi_fi_quality": "Good",
+    "wi_fi_quality": "Free Wi-Fi",
+    "bathroom_access": "Yes",
     "outlet_access": "Moderate",
-    "noise_level": "Casual",
     "seating_comfort": "Basic",
+    "noise_level": "Casual",
     "natural_light": "Some natural light",
     "stay_duration_friendliness": "Welcoming for long stays",
     "food_drink_options": "Coffee, Prepared foods, Quick bite, Small plates, Vegetarian options",
-    "bathroom_access": "Yes",
     "parking_availability": "Free parking lot"
   },
-  "slug": "starbucks"
+  "best_time_to_work_remotely": "Before 10 AM",
+  "remote_work_summary": "This Starbucks offers free Wi-Fi and a casual, trendy atmosphere ideal for remote work. It's popular for solo dining and working on a laptop, with a likelihood of a wait. The space is wheelchair accessible with restroom facilities, making it a comfortable choice for remote workers.",
+  "scores": {
+    "food_quality": 8,
+    "service": 7,
+    "ambiance": 8,
+    "value": 7,
+    "experience": 8
+  }
 }
