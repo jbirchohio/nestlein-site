@@ -17,7 +17,7 @@ export function expandHours(raw: string): Record<string, string> {
     // Match day range
     const rangeMatch = block.match(/^([A-Za-z]+)\s*-\s*([A-Za-z]+)\s+(.+)$/);
     if (rangeMatch) {
-      const [_, start, end, time] = rangeMatch;
+      const [, start, end, time] = rangeMatch;
       const startIdx = days.indexOf(start);
       const endIdx = days.indexOf(end);
       if (startIdx === -1 || endIdx === -1) continue;
