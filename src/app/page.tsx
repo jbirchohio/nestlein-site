@@ -35,7 +35,6 @@ export default function HomePage() {
   const [userCoords, setUserCoords] = useState<{ lat: number; lon: number } | null>(null);
   const [nearMeOnly, setNearMeOnly] = useState(false);
 
-
   useEffect(() => {
     async function fetchLocations() {
       const res = await fetch('/api/locations');
@@ -47,14 +46,13 @@ export default function HomePage() {
           setUserCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
         });
       }
-     
     }
     fetchLocations();
   }, []);
 
   useEffect(() => {
     let updated = [...allLocations];
-  
+
     if (userCoords) {
       updated = updated.map((loc) => {
         if (loc.latitude && loc.longitude) {
@@ -64,20 +62,19 @@ export default function HomePage() {
         return loc;
       });
     }
-  
+
     if (nearMeOnly) {
       updated = updated.filter((loc) => loc.distance !== undefined && loc.distance <= 2);
     }
-  
+
     if (activeFilters.length > 0) {
       updated = updated.filter(loc =>
         loc.tags?.some(tag => activeFilters.includes(tag))
       );
     }
-  
+
     setFiltered(updated);
   }, [activeFilters, allLocations, userCoords, nearMeOnly]);
-  
 
   return (
     <div className="max-w-7xl mx-auto px-4 pb-4">
@@ -90,7 +87,7 @@ export default function HomePage() {
           activeFilters={activeFilters}
           setActiveFilters={setActiveFilters}
         />
-  
+
         {userCoords && (
           <label className="text-sm flex items-center gap-2">
             <input
@@ -102,23 +99,16 @@ export default function HomePage() {
           </label>
         )}
       </div>
-  
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {/* location cards go here */}
-      </div>
-    </div>
-  );
-  
-
-
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto px-4">
         {filtered.length > 0 ? (
           filtered.map((loc) => (
             <LocationCard key={loc.slug} location={loc} />
           ))
         ) : (
-          <p className="text-center col-span-full text-slate-500">No locations match your filters.</p>
+          <p className="text-center col-span-full text-slate-500">
+            No locations match your filters.
+          </p>
         )}
       </div>
     </div>
