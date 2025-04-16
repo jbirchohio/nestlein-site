@@ -1,7 +1,7 @@
 {
   "name": "Starbucks",
   "address": "225 S Main St, Akron, OH 44325",
-  "hours": "Monday: 7:30 AM to 4 PM, Tuesday: 7:30 AM to 4 PM, Wednesday: 7:30 AM to 4 PM, Thursday: 7:30 AM to 4 PM, Friday: 7:30 AM to 2:30 PM",
+  "hours": "Monday: 7:30 AM to 4 PM, Tuesday: 7:30 AM to 4 PM, Wednesday: 7:30 AM to 4 PM, Thursday: 7:30 AM to 4 PM, Friday: 7:30 AM to 2:30 PM, Saturday: Closed, Sunday: Closed",
   "phone_number": "(330) 972-2113",
   "logo_url": "https://lh3.googleusercontent.com/p/AF1QipN33bvG46SXZKsY8aEtl173Xbqhes0B0peLxUIb=w426-h240-k-no",
   "tags": [
@@ -10,7 +10,7 @@
     "Coffee store",
     "Espresso bar"
   ],
-  "best_time_to_work_remotely": "Weekdays before 10 AM",
+  "best_time_to_work_remotely": "Unknown",
   "remote_work_features": {
     "wi_fi_quality": "Good",
     "outlet_access": "Moderate",
