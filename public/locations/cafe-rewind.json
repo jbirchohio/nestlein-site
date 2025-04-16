@@ -3,7 +3,7 @@
   "address": "1763 Goodyear Blvd, Akron, OH 44305",
   "slug": "cafe-rewind",
   "phone_number": "(234) 208-9262",
-  "logo_url": "https://lh3.googleusercontent.com/p/AF1QipMJmt5kMdWZpu5iln2TXhi1eVf1UE2HLiUrsdBH=w408-h334-k-no",
+  "logo_url": "https://lh3.googleusercontent.com/gps-cs-s/AB5caB8IaL2ZZiGEuRZ7NW8X44sNlmFmbDU19tz-LwdEQY9Qw6iIuwMzIz502nNcVGJPyWDYdd6oC06w1_j0SbxCT9Ev7SE8rqqRksrDZxLZ8-5McEaD94HjpVA_hGMMqJ8CYRvJp4QI=w408-h334-k-no",
   "website": "https://www.caferewind.com/?ref=nestlein",
   "menu_url": null,
   "latitude": 41.0738854,
@@ -11,13 +11,12 @@
   "hours": "Mon\u2013Tue: Closed, Wed\u2013Sat: 4\u202fPM to 12\u202fAM, Sunday: Closed",
   "price": "$10\u201320",
   "tags": [
-    "Udon noodle restaurant",
-    "Cafe",
-    "Event venue",
-    "Live music venue",
-    "Salad shop",
-    "Sandwich shop",
-    "Video arcade"
+    "long stay friendly",
+    "open seating",
+    "group-friendly",
+    "free wi-fi",
+    "coffee served",
+    "food & drink available"
   ],
   "neighborhood": "Goodyear Heights",
   "review_score": 4.7,
@@ -33,13 +32,13 @@
     "food_drink_options": "Alcohol, Beer, Coffee, Comfort food, Hard liquor, Late-night food, Quick bite, Vegetarian options, Wine",
     "parking_availability": "Free parking lot"
   },
-  "best_time_to_work_remotely": "Mid-evening",
-  "remote_work_summary": "Cafe Rewind offers a cozy and trendy atmosphere with free Wi-Fi, making it suitable for remote work. It is ideal for solo dining with moderate crowd levels in the evenings, although live music may affect noise levels.",
+  "best_time_to_work_remotely": "Unknown",
+  "remote_work_summary": "Cafe Rewind offers a casual and cozy atmosphere with free Wi-Fi, making it suitable for remote work during its open hours in the late afternoon to midnight. However, as it is also a live music venue, it might not be ideal for those seeking a quiet environment.",
   "scores": {
     "food_quality": 7,
-    "service": 7,
+    "service": 6,
     "ambiance": 8,
-    "value": 6,
-    "experience": 7
+    "value": 7,
+    "experience": 6
   }
 }
