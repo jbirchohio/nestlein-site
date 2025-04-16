@@ -7,6 +7,7 @@ import {
   MapPin, Clock, Phone, Wifi, Power, Volume2,
   Sun, ParkingSquare, Bath, Sandwich, MonitorSmartphone
 } from 'lucide-react';
+import { expandHours } from '@/utils/expandHours';
 
 type Location = {
   name: string;
@@ -35,6 +36,9 @@ export default function LocationPage() {
   const slug = typeof params?.slug === 'string' ? params.slug : Array.isArray(params?.slug) ? params.slug[0] : '';
   const [location, setLocation] = useState<Location | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showHours, setShowHours] = useState(false);
+const expandedHours = expandHours(location.hours || '');
+
 
   useEffect(() => {
     async function fetchLocation() {
@@ -81,6 +85,24 @@ const hasTags = Array.isArray(location.tags) && location.tags.length > 0;
         {/* Content */}
         <div className="p-6 space-y-5">
           <h1 className="text-3xl font-bold text-slate-800">{location.name}</h1>
+          <div className="pt-4">
+  <button
+    onClick={() => setShowHours(!showHours)}
+    className="text-sm text-blue-600 hover:underline"
+  >
+    {showHours ? 'Hide full hours' : 'Show full hours'}
+  </button>
+
+  {showHours && (
+    <ul className="mt-2 text-sm text-slate-700 space-y-1">
+      {Object.entries(expandedHours).map(([day, time]) => (
+        <li key={day}>
+          <span className="font-medium">{day}:</span> {time}
+        </li>
+      ))}
+    </ul>
+  )}
+</div>
 
           <div className="space-y-2 text-slate-600 text-sm">
             <p className="flex items-center gap-2"><MapPin size={18} /> {location.address}</p>
