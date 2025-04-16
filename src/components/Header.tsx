@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { debounce } from 'lodash';
+import debounce from 'lodash.debounce';
 
 interface Location {
   slug: string;
