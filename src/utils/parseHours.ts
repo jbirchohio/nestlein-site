@@ -9,13 +9,18 @@ export function parseHours(hours: string): {
  
   const [startStr, endStr] = hours.split('-').map(str => str.trim());
 
-  const toMinutes = (str: string): number => {
-    const [time, period] = str.split(' ');
-    let [hour, min] = time.split(':').map(Number);
-    if (period === 'PM' && hour !== 12) hour += 12;
-    if (period === 'AM' && hour === 12) hour = 0;
-    return hour * 60 + min;
-  };
+const toMinutes = (str: string): number => {
+  const [time, period] = str.split(' ');
+  const [hourStr, minuteStr] = time.split(':');
+  let hour = Number(hourStr);
+  const minute = Number(minuteStr);
+
+  if (period === 'PM' && hour !== 12) hour += 12;
+  if (period === 'AM' && hour === 12) hour = 0;
+
+  return hour * 60 + minute;
+};
+
 
   const now = new Date();
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
