@@ -82,7 +82,14 @@ export default function HomePage() {
   return (
     <div className="max-w-7xl mx-auto px-4 pb-4 flex items-center justify-between">
   <FilterBar
-  locations={filtered} // or `allLocations` if you're storing unfiltered master list
+  locations={allLocations.map(loc => ({
+    ...loc,
+    tags: loc.tags ?? [] // ensure fallback
+  }))}
+  activeFilters={activeFilters}
+  setActiveFilters={setActiveFilters}
+/>
+ // or `allLocations` if you're storing unfiltered master list
   activeFilters={activeFilters}
   setActiveFilters={setActiveFilters}
 />
