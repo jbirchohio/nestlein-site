@@ -21,7 +21,7 @@ export function parseHours(hours: string): {
     };
   }
 
-  const [_, openStr, closeStr] = match;
+  
   const [openH, openM] = to24HourTime(openStr);
   const [closeH, closeM] = to24HourTime(closeStr);
 
@@ -62,7 +62,6 @@ export function parseHours(hours: string): {
 }
 
 function to24HourTime(str: string): [number, number] {
-  const [_, h, m, ampm] = str.match(/(\d{1,2}):(\d{2})\s*([APMapm]+)/) || [];
   let hour = parseInt(h, 10);
   const minute = parseInt(m, 10);
   if (/pm/i.test(ampm) && hour !== 12) hour += 12;
