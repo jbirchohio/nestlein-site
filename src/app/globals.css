@@ -14,7 +14,7 @@
 
 :root {
   --font-sans: "Satoshi", "Inter", sans-serif;
-  --font-mono: var(--font-geist-mono);..
+  --font-mono: monospace;
 }
 
 
