@@ -22,6 +22,7 @@ GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 GITHUB_REPO = "jbirchohio/nestlein-site"
 GITHUB_PATH_PREFIX = "public/locations"
 
+# Google Sheets
 gc = gspread.service_account(filename=CREDENTIALS_FILE)
 sheet = gc.open_by_key(SHEET_ID).worksheet(SHEET_NAME)
 
@@ -44,10 +45,12 @@ def convert_to_remote_tags(categories):
                 result.update(tags)
     return list(result)
 
+
 def slugify(name):
-    if not name or not isinstance(name, str):
-        return "untitled"
+    if not isinstance(name, str):
+        name = str(name) if name else "unknown"
     return re.sub(r'[^a-z0-9]+', '-', name.lower().strip()).strip('-')
+
 
 def yes_list(category):
     return [
@@ -121,7 +124,7 @@ def build_structured_json(bd):
     return {
         "name": bd.get("title"),
         "address": bd.get("address"),
-        "slug": slugify(bd.get("title")),
+        "slug": slugify(bd.get("title", "")),
         "phone_number": bd.get("phone"),
         "logo_url": bd.get("imageUrl", ""),
         "website": add_ref_param(bd.get("website")) if bd.get("website") else None,
@@ -147,6 +150,38 @@ def build_structured_json(bd):
         }
     }
 
+def batch_push_to_github(file_data_list, commit_message="Batch update locations"):
+    repo = Github(GITHUB_TOKEN).get_repo(GITHUB_REPO)
+    master_ref = repo.get_git_ref("heads/main")
+    base_tree = repo.get_git_tree(master_ref.object.sha)
+    elements = []
+    for f in file_data_list:
+        blob = repo.create_git_blob(f["content"], "utf-8")
+        element = InputGitTreeElement(
+            path=f["path"],
+            mode="100644",
+            type="blob",
+            sha=blob.sha
+        )
+        elements.append(element)
+    tree = repo.create_git_tree(elements, base_tree)
+    parent = repo.get_git_commit(master_ref.object.sha)
+    commit = repo.create_git_commit(commit_message, tree, [parent])
+    master_ref.edit(commit.sha)
+
+def get_all_place_ids():
+    return sheet.col_values(1)[1:]
+
+def get_already_processed():
+    if os.path.exists("processed_ids.json"):
+        with open("processed_ids.json", "r") as f:
+            return json.load(f)
+    return []
+
+def save_processed(ids):
+    with open("processed_ids.json", "w") as f:
+        json.dump(ids, f)
+
 def run_assistant_conversation(business_data):
     thread = client.beta.threads.create()
     prompt = """You are analyzing structured business data to generate a summary for a remote work–friendly location directory. Use ONLY the data provided below.
@@ -158,25 +193,36 @@ Return valid JSON with these fields:
 - Optional block: scores { food_quality, service, ambiance, value, experience }
 
 Do not return any commentary or markdown. JSON only."""
+    
     flattened = flatten_business_data(business_data)
     full_input = f"{prompt}\n\n{flattened}"
+
     client.beta.threads.messages.create(thread_id=thread.id, role="user", content=full_input)
     run = client.beta.threads.runs.create(thread_id=thread.id, assistant_id=ASSISTANT_ID)
+    
     while run.status not in ["completed", "failed"]:
         time.sleep(1)
         run = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
+    
     messages = client.beta.threads.messages.list(thread_id=thread.id)
     raw_output = messages.data[0].content[0].text.value.strip()
+
+    # ✅ Strip code block markers if present
+    if raw_output.startswith("```json"):
+        raw_output = raw_output[7:]
+    elif raw_output.startswith("```"):
+        raw_output = raw_output[3:]
+
+    if raw_output.endswith("```"):
+        raw_output = raw_output[:-3]
+
     try:
-        if raw_output.startswith("```json"):
-            raw_output = raw_output[7:]
-        if raw_output.endswith("```"):
-            raw_output = raw_output[:-3]
         return json.loads(raw_output.strip())
-    except:
+    except json.JSONDecodeError:
         print("⚠️ Could not parse Assistant output. Dumping raw text:")
         print(raw_output)
         return {"output": raw_output}
+
 
 def trigger_apify_actor(actor_slug, place_id):
     url = f"https://api.apify.com/v2/acts/{actor_slug}/runs"
@@ -202,50 +248,32 @@ def poll_apify(run_id):
         time.sleep(5)
     raise TimeoutError("Apify polling timed out.")
 
-def get_all_place_ids():
-    return sheet.col_values(1)[1:]
-
-def get_already_processed():
-    if os.path.exists("processed_ids.json"):
-        with open("processed_ids.json", "r") as f:
-            return json.load(f)
-    return []
-
-def save_processed(ids):
-    with open("processed_ids.json", "w") as f:
-        json.dump(ids, f)
-
-def batch_push_to_github(file_data_list, commit_message="Batch update locations"):
-    repo = Github(GITHUB_TOKEN).get_repo(GITHUB_REPO)
-    master_ref = repo.get_git_ref("heads/main")
-    base_tree = repo.get_git_tree(master_ref.object.sha)
-    elements = []
-    for f in file_data_list:
-        blob = repo.create_git_blob(f["content"], "utf-8")
-        element = InputGitTreeElement(path=f["path"], mode="100644", type="blob", sha=blob.sha)
-        elements.append(element)
-    tree = repo.create_git_tree(elements, base_tree)
-    parent = repo.get_git_commit(master_ref.object.sha)
-    commit = repo.create_git_commit(commit_message, tree, [parent])
-    master_ref.edit(commit.sha)
-
 def process_all():
     print("🚀 Starting full assistant pipeline")
     place_ids = get_all_place_ids()
     already_done = get_already_processed()
-    new_ids = [pid for pid in place_ids if pid not in already_done][:10]
+    new_ids = [pid for pid in place_ids if pid not in already_done]
+
     if not new_ids:
         print("✅ No new Place IDs found.")
         return
+
     batched_files = []
+    processed_count = 0
+
     for place_id in new_ids:
+        if processed_count >= 10:
+            break
+
         print(f"🔍 Processing: {place_id}")
         run_id = trigger_apify_actor("compass~google-places-api", place_id)
         if not run_id:
             continue
+
         raw_data = poll_apify(run_id)
-        if not raw_data:
+        if not raw_data or not raw_data.get("title"):
             continue
+
         structured = build_structured_json(raw_data)
         ai_fields = run_assistant_conversation(raw_data)
         merged = {**structured, **ai_fields}
@@ -254,10 +282,13 @@ def process_all():
         file_content = json.dumps(merged, indent=2)
         batched_files.append({"path": file_path, "content": file_content})
         already_done.append(place_id)
+        processed_count += 1
+
     if batched_files:
         batch_push_to_github(batched_files)
+
     save_processed(already_done)
-    print("🎉 All locations processed.")
+    print(f"🎉 Processed {processed_count} locations.")
 
 if __name__ == "__main__":
     process_all()
