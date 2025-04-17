@@ -151,7 +151,7 @@ export default function HeaderWithFilter({
     // Fuzzy search
     if (term && !term.includes('open') && !term.includes('near')) {
       const fuse = new Fuse(filtered, {
-        keys: ['name', 'tags', 'address'],
+        keys: ['name', 'tags', 'address', 'slug'],
         threshold: 0.3,
       });
       const fuzzyResults = fuse.search(term).map((res) => res.item);
