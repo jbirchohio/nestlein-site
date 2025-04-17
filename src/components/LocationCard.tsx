@@ -68,11 +68,12 @@ export default function LocationCard({ location }: { location: Location }) {
         {visibleTags.map((tag, i) => (
        <span
         key={tag}
-         className="text-xs font-semibold px-3 py-1 bg-[var(--accent-light)] text-[var(--accent-dark)] rounded-full animate-fade-in-up"
+        className="tag-pill animate-fade-in-up"
         style={{ animationDelay: `${i * 50}ms`, animationFillMode: 'forwards' }}
-        >
-          {tag.charAt(0).toUpperCase() + tag.slice(1)}
+       >
+        {tag.charAt(0).toUpperCase() + tag.slice(1)}
        </span>
+     
         ))}
 
           {extraTagCount > 0 && (

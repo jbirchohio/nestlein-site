@@ -18,6 +18,7 @@
 }
 
 
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #1B1F23;             /* Deep Charcoal */
@@ -73,6 +74,17 @@ html {
 }
 .btn-primary:hover {
   background-color: var(--accent-light);
+}
+
+/* Style tag pills with higher contrast and softer background */
+.tag-pill {
+  @apply text-xs font-medium px-3 py-1 rounded-full font-inter;
+  background-color: var(--accent-light);  /* Light green/aqua */
+  color: var(--foreground);               /* Deep charcoal for readability */
+}
+.tag-pill-muted {
+  background-color: #e0e0e0;
+  color: #333;
 }
 
 @keyframes fadeInUp {
