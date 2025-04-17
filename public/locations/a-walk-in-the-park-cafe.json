@@ -11,10 +11,10 @@
   "hours": "Mon\u2013Sun: 8\u202fAM to 2\u202fPM",
   "price": "$10\u201320",
   "tags": [
-    "coffee served",
-    "natural light",
+    "food & drink available",
     "outlets available",
-    "food & drink available"
+    "natural light",
+    "coffee served"
   ],
   "neighborhood": "Firestone Park",
   "review_score": 4.4,
@@ -31,7 +31,7 @@
     "parking_availability": "Free parking lot"
   },
   "best_time_to_work_remotely": "Before 10 AM",
-  "remote_work_summary": "A Walk In The Park Cafe offers a cozy and trendy atmosphere with free Wi-Fi, making it ideal for remote work. It features a casual setting with a variety of seating options and is popular for solo dining, especially in the mornings.",
+  "remote_work_summary": "A Walk In The Park Cafe offers a cozy and trendy atmosphere with free Wi-Fi, making it suitable for remote work. It provides ample seating and is popular for solo dining, especially during breakfast hours.",
   "scores": {
     "food_quality": 8,
     "service": 7,

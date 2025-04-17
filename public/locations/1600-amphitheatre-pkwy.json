@@ -1,0 +1,30 @@
+{
+  "name": "1600 Amphitheatre Pkwy",
+  "address": "1600 Amphitheatre Pkwy, Mountain View, CA 94043",
+  "slug": "1600-amphitheatre-pkwy",
+  "phone_number": null,
+  "logo_url": "https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=75HIiZzf1NlanMhpTfLusw&cb_client=search.gws-prod.gps&w=408&h=240&yaw=151.79146&pitch=0&thumbfov=100",
+  "website": null,
+  "menu_url": null,
+  "latitude": 37.4220108,
+  "longitude": -122.084748,
+  "hours": "",
+  "price": null,
+  "tags": [],
+  "neighborhood": null,
+  "review_score": null,
+  "review_count": 0,
+  "remote_work_features": {
+    "wi_fi_quality": "Unknown",
+    "bathroom_access": "Unknown",
+    "outlet_access": "Limited",
+    "seating_comfort": "Basic",
+    "noise_level": "Unknown",
+    "natural_light": "Some natural light",
+    "stay_duration_friendliness": "Welcoming for long stays",
+    "food_drink_options": "",
+    "parking_availability": "Unknown"
+  },
+  "best_time_to_work_remotely": "Unknown",
+  "remote_work_summary": "No specific details provided on Wi-Fi, seating, or other amenities for remote work suitability."
+}

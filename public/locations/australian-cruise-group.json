@@ -1,0 +1,39 @@
+{
+  "name": "Australian Cruise Group",
+  "address": "King Street Wharf, 32 The Promenade, Sydney NSW 2000, Australia",
+  "slug": "australian-cruise-group",
+  "phone_number": "+61 2 8296 7351",
+  "logo_url": "https://lh3.googleusercontent.com/p/AF1QipN0O52dnLpzVXosVThMtmtnrQNkp97nESRMlLG2=w408-h305-k-no",
+  "website": "https://www.australiancruisegroup.com.au/?utm_source=google&utm_medium=gmb&utm_campaign=website_link&ref=nestlein",
+  "menu_url": null,
+  "latitude": -33.8677371,
+  "longitude": 151.2016935,
+  "hours": "Mon\u2013Sun: 9\u202fAM to 8\u202fPM",
+  "price": null,
+  "tags": [
+    "food & drink available"
+  ],
+  "neighborhood": null,
+  "review_score": 4.4,
+  "review_count": 701,
+  "remote_work_features": {
+    "wi_fi_quality": "Unknown",
+    "bathroom_access": "Unknown",
+    "outlet_access": "Limited",
+    "seating_comfort": "Basic",
+    "noise_level": "Unknown",
+    "natural_light": "Some natural light",
+    "stay_duration_friendliness": "Welcoming for long stays",
+    "food_drink_options": "",
+    "parking_availability": "Unknown"
+  },
+  "best_time_to_work_remotely": "Unknown",
+  "remote_work_summary": "The Australian Cruise Group is primarily a cruise agency and not tailored for remote work. It lacks typical remote work amenities like Wi-Fi, seating arrangements, and a quiet atmosphere.",
+  "scores": {
+    "food_quality": 5,
+    "service": 6,
+    "ambiance": 4,
+    "value": 5,
+    "experience": 3
+  }
+}
