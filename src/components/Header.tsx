@@ -1,9 +1,10 @@
 'use client';
 
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import debounce from 'lodash.debounce';
+import { Filter } from 'lucide-react';
+import Link from 'next/link';
 
 interface Location {
   slug: string;
@@ -17,7 +18,7 @@ interface Location {
   distance?: number;
 }
 
-export default function Header({
+export default function HeaderWithFilter({
   locations,
   setFiltered,
   userCoords,
@@ -34,18 +35,27 @@ export default function Header({
   const [showDropdown, setShowDropdown] = useState(false);
   const [nearMe, setNearMe] = useState(false);
 
-  const allTags = Array.from(
-    new Set(locations.flatMap((loc) => loc.tags ?? []))
-  ).sort();
+  const allTags = useMemo(() => {
+    const tagSet = new Set<string>();
+    locations.forEach(loc => loc.tags?.forEach(tag => tagSet.add(tag)));
+    return Array.from(tagSet).sort();
+  }, [locations]);
+
+  const availableTags = allTags.filter(tag => !activeFilters.includes(tag));
+  const visibleTags = activeFilters.slice(0, 4);
 
   const toggleTag = (tag: string) => {
-    setActiveFilters((prev) => {
-      const updated = prev.includes(tag)
-        ? prev.filter((t) => t !== tag)
-        : [...prev, tag];
-      return updated.length > 4 ? updated.slice(-4) : updated;
-    });
-    setShowDropdown(false);
+    const exists = activeFilters.includes(tag);
+    let updated = exists
+      ? activeFilters.filter(t => t !== tag)
+      : [...activeFilters, tag];
+
+    if (!exists && updated.length > 4) {
+      updated = updated.slice(-4);
+    }
+
+    setActiveFilters(updated);
+    if (!exists) setShowDropdown(false);
   };
 
   const applyFilters = () => {
@@ -68,12 +78,7 @@ export default function Header({
 
       filtered = filtered.map((loc) => {
         if (loc.latitude && loc.longitude) {
-          const dist = haversine(
-            userCoords.lat,
-            userCoords.lon,
-            loc.latitude,
-            loc.longitude
-          );
+          const dist = haversine(userCoords.lat, userCoords.lon, loc.latitude, loc.longitude);
           return { ...loc, distance: dist };
         }
         return loc;
@@ -103,18 +108,16 @@ export default function Header({
   };
 
   useEffect(() => {
-    const delayedFilter = debounce(applyFilters, 250);
+    const delayedFilter = debounce(applyFilters, 200);
     delayedFilter();
     return delayedFilter.cancel;
   }, [activeFilters, locations, userCoords, nearMe, searchTerm]);
 
-  const availableTags = allTags.filter((t) => !activeFilters.includes(t));
-
   return (
-    <header className={`sticky top-0 z-50 backdrop-blur-md bg-white/80 border-b border-slate-200 shadow-sm`}>
+    <header className="sticky top-0 z-50 backdrop-blur-md bg-[var(--background)] border-b border-[var(--accent-light)] shadow-sm">
       <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <Link href="/" className="text-blue-600 font-bold text-xl sm:text-2xl">
-          NestleIn
+        <Link href="/" className="text-[var(--accent)] font-satoshi font-bold text-xl sm:text-2xl">
+          Roamly
         </Link>
 
         {!isSlugPage && (
@@ -127,13 +130,13 @@ export default function Header({
               className="border border-slate-300 rounded-md px-3 py-1 text-sm w-48"
             />
 
-            {activeFilters.map((tag) => (
+            {visibleTags.map((tag) => (
               <button
                 key={tag}
                 onClick={() => toggleTag(tag)}
-                className="px-3 py-1 rounded-full text-sm font-medium bg-blue-600 text-white border border-blue-600"
+                className="tag-pill bg-[var(--accent)] text-white border border-[var(--accent)] hover:brightness-110"
               >
-                {tag} ✕
+                {tag.charAt(0).toUpperCase() + tag.slice(1)} ✕
               </button>
             ))}
 
@@ -141,20 +144,20 @@ export default function Header({
               <div className="relative">
                 <button
                   onClick={() => setShowDropdown(!showDropdown)}
-                  className="px-3 py-1 rounded-full text-sm font-medium border border-slate-300 bg-white text-slate-600 hover:bg-blue-100"
+                  className="flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium border border-[var(--accent-light)] bg-[var(--background)] text-[var(--foreground)] hover:bg-[var(--accent-light)] transition"
                 >
-                  + More
+                  <Filter size={16} /> More
                 </button>
 
                 {showDropdown && (
-                  <div className="absolute z-10 mt-2 bg-white border border-slate-300 rounded-md shadow-lg p-2 max-h-64 overflow-y-auto w-48">
+                  <div className="absolute z-10 mt-2 bg-[var(--background)] border border-[var(--accent-light)] rounded-xl shadow-xl p-2 max-h-64 overflow-y-auto w-52 space-y-1">
                     {availableTags.map((tag) => (
                       <button
                         key={tag}
                         onClick={() => toggleTag(tag)}
-                        className="block w-full text-left px-3 py-1 text-sm text-slate-700 hover:bg-blue-100 rounded"
+                        className="block w-full text-left px-3 py-1 text-sm text-[var(--foreground)] hover:bg-[var(--accent-light)] rounded transition"
                       >
-                        {tag}
+                        {tag.charAt(0).toUpperCase() + tag.slice(1)}
                       </button>
                     ))}
                   </div>
@@ -166,8 +169,8 @@ export default function Header({
               onClick={() => setNearMe((prev) => !prev)}
               className={`px-3 py-1 rounded-full text-sm font-medium border transition-all duration-200 ${
                 nearMe
-                  ? 'bg-blue-600 text-white border-blue-600'
-                  : 'bg-white text-slate-600 border-slate-300 hover:bg-blue-100'
+                  ? 'bg-[var(--accent)] text-white border-[var(--accent)]'
+                  : 'bg-[var(--background)] text-[var(--foreground)] border-[var(--accent-light)] hover:bg-[var(--accent-light)]'
               }`}
             >
               Near me (2 mi)
