@@ -52,13 +52,9 @@ export default function HeaderWithFilter({
     const saved = localStorage.getItem('roamlyActiveFilters');
     if (saved) {
       setActiveFilters(JSON.parse(saved));
-    } else if (allTags.length >= 4) {
-      const shuffled = [...allTags].sort(() => 0.5 - Math.random());
-      const initial = shuffled.slice(0, 4);
-      setActiveFilters(initial);
-      localStorage.setItem('roamlyActiveFilters', JSON.stringify(initial));
     }
   }, [allTags]);
+ 
 
   const visibleTags = activeFilters.slice(0, 4);
 
