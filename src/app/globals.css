@@ -78,7 +78,7 @@ html {
 
 /* Style tag pills with higher contrast and softer background */
 .tag-pill {
-  @apply text-xs font-medium px-3 py-1 rounded-full font-inter;
+  @apply text-xs font-medium px-3 py-1 rounded-full font-sans;
   background-color: var(--accent-light);  /* Light green/aqua */
   color: var(--foreground);               /* Deep charcoal for readability */
 }
