@@ -37,21 +37,33 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 pb-4">
+    <div className="max-w-7xl mx-auto px-4 pt-16 pb-10">
+      {/* 🧭 Hero Section */}
+      <div className="text-center max-w-3xl mx-auto mb-12">
+        <h1 className="text-4xl sm:text-5xl font-bold font-satoshi text-[var(--foreground)] mb-4">
+          Where Remote Works.
+        </h1>
+        <p className="text-lg text-[var(--color-text-secondary)] font-inter">
+          Discover remote-ready cafes, cozy cowork spots, and creative corners near you — filtered by vibe, Wi-Fi, outlets, and more.
+        </p>
+      </div>
+
+      {/* 🔍 Filters + Search */}
       <Header
         locations={allLocations}
         setFiltered={setFiltered}
         userCoords={userCoords}
       />
 
+      {/* 📍 Location Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-6">
         {filtered.length > 0 ? (
           filtered.map((loc) => (
             <LocationCard key={loc.slug} location={loc} />
           ))
         ) : (
-          <p className="text-center col-span-full text-slate-500">
-            No locations match your filters.
+          <p className="text-center col-span-full text-slate-500 text-lg italic">
+            Looks a little quiet here... want to suggest a hidden gem?
           </p>
         )}
       </div>

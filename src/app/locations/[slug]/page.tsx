@@ -1,5 +1,3 @@
-// Updated version of page.tsx with new schema rendering
-
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -70,16 +68,16 @@ export default function LocationPage() {
     }
   }, [slug]);
 
-  if (loading) return <div className="p-6">Loading...</div>;
-  if (!location) return <div className="p-6">Location not found.</div>;
+  if (loading) return <div className="p-6">Brewing your perfect workspace...</div>;
+  if (!location) return <div className="p-6">Oops. This page is on break.</div>;
 
   const features = location.remote_work_features || {};
   const scores = location.scores || {};
   const hasTags = Array.isArray(location.tags) && location.tags.length > 0;
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-10">
-      <div className="bg-white rounded-2xl shadow-md overflow-hidden">
+    <div className="max-w-3xl mx-auto px-4 py-10 font-inter text-[var(--foreground)]">
+      <div className="bg-[var(--background)] rounded-2xl shadow-lg overflow-hidden border border-[var(--accent-light)]">
         {/* Image */}
         {location.logo_url && (
           <div className="h-64 w-full overflow-hidden">
@@ -95,26 +93,26 @@ export default function LocationPage() {
 
         {/* Content */}
         <div className="p-6 space-y-5">
-          <h1 className="text-3xl font-bold text-slate-800">{location.name}</h1>
+          <h1 className="text-3xl font-bold font-satoshi">{location.name}</h1>
 
-          <div className="space-y-2 text-slate-600 text-sm">
+          <div className="space-y-2 text-sm text-[var(--color-text-secondary)]">
             <p className="flex items-center gap-2"><MapPin size={18} /> {location.address}</p>
             {location.hours && <p className="flex items-center gap-2"><Clock size={18} /> {location.hours}</p>}
             {location.phone_number && <p className="flex items-center gap-2"><Phone size={18} /> {location.phone_number}</p>}
             {location.best_time_to_work_remotely && (
-              <p className="flex items-center gap-2 text-blue-600 font-medium mt-2">
+              <p className="flex items-center gap-2 text-[var(--accent)] font-medium mt-2">
                 <Clock size={18} /> Best Time to Work: {location.best_time_to_work_remotely}
               </p>
             )}
             {location.review_score && (
-              <p className="flex items-center gap-2 text-yellow-600 font-medium mt-1">
+              <p className="flex items-center gap-2 text-[var(--accent-dark)] font-medium mt-1">
                 <Star size={18} /> Rating: {location.review_score} ({location.review_count} reviews)
               </p>
             )}
           </div>
 
           {location.remote_work_summary && (
-            <div className="pt-4 text-slate-700 text-sm">
+            <div className="pt-4 text-sm text-[var(--foreground)]">
               <p>{location.remote_work_summary}</p>
             </div>
           )}
@@ -124,7 +122,7 @@ export default function LocationPage() {
               {location.tags!.map((tag: string, index) => (
                 <span
                   key={tag}
-                  className="text-xs font-semibold px-3 py-1 bg-blue-100 text-blue-700 rounded-full animate-fade-in-up"
+                  className="text-xs font-semibold px-3 py-1 bg-[var(--accent-light)] text-[var(--accent-dark)] rounded-full animate-fade-in-up"
                   style={{ animationDelay: `${index * 50}ms`, animationFillMode: 'forwards' }}
                 >
                   {tag}
@@ -135,8 +133,8 @@ export default function LocationPage() {
 
           {/* Remote Work Features */}
           <div>
-            <h2 className="text-lg font-semibold text-slate-700 mt-4 mb-2">Remote Work Features</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-slate-600">
+            <h2 className="text-lg font-semibold font-satoshi mt-4 mb-2">Remote Work Features</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-[var(--color-text-secondary)]">
               {features.wi_fi_quality && <p className="flex items-center gap-2"><Wifi size={18} /> Wi-Fi: {features.wi_fi_quality}</p>}
               {features.outlet_access && <p className="flex items-center gap-2"><Power size={18} /> Outlets: {features.outlet_access}</p>}
               {features.noise_level && <p className="flex items-center gap-2"><Volume2 size={18} /> Noise: {features.noise_level}</p>}
@@ -151,8 +149,8 @@ export default function LocationPage() {
           {/* Scores */}
           {Object.keys(scores).length > 0 && (
             <div>
-              <h2 className="text-lg font-semibold text-slate-700 mt-6 mb-2">Scores</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-slate-600">
+              <h2 className="text-lg font-semibold font-satoshi mt-6 mb-2">Scores</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-[var(--color-text-secondary)]">
                 {scores.food_quality && <p>🍽️ Food Quality: {scores.food_quality}/10</p>}
                 {scores.service && <p>👥 Service: {scores.service}/10</p>}
                 {scores.ambiance && <p>🎧 Ambiance: {scores.ambiance}/10</p>}
@@ -162,10 +160,11 @@ export default function LocationPage() {
             </div>
           )}
 
+          {/* Back Button */}
           <div className="pt-6 text-center">
             <button
               onClick={() => router.back()}
-              className="inline-block text-sm text-blue-600 hover:underline mt-4"
+              className="btn-primary inline-block text-sm mt-4"
             >
               ← Back to Listings
             </button>
