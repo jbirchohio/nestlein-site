@@ -7,7 +7,7 @@ export function parseHours(hours: string): {
   const now = new Date();
   const currentDay = now.toLocaleDateString('en-US', { weekday: 'long' });
 
-  const expanded = expandHours(hours); // Converts blocks to individual lines
+  const expanded = String(expandHours(hours)); // ensures it's a primitive string
 
   const regex = new RegExp(
     `${currentDay}:\\s*(\\d{1,2}:\\d{2}\\s*[APMapm]+)\\s*to\\s*(\\d{1,2}:\\d{2}\\s*[APMapm]+)`
