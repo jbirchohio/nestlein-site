@@ -56,7 +56,7 @@ export default function HeaderWithFilter({
   }, [allTags]);
  
 
-  const visibleTags = activeFilters.slice(0, 4);
+  const visibleTags = allTags.slice(0, 4);
 
   const toggleTag = (tag: string) => {
     const exists = activeFilters.includes(tag);
@@ -191,11 +191,17 @@ export default function HeaderWithFilter({
               <button
                 key={tag}
                 onClick={() => toggleTag(tag)}
-                className="tag-pill bg-[var(--accent)] text-white border border-[var(--accent)] hover:brightness-110"
+                className={`tag-pill ${
+                  activeFilters.includes(tag)
+                    ? 'bg-[var(--accent)] text-white border-[var(--accent)]'
+                    : 'bg-[var(--accent-light)] text-[var(--accent-dark)] border border-[var(--accent-light)]'
+                }`}
               >
-                {tag.charAt(0).toUpperCase() + tag.slice(1)} ✕
+                {tag.charAt(0).toUpperCase() + tag.slice(1)}
+                {activeFilters.includes(tag) && ' ✕'}
               </button>
             ))}
+
 
             {availableTags.length > 0 && (
               <div className="relative">
