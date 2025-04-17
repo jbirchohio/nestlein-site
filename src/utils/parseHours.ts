@@ -7,7 +7,7 @@ export function parseHours(hours: string): {
   const now = new Date();
   const currentDay = now.toLocaleDateString('en-US', { weekday: 'long' });
 
-  const expanded = expandHours(hours); // Converts blocks into individual day lines
+  const expanded = expandHours(hours); // Converts blocks to individual lines
 
   const regex = new RegExp(
     `${currentDay}:\\s*(\\d{1,2}:\\d{2}\\s*[APMapm]+)\\s*to\\s*(\\d{1,2}:\\d{2}\\s*[APMapm]+)`
@@ -21,7 +21,7 @@ export function parseHours(hours: string): {
     };
   }
 
-  
+  const [, openStr, closeStr] = match;
   const [openH, openM] = to24HourTime(openStr);
   const [closeH, closeM] = to24HourTime(closeStr);
 
@@ -62,10 +62,16 @@ export function parseHours(hours: string): {
 }
 
 function to24HourTime(str: string): [number, number] {
+  const parts = str.match(/(\d{1,2}):(\d{2})\s*([APMapm]+)/);
+  if (!parts) return [0, 0];
+
+  const [, h, m, ampm] = parts;
   let hour = parseInt(h, 10);
   const minute = parseInt(m, 10);
+
   if (/pm/i.test(ampm) && hour !== 12) hour += 12;
   if (/am/i.test(ampm) && hour === 12) hour = 0;
+
   return [hour, minute];
 }
 
