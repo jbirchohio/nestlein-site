@@ -34,14 +34,20 @@ export default function RootLayout({
           rel="preload"
           href="https://fonts.bunny.net/css?family=satoshi:400,500,700"
           as="style"
-          onLoad="this.onload=null;this.rel='stylesheet'"
+          onLoad={(e) => {
+            const el = e.currentTarget as HTMLLinkElement;
+            el.onload = null;
+            el.rel = 'stylesheet';
+          }}
         />
+
         <noscript>
-          <link
+         <link
             rel="stylesheet"
             href="https://fonts.bunny.net/css?family=satoshi:400,500,700"
           />
         </noscript>
+
       </Head>
       <body
         className={`${inter.variable} ${geistMono.variable} font-satoshi antialiased`}
