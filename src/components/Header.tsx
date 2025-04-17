@@ -7,6 +7,8 @@ import { Filter } from 'lucide-react';
 import Link from 'next/link';
 import Fuse from 'fuse.js';
 import SmartFilterBanner from '@/components/SmartFilterBanner';
+import { parseHours } from '@/utils/parseHours';
+
 
 interface Location {
   slug: string;
