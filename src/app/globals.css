@@ -18,19 +18,6 @@
 }
 
 
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #1B1F23;             /* Deep Charcoal */
-    --foreground: #F9F6F2;             /* Soft Bone */
-
-    --accent: #FF4F5E;                 /* Electric Coral */
-    --accent-light: #3ED6C0;           /* Cool Aqua */
-    --accent-dark: #FFC857;            /* Golden Amber */
-  }
-}
-
-
 body {
   background-color: var(--background);
   color: var(--foreground);
