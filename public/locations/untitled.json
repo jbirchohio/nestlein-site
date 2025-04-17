@@ -1,0 +1,30 @@
+{
+  "name": null,
+  "address": null,
+  "slug": "untitled",
+  "phone_number": null,
+  "logo_url": "",
+  "website": null,
+  "menu_url": null,
+  "latitude": null,
+  "longitude": null,
+  "hours": "",
+  "price": null,
+  "tags": [],
+  "neighborhood": null,
+  "review_score": null,
+  "review_count": 0,
+  "remote_work_features": {
+    "wi_fi_quality": "Unknown",
+    "bathroom_access": "Unknown",
+    "outlet_access": "Limited",
+    "seating_comfort": "Basic",
+    "noise_level": "Unknown",
+    "natural_light": "Some natural light",
+    "stay_duration_friendliness": "Welcoming for long stays",
+    "food_drink_options": "",
+    "parking_availability": "Unknown"
+  },
+  "best_time_to_work_remotely": "Unknown",
+  "remote_work_summary": "Details about Wi-Fi, seating, and other amenities are not provided, making it difficult to assess the space's suitability for remote work."
+}

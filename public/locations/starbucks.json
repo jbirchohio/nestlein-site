@@ -11,11 +11,11 @@
   "hours": "Mon\u2013Thu: 7:30\u202fAM to 4\u202fPM, Friday: 7:30\u202fAM to 2:30\u202fPM, Sat\u2013Sun: Closed",
   "price": "$1\u201310",
   "tags": [
-    "long stay friendly",
-    "outlets available",
-    "natural light",
     "free wi-fi",
-    "coffee served"
+    "long stay friendly",
+    "coffee served",
+    "outlets available",
+    "natural light"
   ],
   "neighborhood": "Downtown",
   "review_score": 3.7,
@@ -32,12 +32,12 @@
     "parking_availability": "Free parking lot"
   },
   "best_time_to_work_remotely": "Before 10 AM",
-  "remote_work_summary": "A trendy and casual coffee shop with free Wi-Fi and a variety of seating options. It's popular for solo dining and working on a laptop, though there may be a wait due to its popularity among college students.",
+  "remote_work_summary": "This Starbucks offers a trendy and casual atmosphere with free Wi-Fi, making it suitable for solo work. It's popular among college students and provides good laptop-friendly seating with accessible amenities, though it may get busy at times.",
   "scores": {
-    "food_quality": 8,
+    "food_quality": 7,
     "service": 6,
-    "ambiance": 7,
+    "ambiance": 8,
     "value": 7,
-    "experience": 8
+    "experience": 7
   }
 }

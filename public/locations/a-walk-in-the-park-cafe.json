@@ -3,7 +3,7 @@
   "address": "1491 Aster Ave, Akron, OH 44301",
   "slug": "a-walk-in-the-park-cafe",
   "phone_number": "(330) 536-9255",
-  "logo_url": "https://lh3.googleusercontent.com/gps-cs-s/AB5caB_5VcNPFB1VnFD385MpHKPoaFACaBHstkba1OtyXM5uWmnoocKcLRs7Ux1q8WmQP4uE26a5NP1_KBINMzDzq-_2QIi69Y9rrcFCr4wYyRhmpEm8CL2gb5-25SuSDcw2ekuOLmRh4Q=w408-h544-k-no",
+  "logo_url": "https://lh3.googleusercontent.com/p/AF1QipMhJ_hj5TBuuIA4VYPRCAlxItW6WGQtIn_Q1ncE=w408-h544-k-no",
   "website": "http://awalkintheparkcafe.com/?ref=nestlein",
   "menu_url": "http://order.awalkintheparkcafe.com/?ref=nestlein",
   "latitude": 41.042384,
@@ -11,10 +11,10 @@
   "hours": "Mon\u2013Sun: 8\u202fAM to 2\u202fPM",
   "price": "$10\u201320",
   "tags": [
-    "outlets available",
     "coffee served",
-    "food & drink available",
-    "natural light"
+    "natural light",
+    "outlets available",
+    "food & drink available"
   ],
   "neighborhood": "Firestone Park",
   "review_score": 4.4,
@@ -31,7 +31,7 @@
     "parking_availability": "Free parking lot"
   },
   "best_time_to_work_remotely": "Before 10 AM",
-  "remote_work_summary": "A casual and cozy caf\u00e9 offering free Wi-Fi and a variety of seating options. It's suitable for solo work, especially in the morning, with a relaxed atmosphere and moderate crowd.",
+  "remote_work_summary": "A Walk In The Park Cafe offers a cozy and trendy atmosphere with free Wi-Fi, making it ideal for remote work. It features a casual setting with a variety of seating options and is popular for solo dining, especially in the mornings.",
   "scores": {
     "food_quality": 8,
     "service": 7,
