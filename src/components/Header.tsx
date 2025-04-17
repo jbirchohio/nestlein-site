@@ -6,6 +6,8 @@ import debounce from 'lodash.debounce';
 import { Filter } from 'lucide-react';
 import Link from 'next/link';
 import Fuse from 'fuse.js';
+import SmartFilterBanner from '@/components/SmartFilterBanner';
+
 
 interface Location {
   slug: string;
@@ -235,6 +237,8 @@ const applyFilters = () => {
                 )}
               </div>
             )}
+            <SmartFilterBanner message={smartFilterMessage} />
+
             <div className="ml-auto"><div className="flex justify-end w-full sm:w-auto">
               <button
                 onClick={resetFilters}
