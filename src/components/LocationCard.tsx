@@ -59,18 +59,22 @@ export default function LocationCard({ location }: { location: Location }) {
           </p>
         )}
 
-        <p className={`text-sm font-medium ${statusColor}`}>{message}</p>
+        <p className={`text-sm font-medium ${statusColor}`}>
+          {message === 'Closed Today' ? 'Closed' : message}
+        </p>
+
 
         <div className="flex flex-wrap gap-2 pt-2">
-          {visibleTags.map((tag, i) => (
-            <span
-              key={tag}
-              className="text-xs font-semibold px-3 py-1 rounded-full bg-[var(--accent-light)] text-[var(--accent-dark)] font-inter animate-fade-in-up"
-              style={{ animationDelay: `${i * 50}ms`, animationFillMode: 'forwards' }}
-            >
-              {tag}
-            </span>
-          ))}
+        {visibleTags.map((tag, i) => (
+       <span
+        key={tag}
+         className="text-xs font-semibold px-3 py-1 bg-[var(--accent-light)] text-[var(--accent-dark)] rounded-full animate-fade-in-up"
+        style={{ animationDelay: `${i * 50}ms`, animationFillMode: 'forwards' }}
+        >
+          {tag.charAt(0).toUpperCase() + tag.slice(1)}
+       </span>
+        ))}
+
           {extraTagCount > 0 && (
             <span className="text-xs font-semibold px-3 py-1 bg-slate-200 text-slate-600 rounded-full font-inter">
               +{extraTagCount} more
