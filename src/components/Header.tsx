@@ -5,6 +5,7 @@ import { useEffect, useState, useMemo } from 'react';
 import debounce from 'lodash.debounce';
 import { Filter } from 'lucide-react';
 import Link from 'next/link';
+import Fuse from 'fuse.js';
 
 interface Location {
   slug: string;
@@ -42,48 +43,109 @@ export default function HeaderWithFilter({
   }, [locations]);
 
   const availableTags = allTags.filter(tag => !activeFilters.includes(tag));
-  const visibleTags = activeFilters.slice(0, 4);
 
+  useEffect(() => {
+    const saved = localStorage.getItem('roamlyActiveFilters');
+    if (saved) {
+      setActiveFilters(JSON.parse(saved));
+    } else if (allTags.length >= 4) {
+      const shuffled = [...allTags].sort(() => 0.5 - Math.random());
+      const initial = shuffled.slice(0, 4);
+      setActiveFilters(initial);
+      localStorage.setItem('roamlyActiveFilters', JSON.stringify(initial));
+    }
+  }, [allTags]);
+  
+  const visibleTags = activeFilters.slice(0, 4);
+  
   const toggleTag = (tag: string) => {
     const exists = activeFilters.includes(tag);
     let updated = exists
       ? activeFilters.filter(t => t !== tag)
       : [...activeFilters, tag];
-
+  
     if (!exists && updated.length > 4) {
       updated = updated.slice(-4);
     }
-
+  
     setActiveFilters(updated);
+    localStorage.setItem('roamlyActiveFilters', JSON.stringify(updated));
+  
     if (!exists) setShowDropdown(false);
   };
+  
+  const resetFilters = () => {
+    const shuffled = [...allTags].sort(() => 0.5 - Math.random());
+    const fresh = shuffled.slice(0, 4);
+    setActiveFilters(fresh);
+    localStorage.setItem('roamlyActiveFilters', JSON.stringify(fresh));
+    setShowDropdown(false);
+  };
+  
+  import Fuse from 'fuse.js'; // up top
 
-  const applyFilters = () => {
-    let filtered = [...locations];
+const applyFilters = () => {
+  let filtered = [...locations];
+  const term = searchTerm.toLowerCase().trim();
 
-    if (userCoords) {
-      const toRad = (x: number) => (x * Math.PI) / 180;
-      const haversine = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
-        const R = 3958.8;
-        const dLat = toRad(lat2 - lat1);
-        const dLon = toRad(lon2 - lon1);
-        const a =
-          Math.sin(dLat / 2) ** 2 +
-          Math.cos(toRad(lat1)) *
-            Math.cos(toRad(lat2)) *
-            Math.sin(dLon / 2) ** 2;
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return R * c;
-      };
+  // Distance calculation (for "near me" and scoring)
+  if (userCoords) {
+    const toRad = (x: number) => (x * Math.PI) / 180;
+    const haversine = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+      const R = 3958.8;
+      const dLat = toRad(lat2 - lat1);
+      const dLon = toRad(lon2 - lon1);
+      const a =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos(toRad(lat1)) *
+          Math.cos(toRad(lat2)) *
+          Math.sin(dLon / 2) ** 2;
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    };
 
-      filtered = filtered.map((loc) => {
-        if (loc.latitude && loc.longitude) {
-          const dist = haversine(userCoords.lat, userCoords.lon, loc.latitude, loc.longitude);
-          return { ...loc, distance: dist };
-        }
-        return loc;
-      });
-    }
+    filtered = filtered.map((loc) => {
+      if (loc.latitude && loc.longitude) {
+        const dist = haversine(userCoords.lat, userCoords.lon, loc.latitude, loc.longitude);
+        return { ...loc, distance: dist };
+      }
+      return loc;
+    });
+  }
+
+  // Special trigger: "near me"
+  if (term.includes("near")) {
+    filtered = filtered.filter((loc) => loc.distance !== undefined && loc.distance <= 2);
+  }
+
+  // Special trigger: "open now"
+  if (term.includes("open")) {
+    filtered = filtered.filter((loc) => {
+      const { status } = parseHours(loc.hours || '');
+      return status === 'open';
+    });
+  }
+
+  // Active tag filters
+  if (activeFilters.length > 0) {
+    filtered = filtered.filter((loc) =>
+      loc.tags?.some((tag) => activeFilters.includes(tag))
+    );
+  }
+
+  // Fuzzy search
+  if (term && !term.includes("open") && !term.includes("near")) {
+    const fuse = new Fuse(filtered, {
+      keys: ['name', 'tags', 'address'],
+      threshold: 0.3,
+    });
+    const fuzzyResults = fuse.search(term).map((res) => res.item);
+    filtered = fuzzyResults;
+  }
+
+  setFiltered(filtered);
+};
+
 
     if (nearMe) {
       filtered = filtered.filter((loc) => loc.distance !== undefined && loc.distance <= 2);
@@ -97,12 +159,21 @@ export default function HeaderWithFilter({
 
     if (searchTerm.trim()) {
       const term = searchTerm.toLowerCase();
-      filtered = filtered.filter(
-        (loc) =>
-          loc.name.toLowerCase().includes(term) ||
-          loc.tags?.some((t) => t.toLowerCase().includes(term))
-      );
+    
+      if (term.includes("open")) {
+        filtered = filtered.filter((loc) => {
+          const { status } = parseHours(loc.hours || '');
+          return status === 'open';
+        });
+      } else {
+        filtered = filtered.filter(
+          (loc) =>
+            loc.name.toLowerCase().includes(term) ||
+            loc.tags?.some((t) => t.toLowerCase().includes(term))
+        );
+      }
     }
+    
 
     setFiltered(filtered);
   };
@@ -164,7 +235,14 @@ export default function HeaderWithFilter({
                 )}
               </div>
             )}
-
+            <div className="ml-auto"><div className="flex justify-end w-full sm:w-auto">
+              <button
+                onClick={resetFilters}
+                className="px-3 py-1 rounded-full text-sm font-medium border border-[var(--accent-light)] bg-[var(--background)] text-[var(--foreground)] hover:bg-[var(--accent-light)] transition"
+              >   
+                Reset Filters
+              </button>
+              </div>
             <button
               onClick={() => setNearMe((prev) => !prev)}
               className={`px-3 py-1 rounded-full text-sm font-medium border transition-all duration-200 ${

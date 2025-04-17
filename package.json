@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@next/mdx": "^15.3.0",
+    "fuse.js": "^7.1.0",
     "gray-matter": "^4.0.3",
     "lodash": "^4.17.21",
     "lodash.debounce": "^4.0.8",
