@@ -109,6 +109,7 @@ def add_ref_param(url, ref="roamly"):
 
 
 def build_structured_json(bd):
+    ai = bd.get("additional_info", {}) or bd.get("about", {})
     return {
         "slug": slugify_location(bd.get("name"), bd.get("address")),
         "name": bd.get("name"),
@@ -118,19 +119,19 @@ def build_structured_json(bd):
         "phone": bd.get("phone", "Unknown"),
         "website": add_ref_param(bd.get("site", "")),
         "logo_url": bd.get("photos_sample", ["https://roamly.app/default-image.jpg"])[0] if bd.get("photos_sample") else "https://roamly.app/default-image.jpg",
-        "latitude": bd.get("location", {}).get("lat"),
-        "longitude": bd.get("location", {}).get("lng"),
+        "latitude": bd.get("location", {}).get("lat") or "Unknown",
+        "longitude": bd.get("location", {}).get("lng") or "Unknown",
         "hours": format_hours(bd.get("opening_hours", [])),
         "open_now": bd.get("opening_hours_status", "Unknown"),
         "tags": convert_to_remote_tags(bd.get("types", [])),
-        "remote_work_features": [
-            "Free Wi-Fi" if "wifi" in str(bd).lower() else "Unknown",
-            "Outlets available" if "outlet" in str(bd).lower() else "Unknown",
-            "Quiet environment" if "quiet" in str(bd).lower() else "Unknown",
-            "Comfortable seating" if "seating" in str(bd).lower() else "Unknown",
-            "Natural light" if "light" in str(bd).lower() else "Unknown",
-            "Long stay friendly" if "long stay" in str(bd).lower() else "Unknown"
-        ]
+        "remote_work_features": {
+            "wi_fi_quality": "Free Wi-Fi" if "wifi" in str(bd).lower() else "Unknown",
+            "bathroom_access": "Yes" if "restroom" in str(bd).lower() else "Unknown",
+            "outlet_access": "Available" if "outlet" in str(bd).lower() else "Unknown",
+            "seating_comfort": "Comfortable" if "seating" in str(bd).lower() else "Unknown",
+            "noise_level": "Quiet" if "quiet" in str(bd).lower() else "Unknown",
+            "natural_light": "Yes" if "natural light" in str(bd).lower() else "Unknown"
+        }
     }
 
 
