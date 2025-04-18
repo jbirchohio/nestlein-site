@@ -7,19 +7,19 @@
   "phone": "+1 201-547-4556",
   "website": "https://www.jclibrary.org/branch/heights-branch/?ref=roamly",
   "logo_url": "https://roamly.app/default-image.jpg",
-  "latitude": null,
-  "longitude": null,
+  "latitude": "Unknown",
+  "longitude": "Unknown",
   "hours": "",
   "open_now": "Unknown",
   "tags": [],
-  "remote_work_features": [
-    "Unknown",
-    "Unknown",
-    "Unknown",
-    "Unknown",
-    "Unknown",
-    "Unknown"
-  ],
+  "remote_work_features": {
+    "wi_fi_quality": "Unknown",
+    "bathroom_access": "Yes",
+    "outlet_access": "Unknown",
+    "seating_comfort": "Unknown",
+    "noise_level": "Unknown",
+    "natural_light": "Unknown"
+  },
   "best_time_to_work_remotely": "Unknown",
-  "remote_work_summary": "The information provided does not specify details about Wi-Fi, seating, or noise level, making it difficult to assess suitability for remote work."
+  "remote_work_summary": "Information about Wi-Fi, outlet access, and seating is not available, making it difficult to assess the suitability for remote work."
 }
