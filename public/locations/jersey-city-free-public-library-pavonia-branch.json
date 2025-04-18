@@ -3,12 +3,12 @@
   "name": "Jersey City Free Public Library: Pavonia Branch",
   "place_id": "ChIJIya3eEtXwokRypTwIHz1dzA",
   "cid": 3492529949526496458,
-  "address": "Unknown",
+  "address": "326 8th St, Jersey City, NJ 07302",
   "phone": "+1 201-547-4808",
   "website": "https://www.jclibrary.org/branch/pavonia-branch/?ref=roamly",
-  "logo_url": "https://roamly.app/default-image.jpg",
-  "latitude": "Unknown",
-  "longitude": "Unknown",
+  "logo_url": "https://lh6.googleusercontent.com/-ESDUw50GaMQ/AAAAAAAAAAI/AAAAAAAAAAA/B1IFGswXW54/s44-p-k-no-ns-nd/photo.jpg",
+  "latitude": 40.7272517,
+  "longitude": -74.0479742,
   "hours": "",
   "open_now": "Unknown",
   "tags": [],
@@ -21,5 +21,5 @@
     "natural_light": "Unknown"
   },
   "best_time_to_work_remotely": "Unknown",
-  "remote_work_summary": "The library provides a quiet environment suitable for remote work, though details about Wi-Fi, outlet access, and seating are not specified."
+  "remote_work_summary": "The library provides a quiet environment suitable for remote work, with wheelchair accessibility. However, specific details on Wi-Fi, outlet access, and seating are not available."
 }

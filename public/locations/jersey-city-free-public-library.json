@@ -3,12 +3,12 @@
   "name": "Jersey City Free Public Library",
   "place_id": "ChIJDzgYtbZQwokRXGwdVgeGfjs",
   "cid": 4287011261370952796,
-  "address": "Unknown",
+  "address": "472 Jersey Ave, Jersey City, NJ 07302",
   "phone": "+1 201-547-4501",
   "website": "https://www.jclibrary.org/branch/priscilla-gardner-main-library-departments/?ref=roamly",
-  "logo_url": "https://roamly.app/default-image.jpg",
-  "latitude": "Unknown",
-  "longitude": "Unknown",
+  "logo_url": "https://lh3.googleusercontent.com/-ncFE7cQeeis/AAAAAAAAAAI/AAAAAAAAAAA/lMiDeqe3tG8/s44-p-k-no-ns-nd/photo.jpg",
+  "latitude": 40.718852,
+  "longitude": -74.047419,
   "hours": "",
   "open_now": "Unknown",
   "tags": [],
@@ -21,5 +21,5 @@
     "natural_light": "Unknown"
   },
   "best_time_to_work_remotely": "Unknown",
-  "remote_work_summary": "The space's suitability for remote work is unclear due to insufficient information on Wi-Fi, seating, and other amenities."
+  "remote_work_summary": "The library offers a quiet environment suitable for focused work, with accessibility features like a wheelchair accessible entrance. However, details on Wi-Fi, seating, and outlet access are not specified."
 }

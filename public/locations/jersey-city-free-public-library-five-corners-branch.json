@@ -3,12 +3,12 @@
   "name": "Jersey City Free Public Library: Five Corners Branch",
   "place_id": "ChIJKUhUyjBXwokRJPm6E2kz8_s",
   "cid": 18154911049256204580,
-  "address": "Unknown",
+  "address": "678 Newark Ave, Jersey City, NJ 07306",
   "phone": "+1 201-547-4543",
   "website": "https://www.jclibrary.org/branch/five-corners-branch/?ref=roamly",
-  "logo_url": "https://roamly.app/default-image.jpg",
-  "latitude": "Unknown",
-  "longitude": "Unknown",
+  "logo_url": "https://lh5.googleusercontent.com/-kjh75783Zow/AAAAAAAAAAI/AAAAAAAAAAA/p6AKHKUU4kk/s44-p-k-no-ns-nd/photo.jpg",
+  "latitude": 40.7351141,
+  "longitude": -74.0595927,
   "hours": "",
   "open_now": "Unknown",
   "tags": [],
@@ -21,5 +21,5 @@
     "natural_light": "Unknown"
   },
   "best_time_to_work_remotely": "Unknown",
-  "remote_work_summary": "The data provided does not include specific details about Wi-Fi, outlet access, or the overall vibe, making it difficult to assess suitability for remote work."
+  "remote_work_summary": "This library branch offers a quiet environment that is wheelchair accessible, making it suitable for remote work. However, specific details about Wi-Fi, seating, and outlet access are not provided."
 }

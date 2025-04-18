@@ -3,12 +3,12 @@
   "name": "Jersey City Free Public Library: New Jersey Room",
   "place_id": "ChIJs4WLTLFQwokRQzjI2rgYK5U",
   "cid": 10748712117873424451,
-  "address": "Unknown",
+  "address": "472 Jersey Ave, Jersey City, NJ 07302",
   "phone": "+1 201-547-4503",
   "website": "https://www.jclibrary.org/resources/new-jersey-room/?ref=roamly",
-  "logo_url": "https://roamly.app/default-image.jpg",
-  "latitude": "Unknown",
-  "longitude": "Unknown",
+  "logo_url": "https://lh4.googleusercontent.com/-JvXd_P7PFh0/AAAAAAAAAAI/AAAAAAAAAAA/xvFMleOm5IY/s44-p-k-no-ns-nd/photo.jpg",
+  "latitude": 40.7191747,
+  "longitude": -74.0472898,
   "hours": "",
   "open_now": "Unknown",
   "tags": [],
@@ -21,5 +21,5 @@
     "natural_light": "Unknown"
   },
   "best_time_to_work_remotely": "Unknown",
-  "remote_work_summary": "The space is a library setting with a quiet atmosphere suitable for focused work. However, specific details about Wi-Fi, outlet access, and seating are not provided."
+  "remote_work_summary": "A library setting with a quiet atmosphere suitable for focused work. Accessibility is good with a wheelchair accessible entrance, but specific details on Wi-Fi and seating are not available."
 }

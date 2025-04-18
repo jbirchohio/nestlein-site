@@ -3,12 +3,12 @@
   "name": "Jersey City Free Public Library: Heights Branch",
   "place_id": "ChIJV8szYmpXwokRqKAdeNR9Nxc",
   "cid": 1672944138093174952,
-  "address": "Unknown",
+  "address": "14 Zabriskie St, Jersey City, NJ 07307",
   "phone": "+1 201-547-4556",
   "website": "https://www.jclibrary.org/branch/heights-branch/?ref=roamly",
-  "logo_url": "https://roamly.app/default-image.jpg",
-  "latitude": "Unknown",
-  "longitude": "Unknown",
+  "logo_url": "https://lh6.googleusercontent.com/-XWgWFZGZCps/AAAAAAAAAAI/AAAAAAAAAAA/R1Ge5iJ1t1E/s44-p-k-no-ns-nd/photo.jpg",
+  "latitude": 40.745759,
+  "longitude": -74.05041,
   "hours": "",
   "open_now": "Unknown",
   "tags": [],
@@ -21,5 +21,5 @@
     "natural_light": "Unknown"
   },
   "best_time_to_work_remotely": "Unknown",
-  "remote_work_summary": "Information about Wi-Fi, outlet access, and seating is not available, making it difficult to assess the suitability for remote work."
+  "remote_work_summary": "The Jersey City Free Public Library: Heights Branch offers a quiet environment suitable for focused work. It is wheelchair accessible and provides essential amenities, making it a good choice for remote workers seeking a peaceful space."
 }
