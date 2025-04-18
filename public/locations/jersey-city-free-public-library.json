@@ -7,19 +7,19 @@
   "phone": "+1 201-547-4501",
   "website": "https://www.jclibrary.org/branch/priscilla-gardner-main-library-departments/?ref=roamly",
   "logo_url": "https://roamly.app/default-image.jpg",
-  "latitude": null,
-  "longitude": null,
+  "latitude": "Unknown",
+  "longitude": "Unknown",
   "hours": "",
   "open_now": "Unknown",
   "tags": [],
-  "remote_work_features": [
-    "Unknown",
-    "Unknown",
-    "Unknown",
-    "Unknown",
-    "Unknown",
-    "Unknown"
-  ],
+  "remote_work_features": {
+    "wi_fi_quality": "Unknown",
+    "bathroom_access": "Unknown",
+    "outlet_access": "Unknown",
+    "seating_comfort": "Unknown",
+    "noise_level": "Unknown",
+    "natural_light": "Unknown"
+  },
   "best_time_to_work_remotely": "Unknown",
-  "remote_work_summary": "The space's suitability for remote work cannot be determined with the available information."
+  "remote_work_summary": "The space's suitability for remote work is unclear due to insufficient information on Wi-Fi, seating, and other amenities."
 }

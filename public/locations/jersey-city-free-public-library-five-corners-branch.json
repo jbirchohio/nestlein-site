@@ -7,19 +7,19 @@
   "phone": "+1 201-547-4543",
   "website": "https://www.jclibrary.org/branch/five-corners-branch/?ref=roamly",
   "logo_url": "https://roamly.app/default-image.jpg",
-  "latitude": null,
-  "longitude": null,
+  "latitude": "Unknown",
+  "longitude": "Unknown",
   "hours": "",
   "open_now": "Unknown",
   "tags": [],
-  "remote_work_features": [
-    "Unknown",
-    "Unknown",
-    "Unknown",
-    "Unknown",
-    "Unknown",
-    "Unknown"
-  ],
+  "remote_work_features": {
+    "wi_fi_quality": "Unknown",
+    "bathroom_access": "Unknown",
+    "outlet_access": "Unknown",
+    "seating_comfort": "Unknown",
+    "noise_level": "Unknown",
+    "natural_light": "Unknown"
+  },
   "best_time_to_work_remotely": "Unknown",
-  "remote_work_summary": "The library offers a quiet environment suitable for remote work, with accessible facilities. However, specific details on Wi-Fi, outlet access, and seating are not provided."
+  "remote_work_summary": "The data provided does not include specific details about Wi-Fi, outlet access, or the overall vibe, making it difficult to assess suitability for remote work."
 }
