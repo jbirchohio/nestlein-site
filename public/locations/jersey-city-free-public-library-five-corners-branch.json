@@ -6,17 +6,20 @@
   "address": "Unknown",
   "phone": "+1 201-547-4543",
   "website": "https://www.jclibrary.org/branch/five-corners-branch/?ref=roamly",
-  "logo_url": "",
+  "logo_url": "https://roamly.app/default-image.jpg",
+  "latitude": null,
+  "longitude": null,
   "hours": "",
   "open_now": "Unknown",
   "tags": [],
+  "remote_work_features": [
+    "Unknown",
+    "Unknown",
+    "Unknown",
+    "Unknown",
+    "Unknown",
+    "Unknown"
+  ],
   "best_time_to_work_remotely": "Unknown",
-  "remote_work_summary": "The Jersey City Free Public Library: Five Corners Branch is accessible and offers a quiet environment suitable for remote work. However, details about Wi-Fi, seating, and amenities are not available.",
-  "scores": {
-    "food_quality": 0,
-    "service": 0,
-    "ambiance": 0,
-    "value": 0,
-    "experience": 0
-  }
+  "remote_work_summary": "The library offers a quiet environment suitable for remote work, with accessible facilities. However, specific details on Wi-Fi, outlet access, and seating are not provided."
 }

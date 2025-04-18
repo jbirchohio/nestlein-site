@@ -6,17 +6,20 @@
   "address": "Unknown",
   "phone": "+1 201-547-4556",
   "website": "https://www.jclibrary.org/branch/heights-branch/?ref=roamly",
-  "logo_url": "",
+  "logo_url": "https://roamly.app/default-image.jpg",
+  "latitude": null,
+  "longitude": null,
   "hours": "",
   "open_now": "Unknown",
   "tags": [],
+  "remote_work_features": [
+    "Unknown",
+    "Unknown",
+    "Unknown",
+    "Unknown",
+    "Unknown",
+    "Unknown"
+  ],
   "best_time_to_work_remotely": "Unknown",
-  "remote_work_summary": "The Jersey City Free Public Library: Heights Branch offers a quiet environment with accessible facilities, making it suitable for focused work. However, details on Wi-Fi, seating, and outlet access are not provided.",
-  "scores": {
-    "food_quality": 0,
-    "service": 0,
-    "ambiance": 6,
-    "value": 0,
-    "experience": 5
-  }
+  "remote_work_summary": "The information provided does not specify details about Wi-Fi, seating, or noise level, making it difficult to assess suitability for remote work."
 }

@@ -6,17 +6,20 @@
   "address": "Unknown",
   "phone": "+1 201-547-4503",
   "website": "https://www.jclibrary.org/resources/new-jersey-room/?ref=roamly",
-  "logo_url": "",
+  "logo_url": "https://roamly.app/default-image.jpg",
+  "latitude": null,
+  "longitude": null,
   "hours": "",
   "open_now": "Unknown",
   "tags": [],
+  "remote_work_features": [
+    "Unknown",
+    "Unknown",
+    "Unknown",
+    "Unknown",
+    "Unknown",
+    "Unknown"
+  ],
   "best_time_to_work_remotely": "Unknown",
-  "remote_work_summary": "The Jersey City Free Public Library: New Jersey Room offers a quiet environment ideal for research and study. It is wheelchair accessible, making it inclusive for all visitors.",
-  "scores": {
-    "food_quality": 0,
-    "service": 5,
-    "ambiance": 7,
-    "value": 8,
-    "experience": 6
-  }
+  "remote_work_summary": "The information provided is insufficient to determine the suitability for remote work."
 }

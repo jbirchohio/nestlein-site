@@ -6,17 +6,20 @@
   "address": "Unknown",
   "phone": "+1 201-547-4501",
   "website": "https://www.jclibrary.org/branch/priscilla-gardner-main-library-departments/?ref=roamly",
-  "logo_url": "",
+  "logo_url": "https://roamly.app/default-image.jpg",
+  "latitude": null,
+  "longitude": null,
   "hours": "",
   "open_now": "Unknown",
   "tags": [],
+  "remote_work_features": [
+    "Unknown",
+    "Unknown",
+    "Unknown",
+    "Unknown",
+    "Unknown",
+    "Unknown"
+  ],
   "best_time_to_work_remotely": "Unknown",
-  "remote_work_summary": "The Jersey City Free Public Library offers a quiet environment suitable for remote work. It is wheelchair accessible, providing an inclusive space for all visitors.",
-  "scores": {
-    "food_quality": null,
-    "service": null,
-    "ambiance": 8,
-    "value": null,
-    "experience": 7
-  }
+  "remote_work_summary": "The space's suitability for remote work cannot be determined with the available information."
 }

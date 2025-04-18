@@ -6,11 +6,20 @@
   "address": "Unknown",
   "phone": "+1 201-547-4808",
   "website": "https://www.jclibrary.org/branch/pavonia-branch/?ref=roamly",
-  "logo_url": "",
+  "logo_url": "https://roamly.app/default-image.jpg",
+  "latitude": null,
+  "longitude": null,
   "hours": "",
   "open_now": "Unknown",
   "tags": [],
+  "remote_work_features": [
+    "Unknown",
+    "Unknown",
+    "Unknown",
+    "Unknown",
+    "Unknown",
+    "Unknown"
+  ],
   "best_time_to_work_remotely": "Unknown",
-  "remote_work_summary": "The Jersey City Free Public Library: Pavonia Branch offers a wheelchair accessible entrance, making it suitable for remote work, though specific details on Wi-Fi, noise level, and seating are not provided.",
-  "scores": {}
+  "remote_work_summary": "Information regarding Wi-Fi, seating, and other amenities is not provided, making it difficult to assess the suitability for remote work."
 }
