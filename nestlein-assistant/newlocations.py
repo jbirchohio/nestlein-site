@@ -1,30 +1,20 @@
 import os
 import json
-import base64
-import requests
-import gspread
 import time
 import re
-from openai import OpenAI
 from dotenv import load_dotenv
+from openai import OpenAI
 from github import Github, InputGitTreeElement
 from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
 
-# Load .env credentials
 load_dotenv()
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 ASSISTANT_ID = os.getenv("OPENAI_ASSISTANT_ID")
-SHEET_ID = os.getenv("SHEET_ID")
-SHEET_NAME = os.getenv("SHEET_NAME")
-CREDENTIALS_FILE = os.getenv("GOOGLE_CREDENTIALS_JSON")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 GITHUB_REPO = "jbirchohio/nestlein-site"
 GITHUB_PATH_PREFIX = "public/locations"
 
-# Google Sheets
-gc = gspread.service_account(filename=CREDENTIALS_FILE)
-sheet = gc.open_by_key(SHEET_ID).worksheet(SHEET_NAME)
 
 def convert_to_remote_tags(categories):
     tag_map = {
@@ -46,10 +36,15 @@ def convert_to_remote_tags(categories):
     return list(result)
 
 
-def slugify(name):
-    if not isinstance(name, str):
-        name = str(name) if name else "unknown"
-    return re.sub(r'[^a-z0-9]+', '-', name.lower().strip()).strip('-')
+def slugify_location(name, address=""):
+    base = name.lower().strip() if name else "unknown"
+    zip_code = ""
+    if address:
+        match = re.search(r"\\b\\d{5}\\b", address)
+        if match:
+            zip_code = match.group(0)
+    slug = f"{base}-{zip_code}" if zip_code else base
+    return re.sub(r'[^a-z0-9]+', '-', slug).strip('-')
 
 
 def yes_list(category):
@@ -58,6 +53,7 @@ def yes_list(category):
         for item in category
         if item and isinstance(item, dict) and list(item.values())[0] is True
     ]
+
 
 def format_hours(opening_hours):
     days_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -77,39 +73,31 @@ def format_hours(opening_hours):
             last_hours = current_hours
     if group:
         grouped.append((group, last_hours))
+
     def label_range(days):
         if len(days) == 1:
             return days[0]
         return f"{days[0][:3]}–{days[-1][:3]}"
+
     return ", ".join([f"{label_range(group)}: {hours}" for group, hours in grouped])
+
 
 def flatten_business_data(bd):
     out = []
-    out.append(f"Title: {bd.get('title', '')}")
-    out.append(f"Description: {bd.get('description', '')}")
-    out.append(f"Price: {bd.get('price', '')}")
-    out.append(f"Category: {bd.get('categoryName', '')}")
+    out.append(f"Title: {bd.get('name', '')}")
+    out.append(f"Description: {bd.get('about', '')}")
     out.append(f"Address: {bd.get('address', '')}")
     out.append(f"Phone: {bd.get('phone', '')}")
-    out.append(f"Website: {bd.get('website', '')}")
-    out.append(f"Image URL: {bd.get('imageUrl', '')}")
+    out.append(f"Website: {bd.get('site', '')}")
+    out.append(f"CID: {bd.get('cid', '')}")
     out.append("Opening Hours:")
-    for h in bd.get("openingHours", []):
+    for h in bd.get("opening_hours", []):
         out.append(f"  - {h.get('day')}: {h.get('hours')}")
-    out.append(f"Tags: {', '.join(bd.get('categories', []))}")
-    ai = bd.get("additionalInfo", {})
-    for section in ["Amenities", "Atmosphere", "Popular for", "Offerings", "Service options",
-                    "Dining options", "Parking", "Accessibility", "Crowd", "Planning", "Payments"]:
-        out.append(f"{section}: {', '.join(yes_list(ai.get(section, [])))}")
-    if bd.get("reviewSummary"):
-        out.append(f"Review Summary: {bd['reviewSummary']}")
-    if bd.get("plusCode"):
-        out.append(f"Plus Code: {bd['plusCode']}")
-    if bd.get("googleMapsUrl"):
-        out.append(f"Google Maps URL: {bd['googleMapsUrl']}")
+    out.append(f"Tags: {', '.join(bd.get('types', []))}")
     return "\n".join(out)
 
-def add_ref_param(url, ref="nestlein"):
+
+def add_ref_param(url, ref="roamly"):
     try:
         parts = urlparse(url)
         query = parse_qs(parts.query)
@@ -119,36 +107,115 @@ def add_ref_param(url, ref="nestlein"):
     except:
         return url
 
+
 def build_structured_json(bd):
-    ai = bd.get("additionalInfo", {})
     return {
-        "name": bd.get("title"),
-        "address": bd.get("address"),
-        "slug": slugify(bd.get("title", "")),
-        "phone_number": bd.get("phone"),
-        "logo_url": bd.get("imageUrl", ""),
-        "website": add_ref_param(bd.get("website")) if bd.get("website") else None,
-        "menu_url": add_ref_param(bd.get("menu")) if bd.get("menu") else None,
+        "slug": slugify_location(bd.get("name"), bd.get("address")),
+        "name": bd.get("name"),
+        "place_id": bd.get("place_id"),
+        "cid": bd.get("cid", "Unknown"),
+        "address": bd.get("address", "Unknown"),
+        "phone": bd.get("phone", "Unknown"),
+        "website": add_ref_param(bd.get("site", "")),
+        "logo_url": bd.get("photos_sample", ["https://roamly.app/default-image.jpg"])[0] if bd.get("photos_sample") else "https://roamly.app/default-image.jpg",
         "latitude": bd.get("location", {}).get("lat"),
         "longitude": bd.get("location", {}).get("lng"),
-        "hours": format_hours(bd.get("openingHours", [])),
-        "price": bd.get("price"),
-        "tags": convert_to_remote_tags(bd.get("categories", [])),
-        "neighborhood": bd.get("neighborhood"),
-        "review_score": bd.get("totalScore"),
-        "review_count": bd.get("reviewsCount"),
-        "remote_work_features": {
-            "wi_fi_quality": "Free Wi-Fi" if "Free Wi-Fi" in yes_list(ai.get("Amenities", [])) else "Unknown",
-            "bathroom_access": "Yes" if "Restroom" in yes_list(ai.get("Amenities", [])) else "Unknown",
-            "outlet_access": "Moderate" if "Good for working on laptop" in yes_list(ai.get("Popular for", [])) else "Limited",
-            "seating_comfort": "Basic",
-            "noise_level": "Casual" if "Casual" in yes_list(ai.get("Atmosphere", [])) else "Unknown",
-            "natural_light": "Some natural light",
-            "stay_duration_friendliness": "Welcoming for long stays",
-            "food_drink_options": ", ".join(yes_list(ai.get("Offerings", []))),
-            "parking_availability": "Free parking lot" if "Free parking lot" in yes_list(ai.get("Parking", [])) else "Unknown"
-        }
+        "hours": format_hours(bd.get("opening_hours", [])),
+        "open_now": bd.get("opening_hours_status", "Unknown"),
+        "tags": convert_to_remote_tags(bd.get("types", [])),
+        "remote_work_features": [
+            "Free Wi-Fi" if "wifi" in str(bd).lower() else "Unknown",
+            "Outlets available" if "outlet" in str(bd).lower() else "Unknown",
+            "Quiet environment" if "quiet" in str(bd).lower() else "Unknown",
+            "Comfortable seating" if "seating" in str(bd).lower() else "Unknown",
+            "Natural light" if "light" in str(bd).lower() else "Unknown",
+            "Long stay friendly" if "long stay" in str(bd).lower() else "Unknown"
+        ]
     }
+
+
+def run_assistant_conversation(business_data):
+    thread = client.beta.threads.create()
+    prompt = """You are analyzing structured business data for a remote work–friendly café directory called Roamly. 
+
+Use ONLY the information provided below to extract the following:
+
+---
+
+**Required Fields:**
+
+1. `best_time_to_work_remotely`:  
+   - Output a short phrase like “Before 10 AM,” “Mid-afternoon,” or “Unknown”
+   - Base this on fields such as: open hours, popular times, crowd, and tags like “Usually a wait,” “Good for working on laptop,” etc.
+
+2. `remote_work_summary`:  
+   - Output 1–2 sentences describing the space’s suitability for remote work
+   - Consider Wi-Fi, outlet access, crowd type, noise level, bathroom access, seating, and overall vibe
+   - Tailor it to remote workers (e.g., freelancers, students, quiet seekers)
+
+---
+
+**Optional Scoring Section (optional, include if enough data is present):**
+
+3. `scores`:  
+   Assign a score from 1 to 10 (10 = best) for the following:
+   - `food_quality`: Based on tags like \"Prepared foods,\" \"Vegetarian,\" \"Menu\"
+   - `service`: Based on tags like \"Usually a wait,\" “Friendly staff,” “Drive-through”
+   - `ambiance`: Based on atmosphere, crowd, décor tags like “Trendy,” “Casual,” etc.
+   - `value`: Consider price range + offerings
+   - `experience`: A general overall impression of remote work suitability
+
+---
+
+**Output Format:**
+Respond ONLY in this structured JSON format:
+
+```json
+{
+  "best_time_to_work_remotely": "Before 10 AM",
+  "remote_work_summary": "A quiet café with free Wi-Fi and casual seating. Outlet access is moderate, and it's best suited for solo work in the mornings.",
+  "scores": {
+    "food_quality": 7,
+    "service": 8,
+    "ambiance": 7,
+    "value": 6,
+    "experience": 8
+  }
+}
+```
+
+If a score or detail is unclear or missing, do your best to infer it. If not possible, omit the scores block entirely.
+
+Do not echo these instructions. Do not explain your reasoning. Output valid JSON only."""
+
+    flattened = flatten_business_data(business_data)
+    full_input = f"{prompt}\n\n{flattened}"
+
+    client.beta.threads.messages.create(thread_id=thread.id, role="user", content=full_input)
+    run = client.beta.threads.runs.create(thread_id=thread.id, assistant_id=ASSISTANT_ID)
+
+    while run.status not in ["completed", "failed"]:
+        time.sleep(1)
+        run = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
+
+    messages = client.beta.threads.messages.list(thread_id=thread.id)
+    raw_output = messages.data[0].content[0].text.value.strip()
+
+    if raw_output.startswith("```json"):
+        raw_output = raw_output[7:]
+    elif raw_output.startswith("```"):
+        raw_output = raw_output[3:]
+
+    if raw_output.endswith("```"):
+        raw_output = raw_output[:-3]
+
+    try:
+        return json.loads(raw_output.strip())
+    except json.JSONDecodeError:
+        print("⚠️ Could not parse Assistant output. Dumping raw text:")
+        print(raw_output)
+        return {"output": raw_output}
+
 
 def batch_push_to_github(file_data_list, commit_message="Batch update locations"):
     repo = Github(GITHUB_TOKEN).get_repo(GITHUB_REPO)
@@ -169,126 +236,44 @@ def batch_push_to_github(file_data_list, commit_message="Batch update locations"
     commit = repo.create_git_commit(commit_message, tree, [parent])
     master_ref.edit(commit.sha)
 
-def get_all_place_ids():
-    return sheet.col_values(1)[1:]
 
 def get_already_processed():
-    if os.path.exists("processed_ids.json"):
-        with open("processed_ids.json", "r") as f:
-            return json.load(f)
-    return []
+    if os.path.exists("processed_slugs.json"):
+        with open("processed_slugs.json", "r") as f:
+            return set(json.load(f))
+    return set()
 
-def save_processed(ids):
-    with open("processed_ids.json", "w") as f:
-        json.dump(ids, f)
+def save_processed(slugs):
+    with open("processed_slugs.json", "w") as f:
+        json.dump(sorted(list(slugs)), f)
 
-def run_assistant_conversation(business_data):
-    thread = client.beta.threads.create()
-    prompt = """You are analyzing structured business data to generate a summary for a remote work–friendly location directory. Use ONLY the data provided below.
+def process_outscraper_json(path="Outscraper.json", limit=5):
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
 
-Return valid JSON with these fields:
-
-- best_time_to_work_remotely
-- remote_work_summary
-- Optional block: scores { food_quality, service, ambiance, value, experience }
-
-Do not return any commentary or markdown. JSON only."""
-    
-    flattened = flatten_business_data(business_data)
-    full_input = f"{prompt}\n\n{flattened}"
-
-    client.beta.threads.messages.create(thread_id=thread.id, role="user", content=full_input)
-    run = client.beta.threads.runs.create(thread_id=thread.id, assistant_id=ASSISTANT_ID)
-    
-    while run.status not in ["completed", "failed"]:
-        time.sleep(1)
-        run = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
-    
-    messages = client.beta.threads.messages.list(thread_id=thread.id)
-    raw_output = messages.data[0].content[0].text.value.strip()
-
-    # ✅ Strip code block markers if present
-    if raw_output.startswith("```json"):
-        raw_output = raw_output[7:]
-    elif raw_output.startswith("```"):
-        raw_output = raw_output[3:]
-
-    if raw_output.endswith("```"):
-        raw_output = raw_output[:-3]
-
-    try:
-        return json.loads(raw_output.strip())
-    except json.JSONDecodeError:
-        print("⚠️ Could not parse Assistant output. Dumping raw text:")
-        print(raw_output)
-        return {"output": raw_output}
-
-
-def trigger_apify_actor(actor_slug, place_id):
-    url = f"https://api.apify.com/v2/acts/{actor_slug}/runs"
-    body = {"placeIds": [place_id]}
-    res = requests.post(url, params={"token": os.getenv("APIFY_TOKEN")}, json=body)
-    if res.status_code in [200, 201]:
-        return res.json().get("data", {}).get("defaultDatasetId")
-    print(f"❌ Apify failed for {place_id}: {res.text}")
-    return None
-
-def poll_apify(run_id):
-    url = f"https://api.apify.com/v2/datasets/{run_id}/items?format=json&clean=true"
-    headers = {"Authorization": f"Bearer {os.getenv('APIFY_TOKEN')}"}
-    for _ in range(60):
-        res = requests.get(url, headers=headers)
-        if res.status_code == 200:
-            try:
-                data = res.json()
-                if data:
-                    return data[0]
-            except:
-                pass
-        time.sleep(5)
-    raise TimeoutError("Apify polling timed out.")
-
-def process_all():
-    print("🚀 Starting full assistant pipeline")
-    place_ids = get_all_place_ids()
-    already_done = get_already_processed()
-    new_ids = [pid for pid in place_ids if pid not in already_done]
-
-    if not new_ids:
-        print("✅ No new Place IDs found.")
-        return
-
+    already_seen = get_already_processed()
+    newly_processed = set()
     batched_files = []
-    processed_count = 0
-
-    for place_id in new_ids:
-        if processed_count >= 10:
-            break
-
-        print(f"🔍 Processing: {place_id}")
-        run_id = trigger_apify_actor("compass~google-places-api", place_id)
-        if not run_id:
+    for i, bd in enumerate(data[:limit]):
+        slug = slugify_location(bd.get("name"), bd.get("address"))
+        if slug in already_seen:
+            print(f"⏭️ Skipping already-processed: {slug}")
             continue
 
-        raw_data = poll_apify(run_id)
-        if not raw_data or not raw_data.get("title"):
-            continue
-
-        structured = build_structured_json(raw_data)
-        ai_fields = run_assistant_conversation(raw_data)
+        print(f"🔍 Processing: {bd.get('name')}")
+        structured = build_structured_json(bd)
+        ai_fields = run_assistant_conversation(bd)
         merged = {**structured, **ai_fields}
-        slug = merged.get("slug", place_id.replace(":", "-"))
-        file_path = f"{GITHUB_PATH_PREFIX}/{slug}.json"
+        file_path = f"{GITHUB_PATH_PREFIX}/{merged['slug']}.json"
         file_content = json.dumps(merged, indent=2)
         batched_files.append({"path": file_path, "content": file_content})
-        already_done.append(place_id)
-        processed_count += 1
+        newly_processed.add(slug)
 
     if batched_files:
         batch_push_to_github(batched_files)
+        save_processed(already_seen.union(newly_processed))
+        print(f"✅ Uploaded {len(batched_files)} files.")
 
-    save_processed(already_done)
-    print(f"🎉 Processed {processed_count} locations.")
 
 if __name__ == "__main__":
-    process_all()
+    process_outscraper_json("Outscraper.json", limit=5)
