@@ -81,7 +81,7 @@ export default function HomePage() {
       {featuredTag && (
         <section className="mt-12">
           <h2 className="text-2xl font-bold mb-4">Featured: {featuredTag}</h2>
-          <FeaturedTagCards allLocations={allLocations} tag={featuredTag} />
+          <FeaturedTagCards allLocations={allLocations} tag={featuredTag} userCoords={userCoords} />
         </section>
       )}
     </div>
