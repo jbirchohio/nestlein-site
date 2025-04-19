@@ -12,7 +12,7 @@ export async function generateMetadata(
 
   try {
     const res = await fetch(url, {
-      next: { revalidate: 3600 }, // Cache for 1 hour
+      next: { revalidate: 3600 },
     });
     if (!res.ok) throw new Error('Location not found');
     location = await res.json();
@@ -22,7 +22,14 @@ export async function generateMetadata(
       description: 'Find cozy cafés, cowork spots, and hidden gems perfect for working remotely.',
     };
   }
-
+  
+  if (!location) {
+    return {
+      title: 'Roamly — Discover Remote Work-Friendly Spots',
+      description: 'Find cozy cafés, cowork spots, and hidden gems perfect for working remotely.',
+    };
+  }
+  
   const {
     name,
     address,
@@ -31,6 +38,7 @@ export async function generateMetadata(
     remote_work_features = {},
     logo_url,
   } = location;
+  
   
 
   const featurePhrases = [
