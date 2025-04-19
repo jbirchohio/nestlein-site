@@ -8,7 +8,7 @@ import {
   Sun, ParkingSquare, Bath, Sandwich, MonitorSmartphone, Star
 } from 'lucide-react';
 import Head from 'next/head';
-import { generateMetadata } from './metadata';
+
 
 
 type Location = {

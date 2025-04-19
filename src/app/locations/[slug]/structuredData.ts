@@ -1,4 +1,7 @@
-export function getStructuredData(location: any) {
+import type { Location } from './page';
+
+export function getStructuredData(location: Location | null) {
+
   if (!location || !location.name || !location.address) return null;
 
   const {
