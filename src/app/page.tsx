@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
-import LocationCard from '@/components/LocationCard';
+import OpenNowCards from '@/components/home/OpenNowCards';
+import TopRatedCards from '@/components/home/TopRatedCards';
+import FeaturedTagCards from '@/components/home/FeaturedTagCards';
 
 interface Location {
   slug: string;
@@ -18,21 +20,28 @@ interface Location {
 
 export default function HomePage() {
   const [allLocations, setAllLocations] = useState<Location[]>([]);
-  const [filtered, setFiltered] = useState<Location[]>([]);
   const [userCoords, setUserCoords] = useState<{ lat: number; lon: number } | null>(null);
+  const [featuredTag, setFeaturedTag] = useState<string>('');
 
   useEffect(() => {
     async function fetchLocations() {
       const res = await fetch('/api/locations');
       const data = await res.json();
       setAllLocations(data);
-      setFiltered(data);
+
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((pos) => {
           setUserCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
         });
       }
+
+      // Random tag logic for Featured section
+      const allTags = data.flatMap((loc: Location) => loc.tags || []);
+      const uniqueTags = Array.from(new Set(allTags));
+      const random = uniqueTags[Math.floor(Math.random() * uniqueTags.length)];
+      setFeaturedTag(random);
     }
+
     fetchLocations();
   }, []);
 
@@ -48,25 +57,32 @@ export default function HomePage() {
         </p>
       </div>
 
-      {/* 🔍 Filters + Search */}
+      {/* 🔍 Filters */}
       <Header
         locations={allLocations}
-        setFiltered={setFiltered}
+        setFiltered={() => {}}
         userCoords={userCoords}
       />
-      
-      {/* 📍 Location Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-6">
-        {filtered.length > 0 ? (
-          filtered.map((loc) => (
-            <LocationCard key={loc.slug} location={loc} />
-          ))
-        ) : (
-          <p className="text-center col-span-full text-slate-500 text-lg italic">
-            Looks a little quiet here... want to suggest a hidden gem?
-          </p>
-        )}
-      </div>
+
+      {/* 🟢 Open Now Section */}
+      <section className="mt-10">
+        <h2 className="text-2xl font-bold mb-4">Open Near You</h2>
+        <OpenNowCards allLocations={allLocations} userCoords={userCoords} />
+      </section>
+
+      {/* ⭐ Top Rated Section */}
+      <section className="mt-12">
+        <h2 className="text-2xl font-bold mb-4">Top Rated Spots</h2>
+        <TopRatedCards allLocations={allLocations} />
+      </section>
+
+      {/* 🎯 Featured Tag Section */}
+      {featuredTag && (
+        <section className="mt-12">
+          <h2 className="text-2xl font-bold mb-4">Featured: {featuredTag}</h2>
+          <FeaturedTagCards allLocations={allLocations} tag={featuredTag} />
+        </section>
+      )}
     </div>
   );
 }
