@@ -1,0 +1,39 @@
+{
+  "slug": "antique-kitchen-07030",
+  "name": "Antique Kitchen",
+  "place_id": "ChIJ-fuecclZwokRCxeL_cVfFbw",
+  "address": "3341 Newark St. 5th floor, Hoboken, NJ 07030",
+  "phone_number": "",
+  "website": "https://www.swevenhoboken.com/antique-kitchen?ref=roamly",
+  "menu_url": null,
+  "logo_url": "https://lh3.googleusercontent.com/p/AF1QipMyFT2Q8YRMZU-YxnroVFCPYy9Xi_-M-o1lbKNQ=w408-h306-k-no",
+  "latitude": 40.736466,
+  "longitude": -74.0293825,
+  "hours": "Mon\u2013Fri: 7\u202fAM to 2\u202fPM, Sat\u2013Sun: Closed",
+  "open_now": "Open",
+  "tags": [
+    "Coffee shop"
+  ],
+  "review_score": 5,
+  "review_count": 3,
+  "best_time_to_work_remotely": "Before 10 AM",
+  "remote_work_summary": "Antique Kitchen offers a calm atmosphere with delicious food and great service, making it a suitable spot for remote work during its early hours. The limited opening hours suggest it's best for morning productivity.",
+  "scores": {
+    "food_quality": 8,
+    "service": 9,
+    "ambiance": 8,
+    "value": 7,
+    "experience": 8
+  },
+  "remote_work_features": {
+    "wi_fi_quality": "Unknown",
+    "outlet_access": "Unknown",
+    "noise_level": "Calm",
+    "seating_comfort": "Unknown",
+    "natural_light": "Unknown",
+    "stay_duration_friendliness": "Limited to opening hours",
+    "food_drink_options": "Delicious food",
+    "bathroom_access": "Unknown",
+    "parking_availability": "Unknown"
+  }
+}

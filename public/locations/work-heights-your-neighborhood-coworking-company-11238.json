@@ -1,0 +1,39 @@
+{
+  "slug": "work-heights-your-neighborhood-coworking-company-11238",
+  "name": "Work Heights, Your Neighborhood Coworking Company",
+  "place_id": "ChIJ02XLqU5bwokRCtG4ZFNSCkk",
+  "address": "184 Underhill Ave, Brooklyn, NY 11238",
+  "phone_number": "(718) 635-2529",
+  "website": "http://www.workheights.com/?ref=roamly",
+  "menu_url": null,
+  "logo_url": "https://lh3.googleusercontent.com/p/AF1QipP-4cfgpzNulGNIkZ04gCA6CbdycMfpxLbRTpfG=w408-h408-k-no",
+  "latitude": 40.6750684,
+  "longitude": -73.9669524,
+  "hours": "Mon\u2013Sun: Open 24 hours",
+  "open_now": "Open",
+  "tags": [
+    "Coworking space"
+  ],
+  "review_score": 4.7,
+  "review_count": 16,
+  "best_time_to_work_remotely": "Anytime",
+  "remote_work_summary": "Work Heights offers a 24/7 coworking space with a clean, open environment and ample natural light. It's an ideal setting for remote workers seeking a flexible schedule and a respectful community.",
+  "scores": {
+    "food_quality": 5,
+    "service": 8,
+    "ambiance": 9,
+    "value": 8,
+    "experience": 9
+  },
+  "remote_work_features": {
+    "wi_fi_quality": "High",
+    "outlet_access": "Good",
+    "noise_level": "Low",
+    "seating_comfort": "High",
+    "natural_light": "Abundant",
+    "stay_duration_friendliness": "Unlimited",
+    "food_drink_options": "Limited",
+    "bathroom_access": "Good",
+    "parking_availability": "Limited"
+  }
+}
