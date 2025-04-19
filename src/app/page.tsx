@@ -74,7 +74,7 @@ export default function HomePage() {
       {/* ⭐ Top Rated Section */}
       <section className="mt-12">
         <h2 className="text-2xl font-bold mb-4">Top Rated Spots</h2>
-        <TopRatedCards allLocations={allLocations} />
+        <TopRatedCards allLocations={allLocations} userCoords={userCoords} />
       </section>
 
       {/* 🎯 Featured Tag Section */}
