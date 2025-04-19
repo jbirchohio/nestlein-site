@@ -1,0 +1,42 @@
+{
+  "slug": "jefferson-s-coffee-madison-07030",
+  "name": "Jefferson's Coffee @ Madison",
+  "place_id": "ChIJ0bA-gWNXwokRRoW8QXK3kRM",
+  "address": "1001 Madison St, Hoboken, NJ 07030",
+  "phone_number": "(201) 253-0617",
+  "website": "https://www.jeffersonscoffeetwo.com/?ref=roamly",
+  "menu_url": null,
+  "logo_url": "https://lh3.googleusercontent.com/p/AF1QipNPjZzR7ikwTyxnLK0djEqdCFMlxFyCWarJAiTM=w408-h558-k-no",
+  "latitude": 40.7499442,
+  "longitude": -74.035647,
+  "hours": "Mon\u2013Wed: 7\u202fAM to 5\u202fPM, Thu\u2013Sat: 7\u202fAM to 6\u202fPM, Sunday: 7:30\u202fAM to 5:30\u202fPM",
+  "open_now": "Open",
+  "tags": [
+    "Coffee shop",
+    "Cafe",
+    "Coffee roasters",
+    "Coffee store"
+  ],
+  "review_score": 4.3,
+  "review_count": 147,
+  "best_time_to_work_remotely": "Before 10 AM",
+  "remote_work_summary": "Jefferson's Coffee offers a cozy atmosphere with friendly staff, making it a great spot for remote work. The caf\u00e9 provides a comfortable seating arrangement with moderate noise levels, suitable for focused work. Wi-Fi quality is presumed good, given the positive reviews and setup for remote work.",
+  "scores": {
+    "food_quality": 8,
+    "service": 9,
+    "ambiance": 8,
+    "value": 8,
+    "experience": 9
+  },
+  "remote_work_features": {
+    "wi_fi_quality": "Good",
+    "outlet_access": "Moderate",
+    "noise_level": "Moderate",
+    "seating_comfort": "Comfortable",
+    "natural_light": "Ample",
+    "stay_duration_friendliness": "Welcoming for extended stays",
+    "food_drink_options": "Varied",
+    "bathroom_access": "Accessible",
+    "parking_availability": "Limited"
+  }
+}

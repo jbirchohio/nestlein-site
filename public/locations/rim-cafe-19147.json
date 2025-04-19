@@ -1,0 +1,39 @@
+{
+  "slug": "rim-cafe-19147",
+  "name": "RIM Cafe",
+  "place_id": "ChIJ0aGPvR7GxokRUqGGFqVdng0",
+  "address": "1172 S 9th St, Philadelphia, PA 19147",
+  "phone_number": "(215) 465-3515",
+  "website": "?ref=roamly",
+  "menu_url": null,
+  "logo_url": "https://lh3.googleusercontent.com/p/AF1QipMf7miipxauKvN8T7bY9Jc70eQNJGtlvUuN18pm=w426-h240-k-no",
+  "latitude": 39.9343986,
+  "longitude": -75.1589928,
+  "hours": "Mon\u2013Wed: Closed, Thursday: 12 to 9\u202fPM, Fri\u2013Sat: 12 to 10\u202fPM, Sunday: 12 to 9\u202fPM",
+  "open_now": "Open",
+  "tags": [
+    "Cafe"
+  ],
+  "review_score": 4.7,
+  "review_count": 461,
+  "best_time_to_work_remotely": "Mid-afternoon",
+  "remote_work_summary": "RIM Cafe offers a cozy environment with outdoor seating options, ideal for remote work during quieter mid-afternoon hours. While Wi-Fi quality isn't specified, the ambiance is likely conducive to focused work given the caf\u00e9's high rating.",
+  "scores": {
+    "food_quality": 6,
+    "service": 7,
+    "ambiance": 8,
+    "value": 5,
+    "experience": 7
+  },
+  "remote_work_features": {
+    "wi_fi_quality": "Unknown",
+    "outlet_access": "Unknown",
+    "noise_level": "Moderate",
+    "seating_comfort": "Good",
+    "natural_light": "Moderate",
+    "stay_duration_friendliness": "Good",
+    "food_drink_options": "Limited",
+    "bathroom_access": "Available",
+    "parking_availability": "Unknown"
+  }
+}

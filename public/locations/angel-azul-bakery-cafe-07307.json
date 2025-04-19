@@ -1,0 +1,41 @@
+{
+  "slug": "angel-azul-bakery-cafe-07307",
+  "name": "Angel Azul Bakery Cafe",
+  "place_id": "ChIJ0xz4v25XwokRT_ku_mYbMoc",
+  "address": "460 Central Ave, Jersey City, NJ 07307",
+  "phone_number": "(201) 386-1770",
+  "website": "http://angelazulbakery.com/?ref=roamly",
+  "menu_url": null,
+  "logo_url": "https://lh3.googleusercontent.com/p/AF1QipMHPMKHhLUtnK0kKYvOYrGN1qlQdi3s6oTYFVJu=w408-h306-k-no",
+  "latitude": 40.7503343,
+  "longitude": -74.0461024,
+  "hours": "Mon\u2013Sat: 5:30\u202fAM to 7:30\u202fPM, Sunday: 6\u202fAM to 6:30\u202fPM",
+  "open_now": "Open",
+  "tags": [
+    "Bakery",
+    "Breakfast restaurant",
+    "Coffee shop"
+  ],
+  "review_score": 4.5,
+  "review_count": 624,
+  "best_time_to_work_remotely": "Mid-afternoon",
+  "remote_work_summary": "Angel Azul Bakery Cafe offers a cozy environment with delicious pastries and good coffee. It's often busy in the mornings, making the mid-afternoon an ideal time for remote work, especially for those seeking a quieter atmosphere.",
+  "scores": {
+    "food_quality": 8,
+    "service": 7,
+    "ambiance": 6,
+    "value": 8,
+    "experience": 7
+  },
+  "remote_work_features": {
+    "wi_fi_quality": "Unknown",
+    "outlet_access": "Unknown",
+    "noise_level": "Moderate",
+    "seating_comfort": "Moderate",
+    "natural_light": "Unknown",
+    "stay_duration_friendliness": "High",
+    "food_drink_options": "Good",
+    "bathroom_access": "Unknown",
+    "parking_availability": "Unknown"
+  }
+}
