@@ -9,7 +9,7 @@ function parseTimeToMinutes(time: string): number {
   const [hour, minutePart] = time.toLowerCase().replace(/\s+/g, '').split(/:|(?=am|pm)/);
   const [minutes, ampm] = [minutePart.replace(/[^0-9]/g, ''), minutePart.replace(/[0-9]/g, '')];
   let h = parseInt(hour, 10);
-  let m = parseInt(minutes || '0', 10);
+  const m = parseInt(minutes || '0', 10);
   if (ampm === 'pm' && h !== 12) h += 12;
   if (ampm === 'am' && h === 12) h = 0;
   return h * 60 + m;

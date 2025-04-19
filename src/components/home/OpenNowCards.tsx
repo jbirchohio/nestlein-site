@@ -1,4 +1,5 @@
 import LocationCard from '@/components/LocationCard';
+import { isOpenNow } from '@/utils/checkOpenNow';
 
 interface Location {
   slug: string;
@@ -14,18 +15,9 @@ interface Location {
 
 interface Props {
   allLocations: Location[];
-  userCoords: { lat: number; lon: number } | null;
 }
 
-function isOpenNow(hours?: string): boolean {
-  if (!hours) return false;
-  // Basic "Mon - Fri 8 AM to 5 PM" parser — placeholder for real logic
-  const now = new Date();
-  const currentHour = now.getHours();
-  return currentHour >= 8 && currentHour < 18; // crude fallback
-}
-
-export default function OpenNowCards({ allLocations, userCoords }: Props) {
+export default function OpenNowCards({ allLocations }: Props) {
   const openLocations = allLocations
     .filter((loc) => isOpenNow(loc.hours))
     .slice(0, 6);
