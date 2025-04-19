@@ -27,7 +27,7 @@ export default function FeaturedTagCards({ allLocations, tag }: Props) {
         <LocationCard key={loc.slug} location={loc} />
       ))}
       {tagged.length === 0 && (
-        <p className="col-span-full text-slate-500 italic">No locations tagged with "{tag}"</p>
+        <p className="col-span-full text-slate-500 italic">No locations tagged with &quot;{tag}&quot;</p>
       )}
     </div>
   );
