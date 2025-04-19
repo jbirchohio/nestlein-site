@@ -8,7 +8,7 @@ import Link from 'next/link';
 import Fuse from 'fuse.js';
 import SmartFilterBanner from '@/components/SmartFilterBanner';
 import { parseHours } from '@/utils/parseHours';
-
+import { isOpenNow } from '@/utils/checkOpenNow';
 
 interface Location {
   slug: string;
@@ -130,12 +130,10 @@ export default function HeaderWithFilter({
     }
 
     if (term.includes('open')) {
-      filtered = filtered.filter((loc) => {
-        const { status } = parseHours(loc.hours || '');
-        return status === 'open';
-      });
+      filtered = filtered.filter((loc) => isOpenNow(loc.hours));
       setSmartFilterMessage('Showing spots that are open now');
     }
+    
 
     if (!term.includes('open') && !term.includes('near')) {
       setSmartFilterMessage(null);
