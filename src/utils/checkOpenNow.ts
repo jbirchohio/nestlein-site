@@ -1,5 +1,4 @@
 import { parseHours } from './parseHours';
-import { expandHours } from './expandHours';
 
 function getToday(): string {
   return new Date().toLocaleDateString('en-US', { weekday: 'long' });
