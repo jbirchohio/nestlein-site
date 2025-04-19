@@ -1,5 +1,4 @@
 import LocationCard from '@/components/LocationCard';
-import { isOpenNow } from '@/utils/checkOpenNow';
 
 interface Location {
   slug: string;
@@ -34,7 +33,7 @@ function getDistanceMiles(a: { lat: number; lon: number }, b: { lat: number; lon
 
 export default function FeaturedTagCards({ allLocations, tag, userCoords }: Props) {
   const tagged = allLocations
-    .filter((loc) => loc.tags?.includes(tag) && isOpenNow(loc.hours))
+    .filter((loc) => loc.tags?.includes(tag))
     .map((loc) => ({
       ...loc,
       distance: userCoords && loc.latitude && loc.longitude
