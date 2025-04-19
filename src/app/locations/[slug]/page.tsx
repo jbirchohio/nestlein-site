@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import Head from 'next/head';
 
-
+export type { Location };
 
 type Location = {
   name: string;

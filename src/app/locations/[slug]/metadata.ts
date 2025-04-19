@@ -1,22 +1,22 @@
 import type { Metadata } from 'next';
+import type { Location } from './page'; // Assumes you export Location type from page.tsx
 
 type Params = { slug: string };
 
-export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
-
+export async function generateMetadata(
+  { params }: { params: Params }
+): Promise<Metadata> {
   const url = `https://nestlein-site.vercel.app/locations/${params.slug}.json`;
 
-  let location: any = null;
+  let location: Location | null = null;
 
   try {
     const res = await fetch(url, {
-      // Cache for 1 hour to reduce fetch load & speed up rendering
-      next: { revalidate: 3600 },
+      next: { revalidate: 3600 }, // Cache for 1 hour
     });
     if (!res.ok) throw new Error('Location not found');
     location = await res.json();
   } catch {
-    // Fallback metadata for missing/broken JSON
     return {
       title: 'Roamly — Discover Remote Work-Friendly Spots',
       description: 'Find cozy cafés, cowork spots, and hidden gems perfect for working remotely.',
@@ -85,25 +85,6 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
       title,
       description,
       images: [logo_url || 'https://nestlein-site.vercel.app/placeholder.jpg'],
-    },
-    // 👇 Optional bonus: JSON-LD injection (rendered manually in page.tsx head)
-    other: {
-      structuredData: {
-        "@context": "https://schema.org",
-        "@type": "LocalBusiness",
-        name,
-        address,
-        telephone: phone_number,
-        url: website || 'https://roamly.app',
-        image: logo_url,
-        aggregateRating: review_score
-          ? {
-              "@type": "AggregateRating",
-              ratingValue: review_score,
-              reviewCount: review_count || 1,
-            }
-          : undefined,
-      },
     },
   };
 }
