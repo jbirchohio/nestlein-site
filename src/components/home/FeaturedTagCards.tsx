@@ -12,7 +12,8 @@ interface Location {
 
 interface Props {
   allLocations: Location[];
-  tag: string;
+  tag: string; // ✅ Required
+  userCoords: { lat: number; lon: number } | null; // ✅ Also required
 }
 
 export default function FeaturedTagCards({ allLocations, tag }: Props) {
