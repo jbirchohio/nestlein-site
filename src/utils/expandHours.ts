@@ -1,34 +1,45 @@
-export function expandHours(raw: string): Record<string, string> {
-  const output: Record<string, string> = {};
+export function expandHours(parsed: Record<string, string>): Record<string, [string, string][]> {
   const days = [
-    'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
+    'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
   ];
 
-  const blocks = raw.split(',').map(part => part.trim());
+  const expanded: Record<string, [string, string][]> = {};
 
-  for (const block of blocks) {
-    // Match single day
-    const dayMatch = block.match(/^([A-Za-z]+):\s*(.+)$/);
-    if (dayMatch) {
-      output[dayMatch[1]] = dayMatch[2];
-      continue;
-    }
+  for (const day of days) {
+    expanded[day] = [];
+  }
 
-    // Match day range
-    const rangeMatch = block.match(/^([A-Za-z]+)\s*-\s*([A-Za-z]+)\s+(.+)$/);
-    if (rangeMatch) {
-      const [, start, end, time] = rangeMatch;
-      const startIdx = days.indexOf(start);
-      const endIdx = days.indexOf(end);
-      if (startIdx === -1 || endIdx === -1) continue;
+  for (const [key, value] of Object.entries(parsed)) {
+    const timeRanges = value.split(',').map(range => {
+      const [start, end] = range.split('to').map(t => t.trim());
+      return [start, end] as [string, string];
+    });
 
-      const range = startIdx <= endIdx
-        ? days.slice(startIdx, endIdx + 1)
-        : [...days.slice(startIdx), ...days.slice(0, endIdx + 1)];
+    const dayKeys = key.includes('-')
+      ? expandDayRange(key)
+      : [key.trim()];
 
-      for (const day of range) output[day] = time;
+    for (const day of dayKeys) {
+      expanded[day] = [...(expanded[day] || []), ...timeRanges];
     }
   }
 
-  return output;
+  return expanded;
+}
+
+function expandDayRange(range: string): string[] {
+  const days = [
+    'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
+  ];
+  const [start, end] = range.split('-').map(d => d.trim());
+  const startIndex = days.indexOf(start);
+  const endIndex = days.indexOf(end);
+
+  if (startIndex === -1 || endIndex === -1) return [];
+
+  if (startIndex <= endIndex) {
+    return days.slice(startIndex, endIndex + 1);
+  } else {
+    return [...days.slice(startIndex), ...days.slice(0, endIndex + 1)];
+  }
 }
