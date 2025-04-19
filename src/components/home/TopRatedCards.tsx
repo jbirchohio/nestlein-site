@@ -1,5 +1,4 @@
 import LocationCard from '@/components/LocationCard';
-import { isOpenNow } from '@/utils/checkOpenNow';
 
 interface Location {
   slug: string;
@@ -33,7 +32,7 @@ function getDistanceMiles(a: { lat: number; lon: number }, b: { lat: number; lon
 
 export default function TopRatedCards({ allLocations, userCoords }: Props) {
   const topRated = [...allLocations]
-    .filter((loc) => typeof loc.review_score === 'number' && isOpenNow(loc.hours))
+    .filter((loc) => typeof loc.review_score === 'number')
     .map((loc) => ({
       ...loc,
       distance: userCoords && loc.latitude && loc.longitude
