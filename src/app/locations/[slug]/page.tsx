@@ -7,6 +7,9 @@ import {
   MapPin, Clock, Phone, Wifi, Power, Volume2,
   Sun, ParkingSquare, Bath, Sandwich, MonitorSmartphone, Star
 } from 'lucide-react';
+import Head from 'next/head';
+import { generateMetadata } from './metadata';
+
 
 type Location = {
   name: string;
@@ -70,6 +73,23 @@ export default function LocationPage() {
 
   if (loading) return <div className="p-6">Brewing your perfect workspace...</div>;
   if (!location) return <div className="p-6">Oops. This page is on break.</div>;
+   const structuredData = getStructuredData(location);
+
+    return (
+      <>
+       {structuredData && (
+      <Head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+      </Head>
+    )}
+    <div className="max-w-3xl mx-auto px-4 py-10 font-inter text-[var(--foreground)]">
+      {/* ... your existing layout ... */}
+    </div>
+  </>
+);
 
   const features = location.remote_work_features || {};
   const scores = location.scores || {};
