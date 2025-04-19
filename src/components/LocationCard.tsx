@@ -28,11 +28,6 @@ export default function LocationCard({ location }: { location: Location }) {
   const visibleTags = tags.slice(0, 3);
   const extraTagCount = tags.length - visibleTags.length;
 
-  const statusColor =
-    status === 'open' ? 'text-green-600' : status === 'openingSoon' ? 'text-yellow-600' : 'text-red-600';
-  const dotColor =
-    status === 'open' ? 'bg-green-500' : status === 'openingSoon' ? 'bg-yellow-500' : 'bg-red-500';
-
   return (
     <div
       onClick={() => router.push(`/locations/${slug}`)}
