@@ -8,18 +8,40 @@ interface Location {
   logo_url?: string;
   tags?: string[];
   hours?: string;
+  latitude?: number;
+  longitude?: number;
+  distance?: number;
 }
 
 interface Props {
   allLocations: Location[];
-  tag: string; // ✅ Required
-  userCoords: { lat: number; lon: number } | null; // ✅ Also required
+  tag: string;
+  userCoords: { lat: number; lon: number } | null;
 }
 
-export default function FeaturedTagCards({ allLocations, tag }: Props) {
+function getDistanceMiles(a: { lat: number; lon: number }, b: { lat: number; lon: number }): number {
+  const R = 3958.8;
+  const dLat = (b.lat - a.lat) * (Math.PI / 180);
+  const dLon = (b.lon - a.lon) * (Math.PI / 180);
+  const lat1 = a.lat * (Math.PI / 180);
+  const lat2 = b.lat * (Math.PI / 180);
+
+  const aCalc = Math.sin(dLat / 2) ** 2 +
+    Math.sin(dLon / 2) ** 2 * Math.cos(lat1) * Math.cos(lat2);
+  const c = 2 * Math.atan2(Math.sqrt(aCalc), Math.sqrt(1 - aCalc));
+  return R * c;
+}
+
+export default function FeaturedTagCards({ allLocations, tag, userCoords }: Props) {
   const tagged = allLocations
-    .filter((loc) => loc.tags?.includes(tag))
-    .filter((loc) => isOpenNow(loc.hours)) // Optional: only show open ones
+    .filter((loc) => loc.tags?.includes(tag) && isOpenNow(loc.hours))
+    .map((loc) => ({
+      ...loc,
+      distance: userCoords && loc.latitude && loc.longitude
+        ? getDistanceMiles(userCoords, { lat: loc.latitude, lon: loc.longitude })
+        : Infinity
+    }))
+    .sort((a, b) => a.distance - b.distance)
     .slice(0, 6);
 
   return (
@@ -28,7 +50,9 @@ export default function FeaturedTagCards({ allLocations, tag }: Props) {
         <LocationCard key={loc.slug} location={loc} />
       ))}
       {tagged.length === 0 && (
-        <p className="col-span-full text-slate-500 italic">No locations tagged with &quot;{tag}&quot;</p>
+        <p className="col-span-full text-slate-500 italic">
+          No locations tagged with &quot;{tag}&quot; open near you
+        </p>
       )}
     </div>
   );
