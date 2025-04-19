@@ -1,0 +1,39 @@
+{
+  "slug": "workthere-new-york-10022",
+  "name": "Workthere New York",
+  "place_id": "ChIJ-VAVmTtZwokRXBZk1-SMCyw",
+  "address": "399 Park Ave, New York, NY 10022",
+  "phone_number": "(212) 328-3976",
+  "website": "https://www.workthere.com/?utm_source=Google&utm_medium=Local&utm_campaign=gmbnewyork&ref=roamly",
+  "menu_url": null,
+  "logo_url": "https://lh3.googleusercontent.com/p/AF1QipPaFDmLIBQkKexnlAQZ4XyQ3NXwtPYRGXMOeyN7=w426-h240-k-no",
+  "latitude": 40.7592911,
+  "longitude": -73.9719159,
+  "hours": "Mon\u2013Fri: 9\u202fAM to 5:30\u202fPM, Sat\u2013Sun: Closed",
+  "open_now": "Open",
+  "tags": [
+    "Coworking space"
+  ],
+  "review_score": 5,
+  "review_count": 8,
+  "best_time_to_work_remotely": "Mid-afternoon",
+  "remote_work_summary": "Workthere New York offers a professional coworking space ideal for remote work. With a focus on shared and executive spaces, it provides a structured environment with reliable Wi-Fi and comfortable seating, making it suitable for professionals seeking a dedicated workspace.",
+  "scores": {
+    "food_quality": 5,
+    "service": 9,
+    "ambiance": 8,
+    "value": 7,
+    "experience": 8
+  },
+  "remote_work_features": {
+    "wi_fi_quality": "Reliable",
+    "outlet_access": "Moderate",
+    "noise_level": "Quiet",
+    "seating_comfort": "Comfortable",
+    "natural_light": "Good",
+    "stay_duration_friendliness": "Friendly",
+    "food_drink_options": "Limited",
+    "bathroom_access": "Available",
+    "parking_availability": "Limited"
+  }
+}
