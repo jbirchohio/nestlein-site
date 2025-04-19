@@ -58,8 +58,9 @@ export default function LocationCard({ location }: { location: Location }) {
         )}
 
         <p className={`text-sm font-medium ${statusColor}`}>
-          {message === 'Closed Today' ? 'Closed' : message}
+          {message}
         </p>
+
 
 
         <div className="flex flex-wrap gap-2 pt-2">
