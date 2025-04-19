@@ -30,11 +30,8 @@ export async function generateMetadata(
     tags = [],
     remote_work_features = {},
     logo_url,
-    phone_number,
-    website,
-    review_score,
-    review_count,
   } = location;
+  
 
   const featurePhrases = [
     remote_work_features.wi_fi_quality ? 'fast Wi-Fi' : '',
