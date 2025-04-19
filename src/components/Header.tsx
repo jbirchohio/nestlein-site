@@ -7,7 +7,6 @@ import { Filter } from 'lucide-react';
 import Link from 'next/link';
 import Fuse from 'fuse.js';
 import SmartFilterBanner from '@/components/SmartFilterBanner';
-import { parseHours } from '@/utils/parseHours';
 import { isOpenNow } from '@/utils/checkOpenNow';
 
 interface Location {
