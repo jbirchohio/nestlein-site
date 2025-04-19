@@ -1,0 +1,42 @@
+{
+  "slug": "midtown-manhattan-nyc-stark-office-suites-10165",
+  "name": "Midtown Manhattan NYC Stark Office Suites",
+  "place_id": "ChIJ1bZRdQFZwokRiTSZWkF6DY4",
+  "address": "60 E 42nd St Suite 4600, New York, NY 10165",
+  "phone_number": "(212) 601-9280",
+  "website": "https://starkofficesuites.com/new-york-city-office-space/?ref=roamly",
+  "menu_url": null,
+  "logo_url": "https://lh3.googleusercontent.com/p/AF1QipOFM5-ri3A_2qLPKLcM8AQrwZ8JSgECb0ha4AaH=w426-h240-k-no",
+  "latitude": 40.7521234,
+  "longitude": -73.9787369,
+  "hours": "Mon\u2013Fri: 9\u202fAM to 5\u202fPM, Sat\u2013Sun: Closed",
+  "open_now": "Open",
+  "tags": [
+    "Office space rental agency",
+    "Coworking space",
+    "Executive suite rental agency",
+    "Virtual office rental"
+  ],
+  "review_score": 4.9,
+  "review_count": 38,
+  "best_time_to_work_remotely": "Mid-morning",
+  "remote_work_summary": "Stark Office Suites offers a professional and accommodating environment ideal for remote work. With a fantastic staff, clean facilities, and a professional atmosphere, this space is suitable for those seeking a quiet and well-supported office setting.",
+  "scores": {
+    "food_quality": 5,
+    "service": 9,
+    "ambiance": 8,
+    "value": 7,
+    "experience": 8
+  },
+  "remote_work_features": {
+    "wi_fi_quality": 8,
+    "outlet_access": 7,
+    "noise_level": 4,
+    "seating_comfort": 8,
+    "natural_light": 7,
+    "stay_duration_friendliness": 8,
+    "food_drink_options": 5,
+    "bathroom_access": 9,
+    "parking_availability": 6
+  }
+}
