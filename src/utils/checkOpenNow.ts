@@ -19,8 +19,7 @@ export function isOpenNow(hours?: string): boolean {
   if (!hours) return false;
 
   try {
-    const parsed = parseHours(hours);
-    const expanded = expandHours(parsed);
+    const expanded = parseHours(hours);
     const today = getToday();
     const now = new Date();
     const currentMinutes = now.getHours() * 60 + now.getMinutes();
