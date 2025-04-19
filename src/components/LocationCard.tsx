@@ -20,7 +20,10 @@ export default function LocationCard({ location }: { location: Location }) {
   const router = useRouter();
   const { slug, name, address, hours, logo_url, tags = [] } = location;
 
-  const { message, status } = isOpenNow (hours);
+  const isOpen = isOpenNow(hours);
+  const statusColor = isOpen ? 'text-green-600' : 'text-red-600';
+  const dotColor = isOpen ? 'bg-green-500' : 'bg-red-500';
+  const message = isOpen ? 'Open now' : 'Closed';
 
   const visibleTags = tags.slice(0, 3);
   const extraTagCount = tags.length - visibleTags.length;
