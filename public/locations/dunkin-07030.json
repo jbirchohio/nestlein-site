@@ -1,0 +1,45 @@
+{
+  "slug": "dunkin-07030",
+  "name": "Dunkin'",
+  "place_id": "ChIJ-98Dk1tXwokR5gdT4Mw-8KQ",
+  "address": "700 Washington St, Hoboken, NJ 07030",
+  "phone_number": "(201) 798-0444",
+  "website": "https://locations.dunkindonuts.com/en/nj/hoboken/700-washington-ave/338668?utm_source=google&utm_medium=local&utm_campaign=localmaps&utm_content=338668&y_source=1_MTIxMDgxMDctNzE1LWxvY2F0aW9uLndlYnNpdGU%3D&ref=roamly",
+  "menu_url": null,
+  "logo_url": "https://lh3.googleusercontent.com/p/AF1QipMz4ihnlBF0b8s2OBAxGnnLtuKWc7CvHTodXNFy=w426-h240-k-no",
+  "latitude": 40.7449257,
+  "longitude": -74.0289011,
+  "hours": "Mon\u2013Sat: 5:30\u202fAM to 9\u202fPM, Sunday: 6\u202fAM to 9\u202fPM",
+  "open_now": "Open",
+  "tags": [
+    "Coffee shop",
+    "Bagel shop",
+    "Bakery",
+    "Breakfast restaurant",
+    "Donut shop",
+    "Fast food restaurant",
+    "Takeout Restaurant"
+  ],
+  "review_score": 3.9,
+  "review_count": 309,
+  "best_time_to_work_remotely": "Before 10 AM",
+  "remote_work_summary": "Dunkin' offers a casual environment with friendly staff and great service. It provides outdoor seating and is wheelchair accessible, making it a convenient spot for remote work, especially in the early hours when it's less crowded.",
+  "scores": {
+    "food_quality": 6,
+    "service": 7,
+    "ambiance": 5,
+    "value": 6,
+    "experience": 6
+  },
+  "remote_work_features": {
+    "wi_fi_quality": "Unknown",
+    "outlet_access": "Limited",
+    "noise_level": "Moderate",
+    "seating_comfort": "Basic",
+    "natural_light": "Moderate",
+    "stay_duration_friendliness": "Moderate",
+    "food_drink_options": "Good",
+    "bathroom_access": "Good",
+    "parking_availability": "Unknown"
+  }
+}
