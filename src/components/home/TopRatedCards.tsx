@@ -6,7 +6,7 @@ interface Location {
   name: string;
   address: string;
   logo_url?: string;
-  tags?: string[];
+  review_score?: number;
   latitude?: number;
   longitude?: number;
   hours?: string;
@@ -31,26 +31,30 @@ function getDistanceMiles(a: { lat: number; lon: number }, b: { lat: number; lon
   return R * c;
 }
 
-export default function FeaturedTagCards({ allLocations, tag, userCoords }: Props) {
-  const tagged = allLocations
-    .filter((loc) => loc.tags?.includes(tag) && isOpenNow(loc.hours))
+export default function TopRatedCards({ allLocations, userCoords }: Props) {
+  const topRated = [...allLocations]
+    .filter((loc) => typeof loc.review_score === 'number' && isOpenNow(loc.hours))
     .map((loc) => ({
       ...loc,
       distance: userCoords && loc.latitude && loc.longitude
         ? getDistanceMiles(userCoords, { lat: loc.latitude, lon: loc.longitude })
         : Infinity
     }))
-    .sort((a, b) => a.distance - b.distance)
+    .sort((a, b) => {
+      const ratingDiff = (b.review_score ?? 0) - (a.review_score ?? 0);
+      return ratingDiff !== 0 ? ratingDiff : a.distance - b.distance;
+    })
     .slice(0, 6);
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-      {tagged.map((loc) => (
-        <LocationCard key={loc.slug} location={loc} />
-      ))}
-      {tagged.length === 0 && (
+      {topRated.length > 0 ? (
+        topRated.map((loc) => (
+          <LocationCard key={loc.slug} location={loc} />
+        ))
+      ) : (
         <p className="col-span-full text-slate-500 italic">
-          No locations tagged with &quot;{tag}&quot; open near you
+          No highly rated spots open near you right now
         </p>
       )}
     </div>
