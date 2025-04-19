@@ -1,4 +1,9 @@
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+import type { Metadata } from 'next';
+
+type Params = { slug: string };
+
+export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+
   const url = `https://nestlein-site.vercel.app/locations/${params.slug}.json`;
 
   let location: any = null;
@@ -10,7 +15,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     });
     if (!res.ok) throw new Error('Location not found');
     location = await res.json();
-  } catch (err) {
+  } catch {
     // Fallback metadata for missing/broken JSON
     return {
       title: 'Roamly — Discover Remote Work-Friendly Spots',
