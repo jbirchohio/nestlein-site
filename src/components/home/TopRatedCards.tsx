@@ -15,7 +15,6 @@ interface Location {
 
 interface Props {
   allLocations: Location[];
-  tag: string;
   userCoords: { lat: number; lon: number } | null;
 }
 
