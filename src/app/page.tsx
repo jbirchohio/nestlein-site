@@ -39,7 +39,8 @@ export default function HomePage() {
       const allTags = data.flatMap((loc: Location) => loc.tags || []);
       const uniqueTags = Array.from(new Set(allTags));
       const random = uniqueTags[Math.floor(Math.random() * uniqueTags.length)];
-      setFeaturedTag(random);
+      if (typeof random === 'string') setFeaturedTag(random);
+
     }
 
     fetchLocations();
