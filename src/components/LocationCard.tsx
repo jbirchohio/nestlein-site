@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { getStatusFromHours } from '@/utils/checkOpenNow';
+import { isOpenNow } from '@/utils/checkOpenNow';
 
 interface Location {
   slug: string;
@@ -20,7 +20,7 @@ export default function LocationCard({ location }: { location: Location }) {
   const router = useRouter();
   const { slug, name, address, hours, logo_url, tags = [] } = location;
 
-  const { message, status } = getStatusFromHours(hours);
+  const { message, status } = isOpenNow (hours);
 
   const visibleTags = tags.slice(0, 3);
   const extraTagCount = tags.length - visibleTags.length;
