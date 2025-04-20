@@ -14,8 +14,7 @@ const navItems = [
 
 export default function Header() {
   const pathname = usePathname();
-  const [mounted, setMounted] = useState(false);
-
+  
   useEffect(() => {
     setMounted(true);
   }, []);
