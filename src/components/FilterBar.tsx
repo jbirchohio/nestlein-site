@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { SlidersHorizontal, X } from 'lucide-react';
 
 interface FilterBarProps {
   tags: string[];
