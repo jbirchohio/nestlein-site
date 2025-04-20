@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Head from 'next/head';
-import { getStructuredData } from '@/app/locations/structuredData';
+import { getStructuredData } from '@/utils/structuredData';
 import {
   MapPin, Clock, Phone, Wifi, Power, Volume2,
   Sun, ParkingSquare, Bath, Sandwich, MonitorSmartphone, Star
