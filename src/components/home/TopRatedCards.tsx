@@ -9,6 +9,7 @@ interface Location {
   latitude?: number;
   longitude?: number;
   hours?: string;
+  tags?: string[];
   distance?: number;
 }
 
@@ -39,6 +40,7 @@ export default function TopRatedCards({ allLocations, userCoords }: Props) {
         ? getDistanceMiles(userCoords, { lat: loc.latitude, lon: loc.longitude })
         : Infinity
     }))
+    .filter((loc) => loc.distance <= 5)
     .sort((a, b) => {
       const ratingDiff = (b.review_score ?? 0) - (a.review_score ?? 0);
       return ratingDiff !== 0 ? ratingDiff : a.distance - b.distance;
@@ -53,7 +55,7 @@ export default function TopRatedCards({ allLocations, userCoords }: Props) {
         ))
       ) : (
         <p className="col-span-full text-slate-500 italic">
-          No highly rated spots open near you right now
+          No highly rated spots within 5 miles
         </p>
       )}
     </div>
