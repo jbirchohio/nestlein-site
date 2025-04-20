@@ -3,10 +3,10 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { BadgeSearch, MapPinned, Star, Filter, Wand2, PlusCircle } from 'lucide-react';
+import { MapPinned, Star, Filter, Wand2, PlusCircle } from 'lucide-react';
 
 const navItems = [
-  { label: 'Search', href: '/', icon: <BadgeSearch size={18} /> },
+  { label: 'Search', href: '/', icon: <Search size={18} /> }
   { label: 'Browse', href: '/browse', icon: <MapPinned size={18} /> },
   { label: 'Favorites', href: '/favorites', icon: <Star size={18} /> },
   { label: 'Suggest', href: '/suggest', icon: <Wand2 size={18} /> },

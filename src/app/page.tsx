@@ -1,7 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import HomeShell from '@/components/HomeShell';
 import Header from '@/components/Header';
+import SmartFilterBanner from '@/components/SmartFilterBanner';
+import FilterBar from '@/components/FilterBar';
 import OpenNowCards from '@/components/home/OpenNowCards';
 import TopRatedCards from '@/components/home/TopRatedCards';
 import FeaturedTagCards from '@/components/home/FeaturedTagCards';
@@ -29,61 +32,56 @@ export default function HomePage() {
       const data = await res.json();
       setAllLocations(data);
 
+      const tags = Array.from(new Set(data.flatMap((l: Location) => l.tags || [])));
+      const randomTag = tags[Math.floor(Math.random() * tags.length)];
+      if (typeof randomTag === 'string') setFeaturedTag(randomTag);
+
       if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition((pos) => {
-          setUserCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
-        });
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            setUserCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
+            localStorage.setItem('roamly_coords', JSON.stringify({ lat: pos.coords.latitude, lon: pos.coords.longitude }));
+          },
+          () => {
+            const saved = localStorage.getItem('roamly_coords');
+            if (saved) {
+              try {
+                setUserCoords(JSON.parse(saved));
+              } catch {}
+            }
+          }
+        );
       }
-
-      // Random tag logic for Featured section
-      const allTags = data.flatMap((loc: Location) => loc.tags || []);
-      const uniqueTags = Array.from(new Set(allTags));
-      const random = uniqueTags[Math.floor(Math.random() * uniqueTags.length)];
-      if (typeof random === 'string') setFeaturedTag(random);
-
     }
 
     fetchLocations();
   }, []);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 pt-16 pb-10">
-      {/* 🧭 Hero Section */}
-      <div className="text-center max-w-3xl mx-auto mb-12">
-        <h1 className="text-4xl sm:text-5xl font-bold font-satoshi text-[var(--foreground)] mb-4">
-          Where Remote Works.
-        </h1>
-        <p className="text-lg text-[var(--color-text-secondary)] font-inter">
-          Discover remote-ready cafes, cozy cowork spots, and creative corners near you — filtered by vibe, Wi-Fi, outlets, and more.
-        </p>
-      </div>
+    <HomeShell>
+      <Header />
+      <SmartFilterBanner />
+      <FilterBar />
 
-      {/* 🔍 Filters */}
-      <Header
-        locations={allLocations}
-        setFiltered={() => {}}
-        userCoords={userCoords}
-      />
-
-      {/* 🟢 Open Now Section */}
+      {/* 🟢 Open Now */}
       <section className="mt-10">
         <h2 className="text-2xl font-bold mb-4">Open Near You</h2>
         <OpenNowCards allLocations={allLocations} userCoords={userCoords} />
       </section>
 
-      {/* ⭐ Top Rated Section */}
+      {/* ⭐ Top Rated */}
       <section className="mt-12">
         <h2 className="text-2xl font-bold mb-4">Top Rated Spots</h2>
         <TopRatedCards allLocations={allLocations} userCoords={userCoords} />
       </section>
 
-      {/* 🎯 Featured Tag Section */}
+      {/* 🎯 Featured Tag */}
       {featuredTag && (
         <section className="mt-12">
           <h2 className="text-2xl font-bold mb-4">Featured: {featuredTag}</h2>
           <FeaturedTagCards allLocations={allLocations} tag={featuredTag} userCoords={userCoords} />
         </section>
       )}
-    </div>
+    </HomeShell>
   );
 }
