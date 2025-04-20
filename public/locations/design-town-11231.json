@@ -1,0 +1,39 @@
+{
+  "slug": "design-town-11231",
+  "name": "Design Town",
+  "place_id": "ChIJ0-1DAflbwokRsNnrbvcwB8w",
+  "address": "389 Court St, Brooklyn, NY 11231",
+  "phone_number": "(610) 488-2876",
+  "website": "http://designtown.nyc/?ref=roamly",
+  "menu_url": null,
+  "logo_url": "https://lh3.googleusercontent.com/p/AF1QipPoIGtqul9TdyUS5HQkiW8dEin2UGqaArWMQ2um=w408-h544-k-no",
+  "latitude": 40.6801028,
+  "longitude": -73.9968265,
+  "hours": "Mon\u2013Fri: 9:30\u202fAM to 7\u202fPM, Sat\u2013Sun: Closed",
+  "open_now": "Open",
+  "tags": [
+    "Coworking space"
+  ],
+  "review_score": 5,
+  "review_count": 8,
+  "best_time_to_work_remotely": "Before 10 AM",
+  "remote_work_summary": "Design Town is an excellent coworking space for creatives and independent workers, offering a supportive and friendly community. The environment is conducive to work with a nice group of designers and a great space to work.",
+  "remote_work_features": {
+    "wi_fi_quality": "High",
+    "outlet_access": "Good",
+    "noise_level": "Quiet",
+    "seating_comfort": "Comfortable",
+    "natural_light": "Good",
+    "stay_duration_friendliness": "Friendly",
+    "food_drink_options": "Limited",
+    "bathroom_access": "Accessible",
+    "parking_availability": "Unknown"
+  },
+  "scores": {
+    "food_quality": 7,
+    "service": 9,
+    "ambiance": 8,
+    "value": 8,
+    "experience": 9
+  }
+}

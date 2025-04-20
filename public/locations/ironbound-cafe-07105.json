@@ -1,0 +1,37 @@
+{
+  "slug": "ironbound-cafe-07105",
+  "name": "Ironbound Cafe",
+  "place_id": "ChIJ-ZAmAgZTwokR132bxOfRDvo",
+  "address": "11 Fleming Ave, Newark, NJ 07105",
+  "phone_number": "(973) 466-1111",
+  "website": "?ref=roamly",
+  "menu_url": null,
+  "logo_url": "https://lh3.googleusercontent.com/p/AF1QipOr4GtbilMlhjkX5NzI0e_cv5z0nOkDza7A8C-K=w408-h725-k-no",
+  "latitude": 40.7305517,
+  "longitude": -74.1477635,
+  "hours": "Mon\u2013Sun: 11:35\u202fAM to 10\u202fPM",
+  "open_now": "Open",
+  "tags": [
+    "American restaurant"
+  ],
+  "review_score": 5,
+  "review_count": 17,
+  "best_time_to_work_remotely": "Mid-afternoon",
+  "remote_work_summary": "Ironbound Cafe offers a welcoming atmosphere with friendly staff and accommodating service. While primarily a restaurant, it provides a comfortable space for a casual working session, especially during quieter mid-afternoon hours.",
+  "remote_work_features": {
+    "wi_fi_quality": "Unknown",
+    "outlet_access": "Unknown",
+    "noise_level": "Moderate",
+    "seating_comfort": "Comfortable",
+    "natural_light": "Unknown",
+    "stay_duration_friendliness": "Friendly",
+    "food_drink_options": "Good",
+    "bathroom_access": "Available",
+    "parking_availability": "Unknown"
+  },
+  "scores": {
+    "food_quality": 8,
+    "service": 9,
+    "ambiance": 7
+  }
+}
