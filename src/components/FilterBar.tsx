@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 
 interface FilterBarProps {
   tags: string[];
-  activeTag: string | null;
-  setActiveTag: (tag: string | null) => void;
+  activeTags: string[];
+  setActiveTags: (tags: string[]) => void;
 }
 
 export default function FilterBar({ tags, activeTags, setActiveTags }: FilterBarProps) {
