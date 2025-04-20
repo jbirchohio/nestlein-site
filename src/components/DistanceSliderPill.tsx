@@ -28,26 +28,21 @@ export default function DistanceSliderPill({ distance, setDistance }: Props) {
         leaveFrom="opacity-100 translate-y-0"
         leaveTo="opacity-0 translate-y-1"
       >
-        <Popover.Panel
-          className="absolute right-0 mt-2 w-72 p-4 bg-white border border-gray-200 shadow-xl rounded-xl"
-        >
-          <div className="text-sm font-semibold text-gray-800 mb-2">Distance</div>
+      <Popover className="relative z-[60]">
+        <Popover.Button className="...">Distance <ChevronDown /></Popover.Button>
 
-          <input
-            type="range"
-            min={1}
-            max={50}
-            step={1}
-            value={distance}
-            onChange={(e) => setDistance(Number(e.target.value))}
-            className="w-full"
-          />
+        <Transition ...>
+          <Popover.Panel
+            className="absolute right-0 mt-4 w-72 p-4 bg-white border shadow-xl rounded-xl"
+          >
+            <div className="text-sm font-semibold text-gray-800 mb-2">Distance</div>
+            <input type="range" ... />
+            <div className="mt-2 text-center text-sm text-gray-600">
+              Within {distance} mile{distance !== 1 && 's'}
+            </div>
+          </Popover.Panel>
+        </Transition>
+      </Popover>
 
-          <div className="mt-2 text-center text-sm text-gray-600">
-            Within <span className="font-medium">{distance}</span> mile{distance !== 1 && 's'}
-          </div>
-        </Popover.Panel>
-      </Transition>
-    </Popover>
   );
 }
