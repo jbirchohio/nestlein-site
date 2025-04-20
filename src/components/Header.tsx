@@ -11,13 +11,28 @@ const navItems = [
   { label: 'Favorites', href: '/favorites', icon: <Star size={18} /> },
   { label: 'Suggest', href: '/suggest', icon: <Wand2 size={18} /> },
 ];
+interface Location {
+  slug: string;
+  name: string;
+  address: string;
+  hours?: string;
+  logo_url?: string;
+  tags?: string[];
+  latitude?: number;
+  longitude?: number;
+  distance?: number;
+}
 
-export default function Header() {
+interface HeaderProps {
+  locations: Location[];
+  setFiltered: (filtered: Location[]) => void;
+  userCoords: { lat: number; lon: number } | null;
+}
+
+export default function Header({ locations, setFiltered, userCoords }: HeaderProps) {
   const pathname = usePathname();
   
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => {  }, []);
 
   return (
     <header className="sticky top-0 z-50 w-full backdrop-blur border-b border-[var(--accent-light)] bg-[var(--background)/80]">
