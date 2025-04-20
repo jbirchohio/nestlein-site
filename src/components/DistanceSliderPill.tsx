@@ -11,7 +11,7 @@ interface Props {
 
 export default function DistanceSliderPill({ distance, setDistance }: Props) {
   return (
-    <Popover className="relative z-50">
+    <Popover className="relative z-[60]">
       {/* Pill Trigger */}
       <Popover.Button className="flex items-center gap-1 px-3 py-1 text-sm rounded-full border border-gray-300 hover:bg-[#3ED6C0] hover:text-white transition">
         Distance
@@ -28,21 +28,24 @@ export default function DistanceSliderPill({ distance, setDistance }: Props) {
         leaveFrom="opacity-100 translate-y-0"
         leaveTo="opacity-0 translate-y-1"
       >
-      <Popover className="relative z-[60]">
-        <Popover.Button className="...">Distance <ChevronDown /></Popover.Button>
+        <Popover.Panel className="absolute right-0 mt-4 w-72 p-4 bg-white border shadow-xl rounded-xl">
+          <div className="text-sm font-semibold text-gray-800 mb-2">Distance</div>
 
-        <Transition ...>
-          <Popover.Panel
-            className="absolute right-0 mt-4 w-72 p-4 bg-white border shadow-xl rounded-xl"
-          >
-            <div className="text-sm font-semibold text-gray-800 mb-2">Distance</div>
-            <input type="range" ... />
-            <div className="mt-2 text-center text-sm text-gray-600">
-              Within {distance} mile{distance !== 1 && 's'}
-            </div>
-          </Popover.Panel>
-        </Transition>
-      </Popover>
+          <input
+            type="range"
+            min={1}
+            max={50}
+            step={1}
+            value={distance}
+            onChange={(e) => setDistance(Number(e.target.value))}
+            className="w-full"
+          />
 
+          <div className="mt-2 text-center text-sm text-gray-600">
+            Within <span className="font-medium">{distance}</span> mile{distance !== 1 && 's'}
+          </div>
+        </Popover.Panel>
+      </Transition>
+    </Popover>
   );
 }
