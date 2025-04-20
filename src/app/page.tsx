@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter, usePathname } from 'next/navigation'; // 🆕
 import HomeShell from '@/components/HomeShell';
 import Header from '@/components/Header';
 import SmartFilterBanner from '@/components/SmartFilterBanner';
@@ -9,7 +10,8 @@ import OpenNowCards from '@/components/home/OpenNowCards';
 import TopRatedCards from '@/components/home/TopRatedCards';
 import FeaturedTagCards from '@/components/home/FeaturedTagCards';
 import DistanceSliderPill from '@/components/DistanceSliderPill';
-
+import LocationDetail from '@/components/LocationDetail'; // 🆕 (Assuming this exists)
+import Modal from '@/components/Modal'; // 🆕 (You’ll define this)
 
 interface Location {
   slug: string;
@@ -28,7 +30,13 @@ export default function HomePage() {
   const [userCoords, setUserCoords] = useState<{ lat: number; lon: number } | null>(null);
   const [featuredTag, setFeaturedTag] = useState<string>('');
   const [activeTags, setActiveTags] = useState<string[]>([]);
-  const [distanceLimit, setDistanceLimit] = useState(5); // default to 5 miles
+  const [distanceLimit, setDistanceLimit] = useState(5);
+
+  const pathname = usePathname(); // 🆕
+
+  const currentSlug = pathname?.startsWith('/locations/') 
+    ? pathname.split('/locations/')[1] 
+    : null; // 🆕
 
   useEffect(() => {
     async function fetchLocations() {
@@ -36,7 +44,6 @@ export default function HomePage() {
       const data = await res.json();
       setAllLocations(data);
 
-      // Attempt geolocation
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (pos) => {
@@ -48,7 +55,6 @@ export default function HomePage() {
         );
       }
 
-      // Choose a random tag to feature
       const allTags = data.flatMap((loc: Location) => loc.tags || []);
       const uniqueTags = Array.from(new Set(allTags));
       const random = uniqueTags[Math.floor(Math.random() * uniqueTags.length)];
@@ -60,7 +66,6 @@ export default function HomePage() {
 
   return (
     <HomeShell>
-      {/* 🧭 Hero Section */}
       <div className="text-center max-w-3xl mx-auto mb-12 pt-16 px-4">
         <h1 className="text-4xl sm:text-5xl font-bold font-satoshi text-[var(--foreground)] mb-4">
           Where Remote Works.
@@ -70,10 +75,8 @@ export default function HomePage() {
         </p>
       </div>
 
-      {/* 🔍 Smart Filters */}
       <div className="px-4">
         <SmartFilterBanner />
-
         <div className="flex flex-wrap items-start gap-2 mt-4">
           <div className="flex-1">
             <FilterBar
@@ -82,32 +85,33 @@ export default function HomePage() {
               setActiveTags={setActiveTags}
             />
           </div>
-
           <DistanceSliderPill distance={distanceLimit} setDistance={setDistanceLimit} />
         </div>
-
         <Header />
       </div>
 
-
-      {/* 🟢 Open Now */}
       <section className="mt-12 px-4">
         <h2 className="text-2xl font-bold mb-4">Open Near You</h2>
         <OpenNowCards allLocations={allLocations} userCoords={userCoords} activeTags={activeTags} distanceLimit={distanceLimit}/>
       </section>
 
-      {/* ⭐ Top Rated */}
       <section className="mt-12 px-4">
         <h2 className="text-2xl font-bold mb-4">Top Rated Spots</h2>
         <TopRatedCards allLocations={allLocations} userCoords={userCoords} activeTags={activeTags} distanceLimit={distanceLimit} />
       </section>
 
-      {/* 🎯 Featured Tag */}
       {featuredTag && (
         <section className="mt-12 px-4">
           <h2 className="text-2xl font-bold mb-4">Featured: {featuredTag}</h2>
-          <FeaturedTagCards allLocations={allLocations} tag={featuredTag} userCoords={userCoords} activeTags={activeTags}  distanceLimit={distanceLimit}/>
+          <FeaturedTagCards allLocations={allLocations} tag={featuredTag} userCoords={userCoords} activeTags={activeTags} distanceLimit={distanceLimit}/>
         </section>
+      )}
+
+      {/* 🆕 Modal Overlay */}
+      {currentSlug && (
+        <Modal onClose={() => history.back()}>
+          <LocationDetail slug={currentSlug} />
+        </Modal>
       )}
     </HomeShell>
   );
