@@ -17,6 +17,7 @@ interface Props {
   allLocations: Location[];
   activeTags?: string[];
   userCoords: { lat: number; lon: number } | null;
+  distanceLimit: number;
 }
 
 function getDistanceMiles(a: { lat: number; lon: number }, b: { lat: number; lon: number }): number {
@@ -32,20 +33,25 @@ function getDistanceMiles(a: { lat: number; lon: number }, b: { lat: number; lon
   return R * c;
 }
 
-export default function TopRatedCards({ allLocations, activeTags, userCoords }: Props) {
+export default function TopRatedCards({ allLocations, activeTags, userCoords, distanceLimit }: Props) {
   const topRated = allLocations
-  .filter((loc) =>
-    typeof loc.review_score === 'number' &&
-    (activeTags?.length ? loc.tags?.some(tag => activeTags.includes(tag)) : true)
-  )
+    .filter((loc) => {
+      const hasReview = typeof loc.review_score === 'number';
+      const isWithinDistance =
+        userCoords && loc.latitude && loc.longitude
+          ? getDistanceMiles(userCoords, { lat: loc.latitude, lon: loc.longitude }) <= distanceLimit
+          : true;
+      const matchesTags =
+        activeTags?.length ? loc.tags?.some(tag => activeTags.includes(tag)) : true;
 
+      return hasReview && isWithinDistance && matchesTags;
+    })
     .map((loc) => ({
       ...loc,
       distance: userCoords && loc.latitude && loc.longitude
         ? getDistanceMiles(userCoords, { lat: loc.latitude, lon: loc.longitude })
         : Infinity
     }))
-    .filter((loc) => loc.distance <= 5)
     .sort((a, b) => {
       const ratingDiff = (b.review_score ?? 0) - (a.review_score ?? 0);
       return ratingDiff !== 0 ? ratingDiff : a.distance - b.distance;
@@ -60,9 +66,9 @@ export default function TopRatedCards({ allLocations, activeTags, userCoords }: 
         ))
       ) : (
         <p className="col-span-full text-slate-500 italic text-center">
-        No highly rated spots within 5 miles{activeTags?.length ? ` matching "${activeTags.join(', ')}"` : ''}.
-      </p>
-     
+          No highly rated spots within {distanceLimit} mile{distanceLimit !== 1 && 's'}
+          {activeTags?.length ? ` matching "${activeTags.join(', ')}"` : ''}.
+        </p>
       )}
     </div>
   );

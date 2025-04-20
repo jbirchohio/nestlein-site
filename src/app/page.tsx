@@ -8,6 +8,8 @@ import FilterBar from '@/components/FilterBar';
 import OpenNowCards from '@/components/home/OpenNowCards';
 import TopRatedCards from '@/components/home/TopRatedCards';
 import FeaturedTagCards from '@/components/home/FeaturedTagCards';
+import DistanceSliderPill from '@/components/DistanceSliderPill';
+
 
 interface Location {
   slug: string;
@@ -26,6 +28,7 @@ export default function HomePage() {
   const [userCoords, setUserCoords] = useState<{ lat: number; lon: number } | null>(null);
   const [featuredTag, setFeaturedTag] = useState<string>('');
   const [activeTags, setActiveTags] = useState<string[]>([]);
+  const [distanceLimit, setDistanceLimit] = useState(5); // default to 5 miles
 
   useEffect(() => {
     async function fetchLocations() {
@@ -70,32 +73,40 @@ export default function HomePage() {
       {/* 🔍 Smart Filters */}
       <div className="px-4">
         <SmartFilterBanner />
-        <FilterBar
-          tags={Array.from(new Set(allLocations.flatMap(loc => loc.tags || [])))}
-          activeTags={activeTags}
-          setActiveTags={setActiveTags}
-        />
+
+        <div className="flex flex-wrap items-start gap-2 mt-4">
+          <div className="flex-1">
+            <FilterBar
+              tags={Array.from(new Set(allLocations.flatMap(loc => loc.tags || [])))}
+              activeTags={activeTags}
+              setActiveTags={setActiveTags}
+            />
+          </div>
+
+          <DistanceSliderPill distance={distanceLimit} setDistance={setDistanceLimit} />
+        </div>
 
         <Header />
       </div>
 
+
       {/* 🟢 Open Now */}
       <section className="mt-12 px-4">
         <h2 className="text-2xl font-bold mb-4">Open Near You</h2>
-        <OpenNowCards allLocations={allLocations} userCoords={userCoords} activeTags={activeTags}/>
+        <OpenNowCards allLocations={allLocations} userCoords={userCoords} activeTags={activeTags} distanceLimit={distanceLimit}/>
       </section>
 
       {/* ⭐ Top Rated */}
       <section className="mt-12 px-4">
         <h2 className="text-2xl font-bold mb-4">Top Rated Spots</h2>
-        <TopRatedCards allLocations={allLocations} userCoords={userCoords} activeTags={activeTags} />
+        <TopRatedCards allLocations={allLocations} userCoords={userCoords} activeTags={activeTags} distanceLimit={distanceLimit} />
       </section>
 
       {/* 🎯 Featured Tag */}
       {featuredTag && (
         <section className="mt-12 px-4">
           <h2 className="text-2xl font-bold mb-4">Featured: {featuredTag}</h2>
-          <FeaturedTagCards allLocations={allLocations} tag={featuredTag} userCoords={userCoords} activeTags={activeTags}/>
+          <FeaturedTagCards allLocations={allLocations} tag={featuredTag} userCoords={userCoords} activeTags={activeTags}  distanceLimit={distanceLimit}/>
         </section>
       )}
     </HomeShell>

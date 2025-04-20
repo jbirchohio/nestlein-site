@@ -14,9 +14,10 @@ interface Location {
 
 interface Props {
   allLocations: Location[];
-  activeTags?: string[]; // optional for multi-select
-  tag?: string;          // optional fallback
+  activeTags?: string[];
+  tag?: string;
   userCoords: { lat: number; lon: number } | null;
+  distanceLimit: number;
 }
 
 function getDistanceMiles(a: { lat: number; lon: number }, b: { lat: number; lon: number }): number {
@@ -32,18 +33,33 @@ function getDistanceMiles(a: { lat: number; lon: number }, b: { lat: number; lon
   return R * c;
 }
 
-export default function FeaturedTagCards({ allLocations, activeTags, tag, userCoords }: Props) {
+export default function FeaturedTagCards({
+  allLocations,
+  activeTags,
+  tag,
+  userCoords,
+  distanceLimit,
+}: Props) {
   const relevantTags = activeTags?.length ? activeTags : tag ? [tag] : [];
 
   const tagged = allLocations
-    .filter((loc) =>
-      relevantTags.length === 0 ? true : loc.tags?.some(t => relevantTags.includes(t))
-    )
+    .filter((loc) => {
+      const isWithinDistance =
+        userCoords && loc.latitude && loc.longitude
+          ? getDistanceMiles(userCoords, { lat: loc.latitude, lon: loc.longitude }) <= distanceLimit
+          : true;
+
+      const matchesTags =
+        relevantTags.length === 0 ? true : loc.tags?.some((t) => relevantTags.includes(t));
+
+      return isWithinDistance && matchesTags;
+    })
     .map((loc) => ({
       ...loc,
-      distance: userCoords && loc.latitude && loc.longitude
-        ? getDistanceMiles(userCoords, { lat: loc.latitude, lon: loc.longitude })
-        : Infinity
+      distance:
+        userCoords && loc.latitude && loc.longitude
+          ? getDistanceMiles(userCoords, { lat: loc.latitude, lon: loc.longitude })
+          : Infinity,
     }))
     .sort((a, b) => a.distance - b.distance)
     .slice(0, 6);
@@ -54,8 +70,9 @@ export default function FeaturedTagCards({ allLocations, activeTags, tag, userCo
         <LocationCard key={loc.slug} location={loc} />
       ))}
       {tagged.length === 0 && (
-        <p className="col-span-full text-slate-500 italic">
-          No matching spots found {relevantTags.length > 0 ? `for "${relevantTags.join(', ')}"` : ''}
+        <p className="col-span-full text-slate-500 italic text-center">
+          No matching spots within {distanceLimit} mile{distanceLimit !== 1 && 's'}
+          {relevantTags.length > 0 ? ` for "${relevantTags.join(', ')}"` : ''}.
         </p>
       )}
     </div>

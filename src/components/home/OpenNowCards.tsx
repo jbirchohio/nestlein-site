@@ -17,6 +17,7 @@ interface Props {
   allLocations: Location[];
   activeTags?: string[]; // <- add this
   userCoords: { lat: number; lon: number } | null;
+  distanceLimit: number;
 }
 
 
@@ -33,21 +34,27 @@ function getDistanceMiles(a: { lat: number; lon: number }, b: { lat: number; lon
   return R * c;
 }
 
-export default function OpenNowCards({ allLocations, activeTags, userCoords }: Props) {
+export default function OpenNowCards({ allLocations, activeTags, userCoords, distanceLimit }: Props) {
   const openLocations = allLocations
-  .filter((loc) =>
-    isOpenNow(loc.hours) &&
-    (activeTags?.length ? loc.tags?.some(tag => activeTags.includes(tag)) : true)
-  )
-  .map((loc) => ({
-    ...loc,
-    distance: userCoords && loc.latitude && loc.longitude
-      ? getDistanceMiles(userCoords, { lat: loc.latitude, lon: loc.longitude })
-      : Infinity
-  }))
-  .sort((a, b) => a.distance - b.distance)
-  .slice(0, 6);
+    .filter((loc) => {
+      const isOpen = isOpenNow(loc.hours);
+      const isWithinDistance =
+        userCoords && loc.latitude && loc.longitude
+          ? getDistanceMiles(userCoords, { lat: loc.latitude, lon: loc.longitude }) <= distanceLimit
+          : true;
+      const matchesTags =
+        activeTags?.length ? loc.tags?.some(tag => activeTags.includes(tag)) : true;
 
+      return isOpen && isWithinDistance && matchesTags;
+    })
+    .map((loc) => ({
+      ...loc,
+      distance: userCoords && loc.latitude && loc.longitude
+        ? getDistanceMiles(userCoords, { lat: loc.latitude, lon: loc.longitude })
+        : Infinity
+    }))
+    .sort((a, b) => a.distance - b.distance)
+    .slice(0, 6);
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -56,9 +63,11 @@ export default function OpenNowCards({ allLocations, activeTags, userCoords }: P
       ))}
       {openLocations.length === 0 && (
   <p className="col-span-full text-slate-500 italic text-center">
-    No open spots near you{activeTags?.length ? ` matching "${activeTags.join(', ')}"` : ''}.
+    No open spots within {distanceLimit} mile{distanceLimit !== 1 && 's'}
+    {activeTags?.length ? ` matching "${activeTags.join(', ')}"` : ''}.
   </p>
 )}
+
     </div>
   );
 }
