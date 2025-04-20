@@ -1,0 +1,38 @@
+{
+  "slug": "gussy-s-cafe-07302",
+  "name": "Gussy's Cafe",
+  "place_id": "ChIJ01hcZJ5RwokRRAojVZlvJVI",
+  "address": "292 Newark Ave, Jersey City, NJ 07302",
+  "phone_number": "(201) 267-6804",
+  "website": "https://www.gussyscafe.com/?ref=roamly",
+  "menu_url": null,
+  "logo_url": "https://lh3.googleusercontent.com/p/AF1QipOV8FjyAX4zRYir6rG2LroZ4fiBYr_8KY1YTFGL=w408-h306-k-no",
+  "latitude": 40.723894,
+  "longitude": -74.0499565,
+  "hours": "Mon\u2013Fri: 7\u202fAM to 5\u202fPM, Sat\u2013Sun: 7\u202fAM to 3:30\u202fPM",
+  "open_now": "Open",
+  "review_score": 4.4,
+  "review_count": 283,
+  "best_time_to_work_remotely": "Before 10 AM",
+  "remote_work_summary": "Gussy's Cafe offers a pleasant environment with plenty of seating space and clean bathrooms. It's a busy spot with a vibrant atmosphere, making it suitable for remote work during quieter hours.",
+  "remote_work_features": {
+    "wi_fi_quality": "Unknown",
+    "outlet_access": "Unknown",
+    "noise_level": "Moderate",
+    "seating_comfort": "Comfortable",
+    "natural_light": "Unknown",
+    "stay_duration_friendliness": "Friendly",
+    "food_drink_options": "Good",
+    "bathroom_access": "Good",
+    "parking_availability": "Unknown"
+  },
+  "tags": [
+    "Outdoor Seating",
+    "Wheelchair Accessible",
+    "Good For Kids",
+    "Plenty Of Seating",
+    "Clean Bathrooms",
+    "Busy",
+    "Cafe"
+  ]
+}
