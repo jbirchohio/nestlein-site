@@ -82,56 +82,55 @@ def format_hours(opening_hours):
 
 
 def flatten_business_data(bd):
-    lines = []
+    lines = [
+        f"Title: {bd.get('title','')}",
+        f"Category: {bd.get('categoryName','')}",
+        f"Address: {bd.get('address','')}",
+        f"Phone: {bd.get('phone','')}",
+        f"Website: {bd.get('website','')}",
+        f"Rating: {bd.get('totalScore','Unknown')}",
+        f"Review Count: {bd.get('reviewsCount','Unknown')}",
+        "Opening Hours:",
+    ]
 
-    # Core Info
-    lines.append(f"Name: {bd.get('title','')}")
-    lines.append(f"Primary Category: {bd.get('categoryName','')}")
-    lines.append(f"All Categories: {', '.join(bd.get('categories', []))}")
-    lines.append(f"Address: {bd.get('address','')}")
-    lines.append(f"Phone: {bd.get('phone','')}")
-    lines.append(f"Website: {bd.get('website','')}")
-    lines.append(f"Total Rating: {bd.get('totalScore','Unknown')}")
-    lines.append(f"Review Count: {bd.get('reviewsCount','Unknown')}")
-
-    # Popular Times (for best_time_to_work)
     if bd.get("popularTimesHistogram"):
         lines.append("Popular Times:")
         for entry in bd["popularTimesHistogram"]:
-            day = entry.get("day")
-            histogram = entry.get("histogram", [])
-            times = [f"{h['hour']}: {h['occupancyPercent']}%" for h in histogram]
-            lines.append(f"  - {day}: {', '.join(times)}")
+            if isinstance(entry, dict):
+                day = entry.get("day", "Unknown")
+                histogram = entry.get("histogram", [])
+                if isinstance(histogram, list) and histogram:
+                    time_blocks = []
+                    for h in histogram:
+                        if isinstance(h, dict):
+                            hour = h.get("hour")
+                            percent = h.get("occupancyPercent")
+                            if hour is not None and percent is not None:
+                                if percent >= 70:
+                                    descriptor = "Busy"
+                                elif percent >= 40:
+                                    descriptor = "Moderate"
+                                else:
+                                    descriptor = "Light"
+                                label = f"{hour}:00 – {descriptor} ({percent}%)"
+                                time_blocks.append(label)
+                    if time_blocks:
+                        lines.append(f"  - {day}: {', '.join(time_blocks)}")
 
-    # Hours
-    lines.append("Opening Hours:")
     for h in bd.get('openingHours', []):
         lines.append(f"  - {h.get('day')}: {h.get('hours')}")
-
-    # Tags
-    tags = set(bd.get('categories', []))
-    if bd.get("primaryCategory") and bd["primaryCategory"].get("name"):
-        tags.add(bd["primaryCategory"]["name"])
-    lines.append(f"Tags: {', '.join(sorted(tags))}")
-
-    # Attributes / Feature Signals
+    lines.append(f"Tags: {', '.join(bd.get('categories', []))}")
     info = bd.get('additionalInfo', {})
-    for section in ["Service options", "Accessibility", "Planning", "Children"]:
-        values = yes_list(info.get(section, []))
-        if values:
-            lines.append(f"{section}: {', '.join(values)}")
-
-    # Reviews (trimmed)
+    for section in ["Service options","Accessibility","Planning","Children"]:
+        lines.append(f"{section}: {', '.join(yes_list(info.get(section, [])))}")
     reviews = bd.get('reviews') or []
     if reviews:
-        lines.append("Reviews (summarized):")
+        lines.append("Reviews:")
         for r in reviews[:5]:
-            raw = r.get('text', '').replace('\n', ' ').strip()
-            if raw:
-                lines.append(f"  - {raw[:200]}")
-
+            raw = r.get('text') or ''
+            text = raw.replace('\n', ' ')[:150]
+            lines.append(f"  - {text}")
     return "\n".join(lines)
-)
 
 
 def add_ref_param(url, ref="roamly"):
@@ -227,6 +226,12 @@ You must extract the following fields:
      - value  
      - experience  
 
+5. "tags"  
+   - List of remote-work-friendly keywords describing the vibe and amenities  
+   - Examples: ["quiet", "free wifi", "outlets", "sunlight", "solo seating", "early morning", "counter space"]  
+   - Infer based on reviews, popular times, amenities, and overall impression  
+   - Only include useful remote work tags. Avoid generic category names like "restaurant" or "bakery"
+
 ---
 
 ### Output Rules:
@@ -291,7 +296,7 @@ def process_all(limit=5):
     batch, done_now = [], set()
     for pid in newids[:limit]:
         place_ds = trigger_apify_actor(PLACE_ACTOR, {"placeIds": [pid]})
-        rev_ds   = trigger_apify_actor(REVIEW_ACTOR, {"placeIds": [pid], "reviewsLimit": 50})
+        rev_ds   = trigger_apify_actor(REVIEW_ACTOR, {"placeIds": [pid], "maxReviews": 50, "reviewsSort": "mostRelevant"})
         if not place_ds or not rev_ds:
             continue
         place = poll_apify(place_ds)[0]
@@ -311,11 +316,13 @@ def process_all(limit=5):
             "longitude":     place.get('location', {}).get('lng', ''),
             "hours":         format_hours(place.get('openingHours', [])),
             "open_now":      place.get('temporarilyClosed', False) and 'Closed' or 'Open',
-            "tags":          place.get('categories', []),
             "review_score":  place.get('totalScore', ''),
             "review_count":  place.get('reviewsCount', ''),
         }
         ai = run_assistant_conversation(place)
+        # ✅ Capitalize tags
+        if "tags" in ai and isinstance(ai["tags"], list):
+            ai["tags"] = [tag.strip().title() for tag in ai["tags"] if isinstance(tag, str)]
         merged = {**structured, **ai}
         batch.append({"path": f"{GITHUB_PATH_PREFIX}/{slug}.json", "content": json.dumps(merged, indent=2)})
         done_now.add(pid)

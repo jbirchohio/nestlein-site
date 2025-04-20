@@ -1,39 +1,26 @@
 'use client';
 
-import { Clock, MapPin, Search, X } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { Info } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
-export default function SmartFilterBanner({
-  message,
-}: {
-  message: string | null;
-}) {
-  const [visible, setVisible] = useState(!!message);
+interface Props {
+  message?: string;
+}
+
+export default function SmartFilterBanner({ message = 'Showing open spots near you' }: Props) {
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    setVisible(!!message);
-  }, [message]);
+    const timeout = setTimeout(() => setVisible(true), 200); // subtle fade in
+    return () => clearTimeout(timeout);
+  }, []);
 
-  if (!visible || !message) return null;
-
-  const getIcon = () => {
-    if (message.toLowerCase().includes('open')) return <Clock size={16} />;
-    if (message.toLowerCase().includes('near')) return <MapPin size={16} />;
-    return <Search size={16} />;
-  };
+  if (!visible) return null;
 
   return (
-    <div className="flex items-center justify-between gap-3 mt-3 px-4 py-2 rounded-md bg-[var(--accent-light)] text-[var(--foreground)] text-sm font-medium transition-all duration-300 shadow-sm">
-      <div className="flex items-center gap-2">
-        {getIcon()}
-        <span>{message}</span>
-      </div>
-      <button
-        onClick={() => setVisible(false)}
-        className="text-[var(--foreground)] hover:text-[var(--accent)] transition"
-      >
-        <X size={16} />
-      </button>
+    <div className="bg-[var(--accent-light)] text-[var(--accent-dark)] text-sm font-medium py-2 px-4 rounded-xl shadow-sm flex items-center gap-2 max-w-fit mx-auto mt-4 animate-fade-in">
+      <Info size={16} className="text-[var(--accent-dark)]" />
+      {message}
     </div>
   );
 }
