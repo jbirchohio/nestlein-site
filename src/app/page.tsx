@@ -82,20 +82,20 @@ export default function HomePage() {
       {/* 🟢 Open Now */}
       <section className="mt-12 px-4">
         <h2 className="text-2xl font-bold mb-4">Open Near You</h2>
-        <OpenNowCards allLocations={allLocations} userCoords={userCoords} />
+        <OpenNowCards allLocations={allLocations} userCoords={userCoords} activeTags={activeTags}/>
       </section>
 
       {/* ⭐ Top Rated */}
       <section className="mt-12 px-4">
         <h2 className="text-2xl font-bold mb-4">Top Rated Spots</h2>
-        <TopRatedCards allLocations={allLocations} userCoords={userCoords} />
+        <TopRatedCards allLocations={allLocations} userCoords={userCoords} activeTags={activeTags} />
       </section>
 
       {/* 🎯 Featured Tag */}
       {featuredTag && (
         <section className="mt-12 px-4">
           <h2 className="text-2xl font-bold mb-4">Featured: {featuredTag}</h2>
-          <FeaturedTagCards allLocations={allLocations} tag={featuredTag} userCoords={userCoords} />
+          <FeaturedTagCards allLocations={allLocations} tag={featuredTag} userCoords={userCoords} activeTags={activeTags}/>
         </section>
       )}
     </HomeShell>

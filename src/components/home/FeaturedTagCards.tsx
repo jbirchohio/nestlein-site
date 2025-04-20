@@ -14,7 +14,8 @@ interface Location {
 
 interface Props {
   allLocations: Location[];
-  tag: string;
+  activeTags?: string[]; // optional for multi-select
+  tag?: string;          // optional fallback
   userCoords: { lat: number; lon: number } | null;
 }
 
@@ -31,9 +32,13 @@ function getDistanceMiles(a: { lat: number; lon: number }, b: { lat: number; lon
   return R * c;
 }
 
-export default function FeaturedTagCards({ allLocations, tag, userCoords }: Props) {
+export default function FeaturedTagCards({ allLocations, activeTags, tag, userCoords }: Props) {
+  const relevantTags = activeTags?.length ? activeTags : tag ? [tag] : [];
+
   const tagged = allLocations
-    .filter((loc) => loc.tags?.includes(tag))
+    .filter((loc) =>
+      relevantTags.length === 0 ? true : loc.tags?.some(t => relevantTags.includes(t))
+    )
     .map((loc) => ({
       ...loc,
       distance: userCoords && loc.latitude && loc.longitude
@@ -50,7 +55,7 @@ export default function FeaturedTagCards({ allLocations, tag, userCoords }: Prop
       ))}
       {tagged.length === 0 && (
         <p className="col-span-full text-slate-500 italic">
-          No locations tagged with &quot;{tag}&quot; open near you
+          No matching spots found {relevantTags.length > 0 ? `for "${relevantTags.join(', ')}"` : ''}
         </p>
       )}
     </div>

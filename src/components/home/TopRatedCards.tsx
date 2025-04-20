@@ -15,6 +15,7 @@ interface Location {
 
 interface Props {
   allLocations: Location[];
+  activeTags?: string[];
   userCoords: { lat: number; lon: number } | null;
 }
 
@@ -31,9 +32,13 @@ function getDistanceMiles(a: { lat: number; lon: number }, b: { lat: number; lon
   return R * c;
 }
 
-export default function TopRatedCards({ allLocations, userCoords }: Props) {
-  const topRated = [...allLocations]
-    .filter((loc) => typeof loc.review_score === 'number')
+export default function TopRatedCards({ allLocations, activeTags, userCoords }: Props) {
+  const topRated = allLocations
+  .filter((loc) =>
+    typeof loc.review_score === 'number' &&
+    (activeTags?.length ? loc.tags?.some(tag => activeTags.includes(tag)) : true)
+  )
+
     .map((loc) => ({
       ...loc,
       distance: userCoords && loc.latitude && loc.longitude
@@ -54,9 +59,10 @@ export default function TopRatedCards({ allLocations, userCoords }: Props) {
           <LocationCard key={loc.slug} location={loc} />
         ))
       ) : (
-        <p className="col-span-full text-slate-500 italic">
-          No highly rated spots within 5 miles
-        </p>
+        <p className="col-span-full text-slate-500 italic text-center">
+        No highly rated spots within 5 miles{activeTags?.length ? ` matching "${activeTags.join(', ')}"` : ''}.
+      </p>
+     
       )}
     </div>
   );

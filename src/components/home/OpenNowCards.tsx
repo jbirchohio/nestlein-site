@@ -15,8 +15,10 @@ interface Location {
 
 interface Props {
   allLocations: Location[];
+  activeTags?: string[]; // <- add this
   userCoords: { lat: number; lon: number } | null;
 }
+
 
 function getDistanceMiles(a: { lat: number; lon: number }, b: { lat: number; lon: number }): number {
   const R = 3958.8; // Earth radius in miles
@@ -31,17 +33,21 @@ function getDistanceMiles(a: { lat: number; lon: number }, b: { lat: number; lon
   return R * c;
 }
 
-export default function OpenNowCards({ allLocations, userCoords }: Props) {
+export default function OpenNowCards({ allLocations, activeTags, userCoords }: Props) {
   const openLocations = allLocations
-    .filter((loc) => isOpenNow(loc.hours))
-    .map((loc) => ({
-      ...loc,
-      distance: userCoords && loc.latitude && loc.longitude
-        ? getDistanceMiles(userCoords, { lat: loc.latitude, lon: loc.longitude })
-        : Infinity
-    }))
-    .sort((a, b) => a.distance - b.distance)
-    .slice(0, 6);
+  .filter((loc) =>
+    isOpenNow(loc.hours) &&
+    (activeTags?.length ? loc.tags?.some(tag => activeTags.includes(tag)) : true)
+  )
+  .map((loc) => ({
+    ...loc,
+    distance: userCoords && loc.latitude && loc.longitude
+      ? getDistanceMiles(userCoords, { lat: loc.latitude, lon: loc.longitude })
+      : Infinity
+  }))
+  .sort((a, b) => a.distance - b.distance)
+  .slice(0, 6);
+
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -49,8 +55,10 @@ export default function OpenNowCards({ allLocations, userCoords }: Props) {
         <LocationCard key={loc.slug} location={loc} />
       ))}
       {openLocations.length === 0 && (
-        <p className="col-span-full text-slate-500 italic">No open spots near you right now</p>
-      )}
+  <p className="col-span-full text-slate-500 italic text-center">
+    No open spots near you{activeTags?.length ? ` matching "${activeTags.join(', ')}"` : ''}.
+  </p>
+)}
     </div>
   );
 }
