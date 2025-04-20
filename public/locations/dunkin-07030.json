@@ -1,0 +1,45 @@
+{
+  "slug": "dunkin-07030",
+  "name": "Dunkin'",
+  "place_id": "ChIJ-98Dk1tXwokRwHV_Fv6Fr_s",
+  "address": "400 Newark St., Hoboken, NJ 07030",
+  "phone_number": "(201) 222-6959",
+  "website": "https://locations.dunkindonuts.com/en/nj/hoboken/400-newark-st/331553?utm_source=google&utm_medium=local&utm_campaign=localmaps&utm_content=331553&y_source=1_MTIxMTM2MTEtNzE1LWxvY2F0aW9uLndlYnNpdGU%3D&ref=roamly",
+  "menu_url": null,
+  "logo_url": "https://lh3.googleusercontent.com/p/AF1QipNODu79toM843iKht8tmFWhyTmrfIwLT_x6SdzI=w426-h240-k-no",
+  "latitude": 40.7374606,
+  "longitude": -74.0372982,
+  "hours": "Mon\u2013Sun: Open 24 hours",
+  "open_now": "Open",
+  "tags": [
+    "Coffee shop",
+    "Bagel shop",
+    "Bakery",
+    "Breakfast restaurant",
+    "Donut shop",
+    "Fast food restaurant",
+    "Takeout Restaurant"
+  ],
+  "review_score": 4,
+  "review_count": 419,
+  "best_time_to_work_remotely": "Anytime",
+  "remote_work_summary": "Dunkin' offers a 24-hour service, making it a flexible option for remote work at any time of the day. The environment is clean with good music, and it provides wheelchair accessibility, ensuring a comfortable experience.",
+  "remote_work_features": {
+    "wi_fi_quality": "Unknown",
+    "outlet_access": "Unknown",
+    "noise_level": "Moderate",
+    "seating_comfort": "Unknown",
+    "natural_light": "Unknown",
+    "stay_duration_friendliness": "High",
+    "food_drink_options": "Good",
+    "bathroom_access": "Good",
+    "parking_availability": "Good"
+  },
+  "scores": {
+    "food_quality": 8,
+    "service": 8,
+    "ambiance": 7,
+    "value": 7,
+    "experience": 7
+  }
+}

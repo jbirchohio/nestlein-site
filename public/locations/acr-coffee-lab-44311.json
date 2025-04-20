@@ -1,0 +1,37 @@
+{
+  "slug": "acr-coffee-lab-44311",
+  "name": "ACR Coffee Lab",
+  "place_id": "ChIJi8y5UMTXMIgRo9zrf9ZCV8o",
+  "address": "526 S Main St, Akron, OH 44311",
+  "phone_number": "(330) 608-0581",
+  "website": "http://acr-coffee-lab.square.site/?ref=roamly",
+  "menu_url": null,
+  "logo_url": "https://lh3.googleusercontent.com/gps-cs-s/AB5caB8ACyE-NbhTlMwW1vuKVspIZ2mCDI73gVt9NowXvWCpcz-dIOnp8DX2xOiFmSIcKpx30m-Mi7O1dLjnPJ5Du7CXd3vHJzN8R8-PpjlIRVkv8JGQevM9saZuwZEbXiI1BYQ2bcil=w408-h306-k-no",
+  "latitude": 41.0718997,
+  "longitude": -81.5270031,
+  "hours": "Mon\u2013Fri: 7\u202fAM to 3\u202fPM, Sat\u2013Sun: Closed",
+  "open_now": "Open",
+  "tags": [
+    "Coffee shop"
+  ],
+  "review_score": 5,
+  "review_count": 7,
+  "best_time_to_work_remotely": "Before 10 AM",
+  "remote_work_summary": "ACR Coffee Lab offers a cozy environment with fantastic coffee options. While it has a great vibe and excellent drinks, information on Wi-Fi and outlet availability is not provided.",
+  "remote_work_features": {
+    "wi_fi_quality": "Unknown",
+    "outlet_access": "Unknown",
+    "noise_level": "Quiet",
+    "seating_comfort": "Comfortable",
+    "natural_light": "Unknown",
+    "stay_duration_friendliness": "Friendly",
+    "food_drink_options": "Excellent",
+    "bathroom_access": "Unknown",
+    "parking_availability": "Available"
+  },
+  "scores": {
+    "food_quality": 9,
+    "service": 9,
+    "ambiance": 8
+  }
+}
