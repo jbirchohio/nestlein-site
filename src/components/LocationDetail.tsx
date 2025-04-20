@@ -8,9 +8,10 @@ import {
   MapPin, Clock, Phone, Wifi, Power, Volume2,
   Sun, ParkingSquare, Bath, Sandwich, MonitorSmartphone, Star
 } from 'lucide-react';
+import { Location } from '@/types/location';
 
 export default function LocationDetail({ slug }: { slug: string }) {
-  const [location, setLocation] = useState<any>(null);
+  const [location, setLocation] = useState<Location | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
