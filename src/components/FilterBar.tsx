@@ -20,40 +20,56 @@ export default function FilterBar({ tags, activeTag, setActiveTag }: FilterBarPr
   if (!mounted || tags.length === 0) return null;
 
   return (
-    <section className="max-w-6xl mx-auto px-4 mt-4">
-      <div className="flex flex-wrap gap-2 items-center">
-        <div className="flex items-center gap-2 text-[var(--foreground-muted)] text-sm font-semibold">
-          <SlidersHorizontal size={16} />
-          Filter by tag:
-        </div>
-
+    <div className="w-full">
+  
+      {/* Mobile Multi-Select Dropdown */}
+      <div className="block md:hidden mb-4">
+        <label htmlFor="tagFilter" className="text-sm font-medium text-gray-700 mb-1 block">
+          Find your vibe
+        </label>
+        <select
+          id="tagFilter"
+          multiple
+          className="w-full h-32 rounded-md border border-gray-300 py-2 px-3 shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-[#FF4F5E]"
+          onChange={(e) => {
+            const selectedOptions = Array.from(e.target.selectedOptions).map((opt) => opt.value);
+            setActiveTags(selectedOptions);
+          }}
+          value={activeTags}
+        >
+          {tags.map((tag) => (
+            <option key={tag} value={tag}>
+              {tag}
+            </option>
+          ))}
+        </select>
+        <p className="mt-1 text-xs text-gray-500">Hold Ctrl (or Cmd) to select multiple</p>
+      </div>
+  
+      {/* Tag Grid for Desktop */}
+      <div className="hidden md:grid grid-cols-3 lg:grid-cols-6 gap-2">
         {tags.map((tag) => {
-          const selected = activeTag === tag;
+          const isSelected = activeTags.includes(tag);
           return (
             <button
               key={tag}
-              onClick={() => setActiveTag(selected ? null : tag)}
-              className={`text-sm px-3 py-1.5 rounded-full font-medium transition border ${
-                selected
-                  ? 'bg-[var(--accent)] text-white border-[var(--accent-dark)]'
-                  : 'bg-[var(--background)] text-[var(--foreground-muted)] hover:bg-[var(--accent-light)] border-[var(--accent-light)]'
+              onClick={() => {
+                if (isSelected) {
+                  setActiveTags(activeTags.filter((t) => t !== tag));
+                } else {
+                  setActiveTags([...activeTags, tag]);
+                }
+              }}
+              className={`px-3 py-1 text-sm rounded-full border border-gray-300 transition hover:bg-[#3ED6C0] hover:text-white ${
+                isSelected ? 'bg-[#FF4F5E] text-white' : ''
               }`}
             >
-              {tag.charAt(0).toUpperCase() + tag.slice(1)}
+              {tag}
             </button>
           );
         })}
-
-        {activeTag && (
-          <button
-            onClick={() => setActiveTag(null)}
-            className="flex items-center gap-1 text-sm text-[var(--foreground-muted)] hover:text-[var(--foreground)] transition ml-2"
-          >
-            <X size={16} />
-            Clear
-          </button>
-        )}
       </div>
-    </section>
+  
+    </div>
   );
-}
+  
