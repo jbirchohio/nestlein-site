@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 
 interface FilterBarProps {
   tags: string[];
@@ -9,66 +10,80 @@ interface FilterBarProps {
 }
 
 export default function FilterBar({ tags, activeTags, setActiveTags }: FilterBarProps) {
-  const [mounted, setMounted] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
 
-  useEffect(() => {
-    const t = setTimeout(() => setMounted(true), 150);
-    return () => clearTimeout(t);
-  }, []);
+  const toggleTag = (tag: string) => {
+    if (activeTags.includes(tag)) {
+      setActiveTags(activeTags.filter((t) => t !== tag));
+    } else {
+      setActiveTags([...activeTags, tag]);
+    }
+  };
 
-  if (!mounted || tags.length === 0) return null;
+  // Split tags
+  const mobileVisibleTags = tags.slice(0, 3);
+  const desktopVisibleTags = tags.slice(0, 6);
+  const hiddenTags = tags.slice(6);
 
   return (
-    <div className="w-full">
+    <div className="w-full relative">
 
-      {/* Mobile Multi-Select Dropdown */}
-      <div className="block md:hidden mb-4">
-        <label htmlFor="tagFilter" className="text-sm font-medium text-gray-700 mb-1 block">
-          Find your vibe
-        </label>
-        <select
-          id="tagFilter"
-          multiple
-          className="w-full h-32 rounded-md border border-gray-300 py-2 px-3 shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-[#FF4F5E]"
-          onChange={(e) => {
-            const selectedOptions = Array.from(e.target.selectedOptions).map((opt) => opt.value);
-            setActiveTags(selectedOptions);
-          }}
-          value={activeTags}
-        >
-          {tags.map((tag) => (
-            <option key={tag} value={tag}>
-              {tag}
-            </option>
-          ))}
-        </select>
-        <p className="mt-1 text-xs text-gray-500">Hold Ctrl (or Cmd) to select multiple</p>
+      {/* Mobile Buttons */}
+      <div className="flex md:hidden flex-wrap gap-2 mb-2">
+        {mobileVisibleTags.map((tag) => (
+          <button
+            key={tag}
+            onClick={() => toggleTag(tag)}
+            className={`px-3 py-1 text-sm rounded-full border border-gray-300 ${
+              activeTags.includes(tag) ? 'bg-[#FF4F5E] text-white' : 'hover:bg-[#3ED6C0] hover:text-white'
+            }`}
+          >
+            {tag}
+          </button>
+        ))}
       </div>
 
-      {/* Tag Grid for Desktop */}
-      <div className="hidden md:grid grid-cols-3 lg:grid-cols-6 gap-2">
-        {tags.map((tag) => {
-          const isSelected = activeTags.includes(tag);
-          return (
+      {/* Desktop Grid */}
+      <div className="hidden md:grid grid-cols-3 lg:grid-cols-6 gap-2 mb-2">
+        {desktopVisibleTags.map((tag) => (
+          <button
+            key={tag}
+            onClick={() => toggleTag(tag)}
+            className={`px-3 py-1 text-sm rounded-full border border-gray-300 ${
+              activeTags.includes(tag) ? 'bg-[#FF4F5E] text-white' : 'hover:bg-[#3ED6C0] hover:text-white'
+            }`}
+          >
+            {tag}
+          </button>
+        ))}
+      </div>
+
+      {/* Toggle Dropdown */}
+      <div className="flex items-center gap-2 mb-4">
+        <button
+          onClick={() => setShowDropdown(!showDropdown)}
+          className="text-sm text-[#FF4F5E] flex items-center gap-1"
+        >
+          More Filters <ChevronDown className={`w-4 h-4 transition-transform ${showDropdown ? 'rotate-180' : ''}`} />
+        </button>
+      </div>
+
+      {/* Dropdown with remaining tags */}
+      {showDropdown && (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 mt-2 border-t pt-4">
+          {hiddenTags.map((tag) => (
             <button
               key={tag}
-              onClick={() => {
-                if (isSelected) {
-                  setActiveTags(activeTags.filter((t) => t !== tag));
-                } else {
-                  setActiveTags([...activeTags, tag]);
-                }
-              }}
-              className={`px-3 py-1 text-sm rounded-full border border-gray-300 transition hover:bg-[#3ED6C0] hover:text-white ${
-                isSelected ? 'bg-[#FF4F5E] text-white' : ''
+              onClick={() => toggleTag(tag)}
+              className={`px-3 py-1 text-sm rounded-full border border-gray-300 ${
+                activeTags.includes(tag) ? 'bg-[#FF4F5E] text-white' : 'hover:bg-[#3ED6C0] hover:text-white'
               }`}
             >
               {tag}
             </button>
-          );
-        })}
-      </div>
-
+          ))}
+        </div>
+      )}
     </div>
   );
 }
