@@ -1,0 +1,37 @@
+{
+  "slug": "cocoon-cowork-11237",
+  "name": "Cocoon Cowork",
+  "place_id": "ChIJ1_Sl49BdwokRxqbtr3Mt098",
+  "address": "49 Wyckoff Ave, Brooklyn, NY 11237",
+  "phone_number": "(929) 482-5566",
+  "website": "https://cocoon.nyc/?ref=roamly",
+  "menu_url": null,
+  "logo_url": "https://lh3.googleusercontent.com/p/AF1QipPhApu5BEbJVYGVji4AAug24r7mi9Xi0TPj7bUb=w408-h306-k-no",
+  "latitude": 40.706009,
+  "longitude": -73.9215154,
+  "hours": "",
+  "open_now": "Closed",
+  "review_score": 4.5,
+  "review_count": 16,
+  "best_time_to_work_remotely": "Unknown",
+  "remote_work_summary": "Cocoon Cowork offers a beautiful and well-equipped workspace with high-speed internet and helpful staff. The space is filled with natural light, providing a great vibe for remote work.",
+  "remote_work_features": {
+    "wi_fi_quality": "High",
+    "outlet_access": "Unknown",
+    "noise_level": "Quiet",
+    "seating_comfort": "Comfortable",
+    "natural_light": "Abundant",
+    "stay_duration_friendliness": "Friendly",
+    "food_drink_options": "Unknown",
+    "bathroom_access": "Accessible",
+    "parking_availability": "Unknown"
+  },
+  "tags": [
+    "Coworking",
+    "Natural Light",
+    "Quiet",
+    "High-Speed Internet",
+    "Comfortable Seating",
+    "Helpful Staff"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "slug": "rim-cafe-19147",
+  "name": "RIM Cafe",
+  "place_id": "ChIJ0aGPvR7GxokRUqGGFqVdng0",
+  "address": "1172 S 9th St, Philadelphia, PA 19147",
+  "phone_number": "(215) 465-3515",
+  "website": "?ref=roamly",
+  "menu_url": null,
+  "logo_url": "https://lh3.googleusercontent.com/p/AF1QipMf7miipxauKvN8T7bY9Jc70eQNJGtlvUuN18pm=w426-h240-k-no",
+  "latitude": 39.9343986,
+  "longitude": -75.1589928,
+  "hours": "Mon\u2013Wed: Closed, Thursday: 12 to 9\u202fPM, Fri\u2013Sat: 12 to 10\u202fPM, Sunday: 12 to 9\u202fPM",
+  "open_now": "Open",
+  "review_score": 4.7,
+  "review_count": 461,
+  "best_time_to_work_remotely": "Mid-afternoon",
+  "remote_work_summary": "RIM Cafe offers a vibrant and chic atmosphere, ideal for those who enjoy working in a lively environment. While Wi-Fi and outlet access are not specified, the cafe provides outdoor seating options and is wheelchair accessible.",
+  "remote_work_features": {
+    "wi_fi_quality": "Unknown",
+    "outlet_access": "Unknown",
+    "noise_level": "Lively",
+    "seating_comfort": "Outdoor seating available",
+    "natural_light": "Unknown",
+    "stay_duration_friendliness": "Accepts reservations",
+    "food_drink_options": "Fantastic coffee and hot chocolate",
+    "bathroom_access": "Unknown",
+    "parking_availability": "Unknown"
+  },
+  "tags": [
+    "Vibrant",
+    "Outdoor Seating",
+    "Reservations",
+    "Coffee",
+    "Hot Chocolate"
+  ]
+}

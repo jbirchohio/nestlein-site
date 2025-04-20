@@ -1,0 +1,35 @@
+{
+  "slug": "heights-little-free-library-07307",
+  "name": "Heights Little Free Library",
+  "place_id": "ChIJ1xwceaBXwokRyYCcakoOTNw",
+  "address": "300 Ogden Ave., Jersey City, NJ 07307",
+  "phone_number": "",
+  "website": "?ref=roamly",
+  "menu_url": null,
+  "logo_url": "https://lh3.googleusercontent.com/gps-cs-s/AB5caB_oFjnuqDHVXOEUgQMA4HYwIRMXl0fsD3ZWd-GxDqaX_yfRTlQoOGrCdUvRuWAb-Y0GsNon494ty9qxp1RX9xn2Ly7i8ljFYGoVhyh2H_II9er_PNAhIw2qohRbrAsEi4q2Noliiw=w408-h725-k-no",
+  "latitude": 40.7451516,
+  "longitude": -74.0426088,
+  "hours": "Mon\u2013Sun: Open 24 hours",
+  "open_now": "Open",
+  "review_score": 5,
+  "review_count": 2,
+  "best_time_to_work_remotely": "Anytime",
+  "remote_work_summary": "This library offers a quiet and serene environment ideal for focused work. However, amenities like Wi-Fi and outlets are not mentioned, so it's best to plan accordingly.",
+  "remote_work_features": {
+    "wi_fi_quality": "Unknown",
+    "outlet_access": "Unknown",
+    "noise_level": "Quiet",
+    "seating_comfort": "Unknown",
+    "natural_light": "Unknown",
+    "stay_duration_friendliness": "Friendly",
+    "food_drink_options": "Unknown",
+    "bathroom_access": "Unknown",
+    "parking_availability": "Unknown"
+  },
+  "tags": [
+    "Quiet",
+    "Library",
+    "24/7 Access",
+    "Donate Books"
+  ]
+}
