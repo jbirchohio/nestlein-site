@@ -87,7 +87,7 @@ export default function LocationDetail({ slug }: { slug: string }) {
 
         {hasTags && (
           <div className="flex flex-wrap gap-2 pt-2">
-            {location.tags.map((tag: string, i: number) => (
+            {location.tags?.map((tag: string, i: number) => (
               <span
                 key={tag}
                 className="text-xs font-semibold px-3 py-1 bg-[var(--accent-light)] text-[var(--accent-dark)] rounded-full animate-fade-in-up"
