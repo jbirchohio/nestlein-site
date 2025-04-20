@@ -1,0 +1,42 @@
+{
+  "slug": "19th-st-co-working-offices-07087",
+  "name": "19th St. Co-Working Offices",
+  "place_id": "ChIJ0zVnnYFXwokRu0RYDe9fEbw",
+  "address": "160 19th St, Union City, NJ 07087",
+  "phone_number": "(917) 364-0759",
+  "website": "https://www.19thstoffices.com/?ref=roamly",
+  "menu_url": null,
+  "logo_url": "https://lh3.googleusercontent.com/p/AF1QipM-EhMCFsF4_g7A4byzdp-Lw3adzl3Npd00lEli=w408-h266-k-no",
+  "latitude": 40.7623943,
+  "longitude": -74.030275,
+  "hours": "Mon\u2013Fri: 8:30\u202fAM to 6\u202fPM, Saturday: Closed, Sunday: 9:30\u202fAM to 6\u202fPM",
+  "open_now": "Open",
+  "review_score": 5,
+  "review_count": 28,
+  "best_time_to_work_remotely": "Before 10 AM",
+  "remote_work_summary": "19th St. Co-Working Offices offers a vibrant atmosphere with high-speed internet and great coffee, making it ideal for remote work. The space is modern, clean, and bright, with spacious offices and updated bathrooms.",
+  "remote_work_features": {
+    "wi_fi_quality": "High-speed",
+    "outlet_access": "Unknown",
+    "noise_level": "Vibrant",
+    "seating_comfort": "Spacious",
+    "natural_light": "Bright",
+    "stay_duration_friendliness": "Friendly",
+    "food_drink_options": "Great coffee",
+    "bathroom_access": "Modern and clean",
+    "parking_availability": "Unknown"
+  },
+  "scores": {
+    "food_quality": 8,
+    "ambiance": 9,
+    "experience": 9
+  },
+  "tags": [
+    "High-Speed Internet",
+    "Great Coffee",
+    "Vibrant",
+    "Bright",
+    "Spacious",
+    "Modern Bathrooms"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "slug": "jefferson-s-coffee-madison-07030",
+  "name": "Jefferson's Coffee @ Madison",
+  "place_id": "ChIJ0bA-gWNXwokRRoW8QXK3kRM",
+  "address": "1001 Madison St, Hoboken, NJ 07030",
+  "phone_number": "(201) 253-0617",
+  "website": "https://www.jeffersonscoffeetwo.com/?ref=roamly",
+  "menu_url": null,
+  "logo_url": "https://lh3.googleusercontent.com/p/AF1QipNPjZzR7ikwTyxnLK0djEqdCFMlxFyCWarJAiTM=w408-h558-k-no",
+  "latitude": 40.7499442,
+  "longitude": -74.035647,
+  "hours": "Mon\u2013Wed: 7\u202fAM to 5\u202fPM, Thu\u2013Sat: 7\u202fAM to 6\u202fPM, Sunday: 7:30\u202fAM to 5:30\u202fPM",
+  "open_now": "Open",
+  "review_score": 4.3,
+  "review_count": 147,
+  "best_time_to_work_remotely": "Before 10 AM",
+  "remote_work_summary": "Jefferson's Coffee @ Madison offers a cozy atmosphere with friendly staff and a variety of coffee options. While the Wi-Fi quality and outlet access are not specified, the caf\u00e9 provides outdoor seating and a welcoming vibe, making it a pleasant spot for remote work.",
+  "remote_work_features": {
+    "wi_fi_quality": "Unknown",
+    "outlet_access": "Unknown",
+    "noise_level": "Moderate",
+    "seating_comfort": "Moderate",
+    "natural_light": "Unknown",
+    "stay_duration_friendliness": "Friendly",
+    "food_drink_options": "Good",
+    "bathroom_access": "Accessible",
+    "parking_availability": "Unknown"
+  },
+  "tags": [
+    "Friendly Staff",
+    "Outdoor Seating",
+    "Cozy Atmosphere",
+    "Coffee Variety"
+  ]
+}
