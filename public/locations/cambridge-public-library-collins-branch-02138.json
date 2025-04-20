@@ -1,0 +1,33 @@
+{
+  "slug": "cambridge-public-library-collins-branch-02138",
+  "name": "Cambridge Public Library - Collins Branch",
+  "place_id": "ChIJ064Jy4J344kRBIaorZiEpqM",
+  "address": "64 Aberdeen Ave, Cambridge, MA 02138",
+  "phone_number": "(617) 349-4021",
+  "website": "http://www.cambridgepubliclibrary.org/?ref=roamly",
+  "menu_url": null,
+  "logo_url": "https://lh3.googleusercontent.com/p/AF1QipN88Xot22Pf0RxyYyH3lGRSL1dXFaOin4Kxzs_b=w408-h306-k-no",
+  "latitude": 42.3769136,
+  "longitude": -71.1469152,
+  "hours": "",
+  "open_now": "Closed",
+  "review_score": 4.7,
+  "review_count": 21,
+  "best_time_to_work_remotely": "Unknown",
+  "remote_work_summary": "The Cambridge Public Library - Collins Branch offers a quiet environment ideal for focused work. It provides a wheelchair accessible entrance, ensuring ease of access for all visitors.",
+  "remote_work_features": {
+    "wi_fi_quality": "Unknown",
+    "outlet_access": "Unknown",
+    "noise_level": "Quiet",
+    "seating_comfort": "Unknown",
+    "natural_light": "Unknown",
+    "stay_duration_friendliness": "Unknown",
+    "food_drink_options": "Unknown",
+    "bathroom_access": "Unknown",
+    "parking_availability": "Unknown"
+  },
+  "tags": [
+    "Quiet",
+    "Wheelchair Accessible"
+  ]
+}
