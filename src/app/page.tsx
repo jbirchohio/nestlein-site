@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter, usePathname } from 'next/navigation'; // 🆕
+import { usePathname } from 'next/navigation'; // 🆕
 import HomeShell from '@/components/HomeShell';
 import Header from '@/components/Header';
 import SmartFilterBanner from '@/components/SmartFilterBanner';
