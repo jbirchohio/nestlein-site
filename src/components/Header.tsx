@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect } from 'react';
 import { Search, MapPinned, Star, Filter, Wand2, PlusCircle } from 'lucide-react';
 
 const navItems = [
@@ -11,33 +10,17 @@ const navItems = [
   { label: 'Favorites', href: '/favorites', icon: <Star size={18} /> },
   { label: 'Suggest', href: '/suggest', icon: <Wand2 size={18} /> },
 ];
-interface Location {
-  slug: string;
-  name: string;
-  address: string;
-  hours?: string;
-  logo_url?: string;
-  tags?: string[];
-  latitude?: number;
-  longitude?: number;
-  distance?: number;
-}
 
-interface HeaderProps {
-  locations: Location[];
-  setFiltered: (filtered: Location[]) => void;
-  userCoords: { lat: number; lon: number } | null;
-}
-
-export default function Header({ locations, setFiltered, userCoords }: HeaderProps) {
+export default function Header() {
   const pathname = usePathname();
-  
-  useEffect(() => {  }, []);
 
   return (
     <header className="sticky top-0 z-50 w-full backdrop-blur border-b border-[var(--accent-light)] bg-[var(--background)/80]">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-        <Link href="/" className="text-xl font-bold font-satoshi text-[var(--accent)] tracking-tight">
+        <Link
+          href="/"
+          className="text-xl font-bold font-satoshi text-[var(--accent)] tracking-tight"
+        >
           Roamly
         </Link>
 
