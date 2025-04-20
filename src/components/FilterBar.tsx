@@ -9,7 +9,7 @@ interface FilterBarProps {
   setActiveTag: (tag: string | null) => void;
 }
 
-export default function FilterBar({ tags, activeTag, setActiveTag }: FilterBarProps) {
+export default function FilterBar({ tags, activeTags, setActiveTags }: FilterBarProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export default function FilterBar({ tags, activeTag, setActiveTag }: FilterBarPr
 
   return (
     <div className="w-full">
-  
+
       {/* Mobile Multi-Select Dropdown */}
       <div className="block md:hidden mb-4">
         <label htmlFor="tagFilter" className="text-sm font-medium text-gray-700 mb-1 block">
@@ -45,7 +45,7 @@ export default function FilterBar({ tags, activeTag, setActiveTag }: FilterBarPr
         </select>
         <p className="mt-1 text-xs text-gray-500">Hold Ctrl (or Cmd) to select multiple</p>
       </div>
-  
+
       {/* Tag Grid for Desktop */}
       <div className="hidden md:grid grid-cols-3 lg:grid-cols-6 gap-2">
         {tags.map((tag) => {
@@ -69,7 +69,7 @@ export default function FilterBar({ tags, activeTag, setActiveTag }: FilterBarPr
           );
         })}
       </div>
-  
+
     </div>
   );
-  
+}
