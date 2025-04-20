@@ -25,6 +25,7 @@ export default function HomePage() {
   const [allLocations, setAllLocations] = useState<Location[]>([]);
   const [userCoords, setUserCoords] = useState<{ lat: number; lon: number } | null>(null);
   const [featuredTag, setFeaturedTag] = useState<string>('');
+  const [activeTag, setActiveTag] = useState<string>('');
 
   useEffect(() => {
     async function fetchLocations() {
@@ -69,7 +70,11 @@ export default function HomePage() {
       {/* 🔍 Smart Filters */}
       <div className="px-4">
         <SmartFilterBanner />
-        <FilterBar />
+        <FilterBar
+          tags={Array.from(new Set(allLocations.flatMap(loc => loc.tags || [])))}
+          activeTag={activeTag}
+          setActiveTag={setActiveTag}
+        />
         <Header locations={allLocations} setFiltered={() => {}} userCoords={userCoords} />
       </div>
 
