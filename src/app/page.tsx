@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import HomeShell from '@/components/HomeShell';
 import Header from '@/components/Header';
 import SmartFilterBanner from '@/components/SmartFilterBanner';
@@ -32,26 +32,23 @@ export default function HomePage() {
       const data = await res.json();
       setAllLocations(data);
 
-      const tags = Array.from(new Set(data.flatMap((l: Location) => l.tags || [])));
-      const randomTag = tags[Math.floor(Math.random() * tags.length)];
-      if (typeof randomTag === 'string') setFeaturedTag(randomTag);
-
+      // Attempt geolocation
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (pos) => {
             setUserCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
-            localStorage.setItem('roamly_coords', JSON.stringify({ lat: pos.coords.latitude, lon: pos.coords.longitude }));
           },
           () => {
-            const saved = localStorage.getItem('roamly_coords');
-            if (saved) {
-              try {
-                setUserCoords(JSON.parse(saved));
-              } catch {}
-            }
+            console.warn('📍 User denied geolocation. Showing nationwide fallback.');
           }
         );
       }
+
+      // Choose a random tag to feature
+      const allTags = data.flatMap((loc: Location) => loc.tags || []);
+      const uniqueTags = Array.from(new Set(allTags));
+      const random = uniqueTags[Math.floor(Math.random() * uniqueTags.length)];
+      if (typeof random === 'string') setFeaturedTag(random);
     }
 
     fetchLocations();
@@ -59,25 +56,38 @@ export default function HomePage() {
 
   return (
     <HomeShell>
-      <Header />
-      <SmartFilterBanner />
-      <FilterBar />
+      {/* 🧭 Hero Section */}
+      <div className="text-center max-w-3xl mx-auto mb-12 pt-16 px-4">
+        <h1 className="text-4xl sm:text-5xl font-bold font-satoshi text-[var(--foreground)] mb-4">
+          Where Remote Works.
+        </h1>
+        <p className="text-lg text-[var(--color-text-secondary)] font-inter">
+          Discover remote-ready cafés, creative corners, and cowork spots near you — filtered by vibe, Wi-Fi, outlets, and more.
+        </p>
+      </div>
+
+      {/* 🔍 Smart Filters */}
+      <div className="px-4">
+        <SmartFilterBanner />
+        <FilterBar />
+        <Header locations={allLocations} setFiltered={() => {}} userCoords={userCoords} />
+      </div>
 
       {/* 🟢 Open Now */}
-      <section className="mt-10">
+      <section className="mt-12 px-4">
         <h2 className="text-2xl font-bold mb-4">Open Near You</h2>
         <OpenNowCards allLocations={allLocations} userCoords={userCoords} />
       </section>
 
       {/* ⭐ Top Rated */}
-      <section className="mt-12">
+      <section className="mt-12 px-4">
         <h2 className="text-2xl font-bold mb-4">Top Rated Spots</h2>
         <TopRatedCards allLocations={allLocations} userCoords={userCoords} />
       </section>
 
       {/* 🎯 Featured Tag */}
       {featuredTag && (
-        <section className="mt-12">
+        <section className="mt-12 px-4">
           <h2 className="text-2xl font-bold mb-4">Featured: {featuredTag}</h2>
           <FeaturedTagCards allLocations={allLocations} tag={featuredTag} userCoords={userCoords} />
         </section>
