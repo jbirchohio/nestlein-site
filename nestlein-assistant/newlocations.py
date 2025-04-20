@@ -82,30 +82,56 @@ def format_hours(opening_hours):
 
 
 def flatten_business_data(bd):
-    lines = [
-        f"Title: {bd.get('title','')}",
-        f"Category: {bd.get('categoryName','')}",
-        f"Address: {bd.get('address','')}",
-        f"Phone: {bd.get('phone','')}",
-        f"Website: {bd.get('website','')}",
-        f"Rating: {bd.get('totalScore','Unknown')}",
-        f"Review Count: {bd.get('reviewsCount','Unknown')}",
-        "Opening Hours:",
-    ]
+    lines = []
+
+    # Core Info
+    lines.append(f"Name: {bd.get('title','')}")
+    lines.append(f"Primary Category: {bd.get('categoryName','')}")
+    lines.append(f"All Categories: {', '.join(bd.get('categories', []))}")
+    lines.append(f"Address: {bd.get('address','')}")
+    lines.append(f"Phone: {bd.get('phone','')}")
+    lines.append(f"Website: {bd.get('website','')}")
+    lines.append(f"Total Rating: {bd.get('totalScore','Unknown')}")
+    lines.append(f"Review Count: {bd.get('reviewsCount','Unknown')}")
+
+    # Popular Times (for best_time_to_work)
+    if bd.get("popularTimesHistogram"):
+        lines.append("Popular Times:")
+        for entry in bd["popularTimesHistogram"]:
+            day = entry.get("day")
+            histogram = entry.get("histogram", [])
+            times = [f"{h['hour']}: {h['occupancyPercent']}%" for h in histogram]
+            lines.append(f"  - {day}: {', '.join(times)}")
+
+    # Hours
+    lines.append("Opening Hours:")
     for h in bd.get('openingHours', []):
         lines.append(f"  - {h.get('day')}: {h.get('hours')}")
-    lines.append(f"Tags: {', '.join(bd.get('categories', []))}")
+
+    # Tags
+    tags = set(bd.get('categories', []))
+    if bd.get("primaryCategory") and bd["primaryCategory"].get("name"):
+        tags.add(bd["primaryCategory"]["name"])
+    lines.append(f"Tags: {', '.join(sorted(tags))}")
+
+    # Attributes / Feature Signals
     info = bd.get('additionalInfo', {})
-    for section in ["Service options","Accessibility","Planning","Children"]:
-        lines.append(f"{section}: {', '.join(yes_list(info.get(section, [])))}")
+    for section in ["Service options", "Accessibility", "Planning", "Children"]:
+        values = yes_list(info.get(section, []))
+        if values:
+            lines.append(f"{section}: {', '.join(values)}")
+
+    # Reviews (trimmed)
     reviews = bd.get('reviews') or []
     if reviews:
-        lines.append("Reviews:")
+        lines.append("Reviews (summarized):")
         for r in reviews[:5]:
-            raw = r.get('text') or ''
-            text = raw.replace('\n', ' ')[:150]
-            lines.append(f"  - {text}")
+            raw = r.get('text', '').replace('\n', ' ').strip()
+            if raw:
+                lines.append(f"  - {raw[:200]}")
+
     return "\n".join(lines)
+)
 
 
 def add_ref_param(url, ref="roamly"):
@@ -158,34 +184,61 @@ def poll_apify(dsid):
 
 def run_assistant_conversation(bd):
     thread = client.beta.threads.create()
-    prompt = '''You are analyzing structured business data for a remote work–friendly café directory called Roamly.
+    prompt = prompt = '''You are an AI assistant helping NestleIn, a directory of remote work–friendly cafés, coworking spaces, and creative spots.
 
-Use ONLY the information provided below to extract the following:
-
-Pretend you are physically standing in the business space and doing your best to infer from the data what the experience might be like for a remote worker. Even if some fields are missing, make reasonable educated guesses based on the tone, tags, hours, category, and any other field available.
+You are analyzing a flattened business data block, which includes categories, hours, tags, reviews, and accessibility data.
 
 ---
 
-**Required Fields:**
+Your job is to infer how suitable the place is for remote work based on this data — even if some fields are missing.
 
-1. `best_time_to_work_remotely`
-2. `remote_work_summary`
-
----
-
-**Optional Scoring Section:**
-3. `scores` { food_quality, service, ambiance, value, experience }
+You must extract the following fields:
 
 ---
 
-**Remote Work Features:**
-4. `remote_work_features` including wi_fi_quality, outlet_access, noise_level, seating_comfort, natural_light, stay_duration_friendliness, food_drink_options, bathroom_access, parking_availability
+1. "best_time_to_work_remotely"  
+   - Short phrase like "Before 10 AM", "Mid-afternoon", or "After 6 PM"  
+   - Use formatted opening hours, popular times, or crowd hints
+
+2. "remote_work_summary"  
+   - 1–2 clear sentences for remote workers (freelancers, students, etc.)  
+   - Focus on Wi-Fi, outlets, seating, noise, bathrooms, overall vibe
+
+3. "remote_work_features":  
+   - Use these 9 fields:  
+     - wi_fi_quality  
+     - outlet_access  
+     - noise_level  
+     - seating_comfort  
+     - natural_light  
+     - stay_duration_friendliness  
+     - food_drink_options  
+     - bathroom_access  
+     - parking_availability  
+   - If no info is present, use "Unknown" **only as last resort**  
+   - Infer from tags like “Coworking,” “Quiet,” “Drive-through,” “Bright”
+
+4. "scores" (optional):  
+   - Only include if you can infer at least 2 fields  
+   - 1–10 scores for:  
+     - food_quality  
+     - service  
+     - ambiance  
+     - value  
+     - experience  
 
 ---
 
-Respond ONLY with valid JSON:
-{ "best_time_to_work_remotely": "...", "remote_work_summary": "...", "scores": {...}, "remote_work_features": {...} }
-'''  # no echo
+### Output Rules:
+
+- Respond **ONLY with valid JSON**
+- Do **not** echo this prompt
+- Do **not** include markdown or explanations
+- If something is missing, omit the key or use a phrase like `"Unknown"` only if you must
+- Do **not** output `null` or `"n/a"` — either make a best guess or leave the field out
+
+'''
+  # no echo
     flat = flatten_business_data(bd)
     client.beta.threads.messages.create(thread_id=thread.id, role="user", content=prompt + "\n\n" + flat)
     run = client.beta.threads.runs.create(thread_id=thread.id, assistant_id=ASSISTANT_ID)
