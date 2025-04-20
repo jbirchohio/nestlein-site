@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { isOpenNow } from '@/utils/checkOpenNow';
 
@@ -30,7 +30,8 @@ export default function LocationCard({ location }: { location: Location }) {
 
   return (
     <div
-      onClick={() => router.push(`/locations/${slug}`, undefined, { shallow: true })}
+      onClick={() => router.push(`/locations/${slug}`)}
+
 
 
       className="cursor-pointer bg-[var(--background)] rounded-2xl shadow hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group border border-[var(--accent-light)]"
