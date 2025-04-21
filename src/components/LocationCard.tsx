@@ -30,7 +30,8 @@ export default function LocationCard({ location }: { location: Location }) {
 
   return (
     <div
-      onClick={() => router.push(`/modal/${slug}`)}
+      onClick={() => router.push(`/locationModalTest/${slug}`)
+    }
 
 
 
