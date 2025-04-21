@@ -138,3 +138,14 @@ body.modal-open {
   z-index: 1;
   display: block;
 }
+
+
+.modal-bounce {
+  animation: bounce-back 0.3s ease-out;
+}
+/* Swipe/Bounce Mobile */
+@keyframes bounce-back {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(60px); }
+  100% { transform: translateY(0); }
+}
