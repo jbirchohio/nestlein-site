@@ -4,7 +4,13 @@ import { useRouter } from 'next/navigation'
 import Modal from '@/components/Modal'
 import LocationDetail from '@/components/LocationDetail'
 
-export default function LocationModal({ params }: { params: { slug: string } }) {
+type Props = {
+  params: {
+    slug: string
+  }
+}
+
+export default function LocationModal({ params }: Props) {
   const router = useRouter()
 
   return (
