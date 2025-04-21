@@ -96,9 +96,6 @@ export default function HomePage() {
         setAllLocations(data);
       }
 
-      const allTags = data.flatMap((loc: Location) => loc.tags || []);
-      const uniqueTags = Array.from(new Set(allTags));
-      const random = uniqueTags[Math.floor(Math.random() * uniqueTags.length)];
     }
 
     fetchLocations();
