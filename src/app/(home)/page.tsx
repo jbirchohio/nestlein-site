@@ -25,8 +25,8 @@ function getDistanceBetween(lat1: number, lon1: number, lat2: number, lon2: numb
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    Math.cos((lat2 * Math.PI) / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
 }
@@ -78,7 +78,6 @@ export default function HomePage() {
           (pos) => {
             const user = { lat: pos.coords.latitude, lon: pos.coords.longitude };
             setUserCoords(user);
-            // Add distance to each location
             const withDistances = data.map((loc: Location) => {
               if (loc.latitude && loc.longitude) {
                 loc.distance = getDistanceBetween(user.lat, user.lon, loc.latitude, loc.longitude);
@@ -95,7 +94,6 @@ export default function HomePage() {
       } else {
         setAllLocations(data);
       }
-
     }
 
     fetchLocations();
@@ -122,70 +120,69 @@ export default function HomePage() {
 
   return (
     <HomeShell>
-      <div className="relative text-center max-w-4xl mx-auto mb-16 px-4 pt-32 pb-24 bg-[url('/urban-oasis-hero.webp')] bg-cover bg-center rounded-xl shadow-lg overflow-hidden">
-  {/* dark gradient overlay */}
-  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-0 rounded-xl" />
+      <div className="relative mx-auto mb-16 pt-24 pb-20 px-6 sm:px-10 lg:px-16 xl:px-20 max-w-5xl xl:max-w-6xl bg-[url('/urban-oasis-hero.webp')] bg-cover bg-center rounded-xl shadow-lg overflow-hidden">
+        {/* gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-0 rounded-xl" />
 
-  {/* content container */}
-  <div className="relative z-10 bg-white/80 backdrop-blur-sm p-6 rounded-xl">
-    <h1 className="text-5xl sm:text-6xl font-bold text-[var(--foreground)] mb-4 leading-tight">
-      Find Your Next Power Spot.
-    </h1>
-    <p className="text-xl text-[var(--text-secondary)] font-inter mb-6">
-      Browse remote-friendly cafés, cowork corners & creative nooks — filtered by vibe, Wi-Fi, and flow.
-    </p>
+        {/* content */}
+        <div className="relative z-10 bg-white/80 backdrop-blur-sm p-6 rounded-xl">
+          <h1 className="text-5xl sm:text-6xl font-bold text-[var(--foreground)] mb-4 leading-tight">
+            Find Your Next Power Spot.
+          </h1>
+          <p className="text-xl text-[var(--text-secondary)] font-inter mb-6">
+            Browse remote-friendly cafés, cowork corners & creative nooks — filtered by vibe, Wi-Fi, and flow.
+          </p>
 
-    <div className="flex flex-col sm:flex-row gap-2 mb-4">
-      <input
-        type="text"
-        placeholder="Find cafés, workspaces, or vibes near you..."
-        value={searchTerm}
-        onChange={(e) => {
-          const value = e.target.value;
-          setSearchTerm(value);
-          if (value.trim()) {
-            setRecentSearches((prev) => {
-              const updated = [value, ...prev.filter(v => v !== value)].slice(0, 5);
-              localStorage.setItem('recentSearches', JSON.stringify(updated));
-              return updated;
-            });
-          }
-        }}
-        className="flex-1 px-4 py-2 rounded-md border border-[var(--border)] shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--border)] bg-[var(--surface)] text-[var(--foreground)]"
-      />
-      <button className="px-6 py-2 rounded-md bg-[var(--accent)] text-white font-semibold hover:brightness-90 transition">
-        Search
-      </button>
-    </div>
+          <div className="flex flex-col sm:flex-row gap-2 mb-4">
+            <input
+              type="text"
+              placeholder="Find cafés, workspaces, or vibes near you..."
+              value={searchTerm}
+              onChange={(e) => {
+                const value = e.target.value;
+                setSearchTerm(value);
+                if (value.trim()) {
+                  setRecentSearches((prev) => {
+                    const updated = [value, ...prev.filter(v => v !== value)].slice(0, 5);
+                    localStorage.setItem('recentSearches', JSON.stringify(updated));
+                    return updated;
+                  });
+                }
+              }}
+              className="flex-1 px-4 py-2 rounded-md border border-[var(--border)] shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--border)] bg-[var(--surface)] text-[var(--foreground)]"
+            />
+            <button className="px-6 py-2 rounded-md bg-[var(--accent)] text-white font-semibold hover:brightness-90 transition">
+              Search
+            </button>
+          </div>
 
-    {recentSearches.length > 0 && (
-      <div className="mt-4 text-sm text-[var(--text-secondary)] flex flex-wrap justify-center gap-2">
-        <span className="font-medium text-[var(--foreground)]">Recent:</span>
-        {recentSearches.map((tag) => (
-          <button
-            key={tag}
-            onClick={() => setSearchTerm(tag)}
-            className="px-3 py-1 rounded-md bg-[var(--surface)] text-[var(--foreground)] hover:bg-[var(--border)] border border-[var(--border)] transition"
-          >
-            {tag}
-          </button>
-        ))}
+          {recentSearches.length > 0 && (
+            <div className="mt-4 text-sm text-[var(--text-secondary)] flex flex-wrap justify-center gap-2">
+              <span className="font-medium text-[var(--foreground)]">Recent:</span>
+              {recentSearches.map((tag) => (
+                <button
+                  key={tag}
+                  onClick={() => setSearchTerm(tag)}
+                  className="px-3 py-1 rounded-md bg-[var(--surface)] text-[var(--foreground)] hover:bg-[var(--border)] border border-[var(--border)] transition"
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <div className="flex flex-wrap justify-center items-center gap-3 mt-6">
+            <FilterBar
+              tags={Array.from(new Set(allLocations.flatMap(loc => loc.tags || [])))}
+              activeTags={activeTags}
+              setActiveTags={setActiveTags}
+            />
+            {userCoords && (
+              <DistanceSliderPill distance={distanceLimit} setDistance={setDistanceLimit} />
+            )}
+          </div>
+        </div>
       </div>
-    )}
-
-    <div className="flex flex-wrap justify-center items-center gap-3 mt-6">
-      <FilterBar
-        tags={Array.from(new Set(allLocations.flatMap(loc => loc.tags || [])))}
-        activeTags={activeTags}
-        setActiveTags={setActiveTags}
-      />
-      {userCoords && (
-        <DistanceSliderPill distance={distanceLimit} setDistance={setDistanceLimit} />
-      )}
-    </div>
-  </div>
-</div>
-
 
       <Suspense fallback={null}>
         <ModalWrapper />
@@ -197,8 +194,6 @@ export default function HomePage() {
         </h2>
         <LocationCardGrid locations={hasFilters ? filteredLocations : allLocations.slice(0, 6)} />
       </section>
-
-  
     </HomeShell>
   );
 }
