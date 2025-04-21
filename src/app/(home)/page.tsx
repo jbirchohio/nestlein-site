@@ -129,7 +129,7 @@ export default function HomePage() {
 
   return (
     <HomeShell>
-      <div className="relative text-center max-w-4xl mx-auto mb-16 px-4 pt-32 pb-24 bg-[url('urban-oasis-hero.webp')] bg-cover bg-center rounded-xl shadow-lg">
+      <div className="relative text-center max-w-4xl mx-auto mb-16 px-4 pt-32 pb-24 bg-[url('/urban-oasis-hero.webp')] bg-cover bg-center rounded-xl shadow-lg">
         <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl">
           <h1 className="text-5xl sm:text-6xl font-bold text-[var(--foreground)] mb-4 leading-tight">
             Find Your Next Power Spot.
