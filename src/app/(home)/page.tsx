@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { usePathname } from 'next/navigation'; // 🆕
+import { useSearchParams } from 'next/navigation';
 import HomeShell from '@/components/HomeShell';
 import Header from '@/components/Header';
 import SmartFilterBanner from '@/components/SmartFilterBanner';
@@ -32,11 +32,9 @@ export default function HomePage() {
   const [activeTags, setActiveTags] = useState<string[]>([]);
   const [distanceLimit, setDistanceLimit] = useState(5);
 
-  const pathname = usePathname(); // 🆕
+  const searchParams = useSearchParams();
+  const currentSlug = searchParams?.get('modal');
 
-  const currentSlug = pathname?.startsWith('/locations/') 
-    ? pathname.split('/locations/')[1] 
-    : null; // 🆕
 
   useEffect(() => {
     async function fetchLocations() {
