@@ -10,7 +10,7 @@ export default function Modal({
   children: React.ReactNode
   onClose: () => void
 }) {
-  const { ref, bounced } = useSwipeToDismiss(onClose)
+  const { ref, bounced } = useSwipeToDismiss(onClose, 140) // ← raise threshold
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
