@@ -46,7 +46,6 @@ interface Location {
 export default function HomePage() {
   const [allLocations, setAllLocations] = useState<Location[]>([]);
   const [userCoords, setUserCoords] = useState<{ lat: number; lon: number } | null>(null);
-  const [featuredTag, setFeaturedTag] = useState('');
   const [activeTags, setActiveTags] = useState<string[]>([]);
   const [distanceLimit, setDistanceLimit] = useState(5);
   const [searchTerm, setSearchTerm] = useState('');
