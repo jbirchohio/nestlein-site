@@ -9,8 +9,6 @@ import OpenNowCards from '@/components/home/OpenNowCards';
 import TopRatedCards from '@/components/home/TopRatedCards';
 import FeaturedTagCards from '@/components/home/FeaturedTagCards';
 import DistanceSliderPill from '@/components/DistanceSliderPill';
-import LocationDetail from '@/components/LocationDetail'; // 🆕 (Assuming this exists)
-import Modal from '@/components/Modal'; // 🆕 (You’ll define this)
 import ModalWrapper from '@/components/ModalWrapper'
 import { Suspense } from 'react'
 
