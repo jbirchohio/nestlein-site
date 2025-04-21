@@ -108,31 +108,22 @@ export default function HomePage() {
     fetchLocations();
   }, []);
 
-  const getDistanceBetween = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
-  const R = 3958.8; // miles
-  const toRad = (val: number) => val * Math.PI / 180;
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
-  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2)**2;
-  return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
-};
+  const filteredLocations = useMemo(() => {
+    const base = debouncedSearch.trim()
+      ? fuse.search(debouncedSearch).map((result) => result.item)
+      : allLocations;
 
-const filteredLocations = useMemo(() => {
-  const base = debouncedSearch.trim()
-    ? fuse.search(debouncedSearch).map((result) => result.item)
-    : allLocations;
+    return base.filter((loc) => {
+      const matchesTags = activeTags.length === 0 ||
+        activeTags.every(tag => (loc.tags || []).includes(tag));
 
-  return base.filter((loc) => {
-    const matchesTags = activeTags.length === 0 ||
-      activeTags.every(tag => (loc.tags || []).includes(tag));
+      const withinDistance = !userCoords || (!loc.latitude || !loc.longitude)
+        ? true
+        : getDistanceBetween(userCoords.lat, userCoords.lon, loc.latitude, loc.longitude) <= distanceLimit;
 
-    const withinDistance = !userCoords || (!loc.latitude || !loc.longitude)
-      ? true
-      : getDistanceBetween(userCoords.lat, userCoords.lon, loc.latitude, loc.longitude) <= distanceLimit;
-
-    return matchesTags && withinDistance;
-  });
-}, [debouncedSearch, activeTags, distanceLimit, userCoords, allLocations, fuse]);
+      return matchesTags && withinDistance;
+    });
+  }, [debouncedSearch, activeTags, distanceLimit, userCoords, allLocations, fuse]);
 
   const hasFilters = debouncedSearch.trim() || activeTags.length > 0;
 
