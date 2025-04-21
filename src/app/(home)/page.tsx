@@ -9,10 +9,8 @@ import OpenNowCards from '@/components/home/OpenNowCards';
 import TopRatedCards from '@/components/home/TopRatedCards';
 import FeaturedTagCards from '@/components/home/FeaturedTagCards';
 import DistanceSliderPill from '@/components/DistanceSliderPill';
-import ModalWrapper from '@/components/ModalWrapper'
-import { Suspense } from 'react'
-
-
+import ModalWrapper from '@/components/ModalWrapper';
+import { Suspense } from 'react';
 
 interface Location {
   slug: string;
@@ -61,17 +59,20 @@ export default function HomePage() {
 
   return (
     <HomeShell>
-      <div className="text-center max-w-3xl mx-auto mb-12 pt-16 px-4">
-        <h1 className="text-4xl sm:text-5xl font-bold font-satoshi text-[var(--foreground)] mb-4">
-          Where Remote Works.
-        </h1>
-        <p className="text-lg text-[var(--color-text-secondary)] font-inter">
-          Discover remote-ready cafés, creative corners, and cowork spots near you — filtered by vibe, Wi-Fi, outlets, and more.
-        </p>
+      <div className="relative text-center max-w-4xl mx-auto mb-16 px-4 pt-32 pb-24 bg-[url('/hero.jpg')] bg-cover bg-center rounded-xl shadow-lg">
+        <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl">
+          <h1 className="text-5xl sm:text-6xl font-bold text-gray-900 mb-4 leading-tight">
+            Find Your Next Power Spot.
+          </h1>
+          <p className="text-xl text-gray-600 font-inter">
+            Browse remote-friendly cafés, cowork corners & creative nooks — filtered by vibe, Wi-Fi, and flow.
+          </p>
+        </div>
       </div>
-          <Suspense fallback={null}>
-          <ModalWrapper />
-        </Suspense>
+
+      <Suspense fallback={null}>
+        <ModalWrapper />
+      </Suspense>
 
       <div className="px-4">
         <SmartFilterBanner />
@@ -88,23 +89,22 @@ export default function HomePage() {
         <Header />
       </div>
 
-      <section className="mt-12 px-4">
-        <h2 className="text-2xl font-bold mb-4">Open Near You</h2>
-        <OpenNowCards allLocations={allLocations} userCoords={userCoords} activeTags={activeTags} distanceLimit={distanceLimit}/>
+      <section className="mt-16 px-4">
+        <h2 className="text-3xl font-bold mb-6 text-gray-900">Open Near You</h2>
+        <OpenNowCards allLocations={allLocations} userCoords={userCoords} activeTags={activeTags} distanceLimit={distanceLimit} />
       </section>
 
-      <section className="mt-12 px-4">
-        <h2 className="text-2xl font-bold mb-4">Top Rated Spots</h2>
+      <section className="mt-16 px-4">
+        <h2 className="text-3xl font-bold mb-6 text-gray-900">Top Rated Spots</h2>
         <TopRatedCards allLocations={allLocations} userCoords={userCoords} activeTags={activeTags} distanceLimit={distanceLimit} />
       </section>
 
       {featuredTag && (
-        <section className="mt-12 px-4">
-          <h2 className="text-2xl font-bold mb-4">Featured: {featuredTag}</h2>
-          <FeaturedTagCards allLocations={allLocations} tag={featuredTag} userCoords={userCoords} activeTags={activeTags} distanceLimit={distanceLimit}/>
+        <section className="mt-16 px-4">
+          <h2 className="text-3xl font-bold mb-6 text-gray-900">Featured: {featuredTag}</h2>
+          <FeaturedTagCards allLocations={allLocations} tag={featuredTag} userCoords={userCoords} activeTags={activeTags} distanceLimit={distanceLimit} />
         </section>
       )}
-
     </HomeShell>
   );
 }
