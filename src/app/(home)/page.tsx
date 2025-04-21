@@ -20,6 +20,19 @@ function useDebounce<T>(value: T, delay: number): T {
   return debouncedValue;
 }
 
+function getDistanceBetween(lat1: number, lon1: number, lat2: number, lon2: number) {
+  const R = 3958.8; // miles
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
 interface Location {
   slug: string;
   name: string;
@@ -57,19 +70,33 @@ export default function HomePage() {
       includeScore: true,
     }), [allLocations]
   );
-  
 
   useEffect(() => {
     async function fetchLocations() {
       const res = await fetch('/api/locations');
       const data = await res.json();
-      setAllLocations(data);
 
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
-          (pos) => setUserCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
-          () => console.warn('📍 User denied geolocation. Showing fallback.')
+          (pos) => {
+            const user = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+            setUserCoords(user);
+            // Add distance to each location
+            const withDistances = data.map((loc: Location) => {
+              if (loc.latitude && loc.longitude) {
+                loc.distance = getDistanceBetween(user.lat, user.lon, loc.latitude, loc.longitude);
+              }
+              return loc;
+            });
+            setAllLocations(withDistances);
+          },
+          () => {
+            console.warn('📍 User denied geolocation. Showing fallback.');
+            setAllLocations(data);
+          }
         );
+      } else {
+        setAllLocations(data);
       }
 
       const allTags = data.flatMap((loc: Location) => loc.tags || []);
@@ -81,21 +108,31 @@ export default function HomePage() {
     fetchLocations();
   }, []);
 
-  const filteredLocations = useMemo(() => {
-    const base = debouncedSearch.trim()
-      ? fuse.search(debouncedSearch).map((result) => result.item)
-      : allLocations;
+  const getDistanceBetween = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+  const R = 3958.8; // miles
+  const toRad = (val: number) => val * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2)**2;
+  return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+};
 
-    return base.filter((loc) => {
-      const matchesTags = activeTags.length === 0 ||
-        activeTags.every(tag => (loc.tags || []).includes(tag));
+const filteredLocations = useMemo(() => {
+  const base = debouncedSearch.trim()
+    ? fuse.search(debouncedSearch).map((result) => result.item)
+    : allLocations;
 
-      const withinDistance = !userCoords ||
-        (loc.distance !== undefined && loc.distance <= distanceLimit);
+  return base.filter((loc) => {
+    const matchesTags = activeTags.length === 0 ||
+      activeTags.every(tag => (loc.tags || []).includes(tag));
 
-      return matchesTags && withinDistance;
-    });
-  }, [debouncedSearch, activeTags, distanceLimit, userCoords, allLocations, fuse]);
+    const withinDistance = !userCoords || (!loc.latitude || !loc.longitude)
+      ? true
+      : getDistanceBetween(userCoords.lat, userCoords.lon, loc.latitude, loc.longitude) <= distanceLimit;
+
+    return matchesTags && withinDistance;
+  });
+}, [debouncedSearch, activeTags, distanceLimit, userCoords, allLocations, fuse]);
 
   const hasFilters = debouncedSearch.trim() || activeTags.length > 0;
 
@@ -154,7 +191,9 @@ export default function HomePage() {
               activeTags={activeTags}
               setActiveTags={setActiveTags}
             />
-            <DistanceSliderPill distance={distanceLimit} setDistance={setDistanceLimit} />
+            {userCoords && (
+              <DistanceSliderPill distance={distanceLimit} setDistance={setDistanceLimit} />
+            )}
           </div>
         </div>
       </div>
