@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import HomeShell from '@/components/HomeShell';
-import Header from '@/components/Header';
 import SmartFilterBanner from '@/components/SmartFilterBanner';
 import FilterBar from '@/components/FilterBar';
 import OpenNowCards from '@/components/home/OpenNowCards';
