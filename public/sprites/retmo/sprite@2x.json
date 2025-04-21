@@ -1,0 +1,58 @@
+{
+  "restaurant": {
+    "width": 15,
+    "height": 15,
+    "x": 0,
+    "y": 0,
+    "pixelRatio": 1
+  },
+  "cafe": {
+    "width": 15,
+    "height": 15,
+    "x": 0,
+    "y": 16,
+    "pixelRatio": 1
+  },
+  "wheelchair": {
+    "width": 15,
+    "height": 15,
+    "x": 16,
+    "y": 0,
+    "pixelRatio": 1
+  },
+  "library": {
+    "width": 15,
+    "height": 15,
+    "x": 16,
+    "y": 16,
+    "pixelRatio": 1
+  },
+  "park": {
+    "width": 15,
+    "height": 15,
+    "x": 0,
+    "y": 32,
+    "pixelRatio": 1
+  },
+  "bar": {
+    "width": 15,
+    "height": 15,
+    "x": 16,
+    "y": 32,
+    "pixelRatio": 1
+  },
+  "bank": {
+    "width": 15,
+    "height": 15,
+    "x": 32,
+    "y": 0,
+    "pixelRatio": 1
+  },
+  "marker": {
+    "width": 15,
+    "height": 15,
+    "x": 32,
+    "y": 16,
+    "pixelRatio": 1
+  }
+}
