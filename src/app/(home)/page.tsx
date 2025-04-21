@@ -2,9 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import HomeShell from '@/components/HomeShell';
-import SmartFilterBanner from '@/components/SmartFilterBanner';
 import FilterBar from '@/components/FilterBar';
-import FeaturedTagCards from '@/components/home/FeaturedTagCards';
 import DistanceSliderPill from '@/components/DistanceSliderPill';
 import ModalWrapper from '@/components/ModalWrapper';
 import LocationCardGrid from '@/components/LocationCardGrid';
