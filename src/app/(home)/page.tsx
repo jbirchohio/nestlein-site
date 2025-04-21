@@ -12,6 +12,8 @@ import FeaturedTagCards from '@/components/home/FeaturedTagCards';
 import DistanceSliderPill from '@/components/DistanceSliderPill';
 import LocationDetail from '@/components/LocationDetail'; // 🆕 (Assuming this exists)
 import Modal from '@/components/Modal'; // 🆕 (You’ll define this)
+import { Suspense } from 'react';
+
 
 interface Location {
   slug: string;
@@ -106,11 +108,14 @@ export default function HomePage() {
       )}
 
       {/* 🆕 Modal Overlay */}
+      <Suspense fallback={null}>
       {currentSlug && (
         <Modal onClose={() => history.back()}>
           <LocationDetail slug={currentSlug} />
         </Modal>
       )}
+    </Suspense>
+
     </HomeShell>
   );
 }
