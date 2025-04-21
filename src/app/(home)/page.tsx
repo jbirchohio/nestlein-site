@@ -103,8 +103,6 @@ export default function HomePage() {
     });
   }, [debouncedSearch, activeTags, distanceLimit, userCoords, allLocations, fuse]);
 
-  
-
   return (
     <HomeShell>
       <div className="relative text-center max-w-4xl mx-auto mb-16 px-4 pt-32 pb-24 bg-[url('/hero.jpg')] bg-cover bg-center rounded-xl shadow-lg">
@@ -116,10 +114,10 @@ export default function HomePage() {
             Browse remote-friendly cafés, cowork corners & creative nooks — filtered by vibe, Wi-Fi, and flow.
           </p>
 
-          <div className=\"flex flex-col sm:flex-row gap-2 mb-4\">
+          <div className="flex flex-col sm:flex-row gap-2 mb-4">
             <input
-              type=\"text\"
-              placeholder=\"Find cafés, workspaces, or vibes near you...\"
+              type="text"
+              placeholder="Find cafés, workspaces, or vibes near you..."
               value={searchTerm}
               onChange={(e) => {
                 const value = e.target.value;
@@ -132,35 +130,29 @@ export default function HomePage() {
                   });
                 }
               }}
-              className=\"flex-1 px-4 py-2 rounded-full border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent-light)]\"
+              className="flex-1 px-4 py-2 rounded-full border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent-light)]"
             />
-            <button className=\"px-6 py-2 rounded-full bg-[var(--accent)] text-white font-medium hover:opacity-90 transition\">
+            <button className="px-6 py-2 rounded-full bg-[var(--accent)] text-white font-medium hover:opacity-90 transition">
               Search
             </button>
           </div>
 
-          {/* Trending tags from actual data */}
-          <div className=\"mt-2 text-sm text-gray-600 flex flex-wrap justify-center gap-2\">
-            <span className=\"font-medium text-gray-700\">Trending:</span>
-            $1
+          {recentSearches.length > 0 && (
+            <div className="mt-4 text-sm text-gray-600 flex flex-wrap justify-center gap-2">
+              <span className="font-medium text-gray-700">Recent:</span>
+              {recentSearches.map((tag) => (
+                <button
+                  key={tag}
+                  onClick={() => setSearchTerm(tag)}
+                  className="px-3 py-1 rounded-full bg-gray-200 hover:bg-[var(--accent-light)] hover:text-white transition"
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+          )}
 
-{recentSearches.length > 0 && (
-  <div className="mt-4 text-sm text-gray-600 flex flex-wrap justify-center gap-2">
-    <span className="font-medium text-gray-700">Recent:</span>
-    {recentSearches.map((tag) => (
-      <button
-        key={tag}
-        onClick={() => setSearchTerm(tag)}
-        className="px-3 py-1 rounded-full bg-gray-200 hover:bg-[var(--accent-light)] hover:text-white transition"
-      >
-        {tag}
-      </button>
-    ))}
-  </div>
-)}
-          </div>
-
-          <div className="flex flex-wrap justify-center items-center gap-2">
+          <div className="flex flex-wrap justify-center items-center gap-2 mt-4">
             <FilterBar
               tags={Array.from(new Set(allLocations.flatMap(loc => loc.tags || [])))}
               activeTags={activeTags}
