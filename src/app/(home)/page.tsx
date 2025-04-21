@@ -54,8 +54,11 @@ export default function HomePage() {
       keys: ['name', 'address', 'tags'],
       threshold: 0.3,
       ignoreLocation: true,
+      tokenize: true,
+      includeScore: true
     }), [allLocations]
   );
+  
 
   useEffect(() => {
     async function fetchLocations() {
