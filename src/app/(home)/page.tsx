@@ -129,7 +129,7 @@ export default function HomePage() {
 
   return (
     <HomeShell>
-      <div className="relative text-center max-w-4xl mx-auto mb-16 px-4 pt-32 pb-24 bg-[url('/hero.jpg')] bg-cover bg-center rounded-xl shadow-lg">
+      <div className="relative text-center max-w-4xl mx-auto mb-16 px-4 pt-32 pb-24 bg-[url('urban-oasis-hero.webp')] bg-cover bg-center rounded-xl shadow-lg">
         <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl">
           <h1 className="text-5xl sm:text-6xl font-bold text-[var(--foreground)] mb-4 leading-tight">
             Find Your Next Power Spot.
@@ -193,10 +193,6 @@ export default function HomePage() {
         <ModalWrapper />
       </Suspense>
 
-      <div className="px-4">
-        <SmartFilterBanner />
-      </div>
-
       <section className="mt-16 px-4 animate-fade-in">
         <h2 className="text-3xl font-bold mb-6 text-[var(--foreground)]">
           {hasFilters ? 'Filtered Results' : 'Featured Remote Spots'}
@@ -204,18 +200,7 @@ export default function HomePage() {
         <LocationCardGrid locations={hasFilters ? filteredLocations : allLocations.slice(0, 6)} />
       </section>
 
-      {featuredTag && (
-        <section className="mt-16 px-4 animate-fade-in">
-          <h2 className="text-3xl font-bold mb-6 text-[var(--foreground)]">Featured: {featuredTag}</h2>
-          <FeaturedTagCards
-            allLocations={filteredLocations}
-            tag={featuredTag}
-            userCoords={userCoords}
-            activeTags={activeTags}
-            distanceLimit={distanceLimit}
-          />
-        </section>
-      )}
+  
     </HomeShell>
   );
 }
