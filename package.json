@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "16": "^0.0.2",
     "@headlessui/react": "^2.2.2",
     "@mapbox/maki": "^8.2.0",
     "@next/mdx": "^15.3.0",
