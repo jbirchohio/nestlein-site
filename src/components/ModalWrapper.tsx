@@ -6,7 +6,7 @@ import LocationDetail from '@/components/LocationDetail'
 
 export default function ModalWrapper() {
   const searchParams = useSearchParams()
-  const currentSlug = searchParams.get('modal')
+  const currentSlug = searchParams?.get('modal')
 
   if (!currentSlug) return null
 
