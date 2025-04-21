@@ -3,22 +3,20 @@ import { Inter, Geist_Mono } from "next/font/google";
 import Head from "next/head";
 import "./globals.css";
 
-// Load Inter from Google Fonts for body
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
 });
 
-// Load Geist Mono if used for code
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Roamly | Where Remote Works",
+  title: "NestleIn | Find Remote-Ready Work Spots",
   description:
-    "Roamly helps you find remote-friendly cafes, coworking spaces & spots to crush your workflow.",
+    "Explore work-friendly cafes and coworking spaces near you with Wi-Fi, outlets, and chill vibes.",
 };
 
 export default function RootLayout({
@@ -42,17 +40,20 @@ export default function RootLayout({
         />
 
         <noscript>
-         <link
+          <link
             rel="stylesheet"
             href="https://fonts.bunny.net/css?family=satoshi:400,500,700"
           />
         </noscript>
-
       </Head>
       <body
-        className={`${inter.variable} ${geistMono.variable} font-satoshi antialiased`}
+        className={`${inter.variable} ${geistMono.variable} font-satoshi antialiased bg-[var(--background)] text-[var(--foreground)]`}
       >
         {children}
+
+        <footer className="mt-24 border-t border-gray-200 text-sm text-center text-gray-500 py-10">
+          <p>Built for remote workers. © {new Date().getFullYear()} NestleIn</p>
+        </footer>
       </body>
     </html>
   );
