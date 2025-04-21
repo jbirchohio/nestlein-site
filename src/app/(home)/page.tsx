@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
 import HomeShell from '@/components/HomeShell';
 import Header from '@/components/Header';
 import SmartFilterBanner from '@/components/SmartFilterBanner';
@@ -12,7 +11,9 @@ import FeaturedTagCards from '@/components/home/FeaturedTagCards';
 import DistanceSliderPill from '@/components/DistanceSliderPill';
 import LocationDetail from '@/components/LocationDetail'; // 🆕 (Assuming this exists)
 import Modal from '@/components/Modal'; // 🆕 (You’ll define this)
-import { Suspense } from 'react';
+import ModalWrapper from '@/components/ModalWrapper'
+import { Suspense } from 'react'
+
 
 
 interface Location {
@@ -33,10 +34,6 @@ export default function HomePage() {
   const [featuredTag, setFeaturedTag] = useState<string>('');
   const [activeTags, setActiveTags] = useState<string[]>([]);
   const [distanceLimit, setDistanceLimit] = useState(5);
-
-  const searchParams = useSearchParams();
-  const currentSlug = searchParams?.get('modal');
-
 
   useEffect(() => {
     async function fetchLocations() {
@@ -74,6 +71,9 @@ export default function HomePage() {
           Discover remote-ready cafés, creative corners, and cowork spots near you — filtered by vibe, Wi-Fi, outlets, and more.
         </p>
       </div>
+          <Suspense fallback={null}>
+          <ModalWrapper />
+        </Suspense>
 
       <div className="px-4">
         <SmartFilterBanner />
@@ -106,15 +106,6 @@ export default function HomePage() {
           <FeaturedTagCards allLocations={allLocations} tag={featuredTag} userCoords={userCoords} activeTags={activeTags} distanceLimit={distanceLimit}/>
         </section>
       )}
-
-      {/* 🆕 Modal Overlay */}
-      <Suspense fallback={null}>
-      {currentSlug && (
-        <Modal onClose={() => history.back()}>
-          <LocationDetail slug={currentSlug} />
-        </Modal>
-      )}
-    </Suspense>
 
     </HomeShell>
   );
