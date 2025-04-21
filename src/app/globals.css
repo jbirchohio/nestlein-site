@@ -2,16 +2,23 @@
 
 /* === THEME VARIABLES === */
 :root {
-  --background: #F9F6F2;              /* Soft Bone */
-  --foreground: #1B1F23;              /* Deep Charcoal */
+  /* Base */
+  --background: #FFFFFF;
+  --foreground: #1A1A1A;
 
-  --accent: #FF4F5E;                  /* Electric Coral */
-  --accent-light: #3ED6C0;            /* Cool Aqua */
-  --accent-dark: #FFC857;            /* Golden Amber */
+  /* Accent System */
+  --accent: #4F46E5;          /* Indigo - modern, premium */
+  --accent-light: #3AB8B0;    /* Aqua - calm secondary */
+  --highlight: #F6C26B;       /* Amber - used sparingly */
 
-  --font-sans: "Satoshi", "Inter", "Outfit", sans-serif;
-  --font-mono: monospace;
+  /* Neutral UI */
+  --surface: #FAFAFA;         /* For cards/panels */
+  --border: #E5E5E5;          /* Dividers and outlines */
+  --text-secondary: #6B7280;  /* Labels, low-priority text */
+
+  --font-sans: "Inter", "Outfit", sans-serif;
 }
+
 
 /* === BASE STYLES === */
 body {

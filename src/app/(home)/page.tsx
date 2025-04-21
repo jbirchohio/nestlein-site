@@ -110,7 +110,7 @@ export default function HomePage() {
           <h1 className="text-5xl sm:text-6xl font-bold text-gray-900 mb-4 leading-tight">
             Find Your Next Power Spot.
           </h1>
-          <p className="text-xl text-gray-600 font-inter mb-6">
+          <p className="text-xl text-[var(--text-secondary)] font-inter mb-6">
             Browse remote-friendly cafés, cowork corners & creative nooks — filtered by vibe, Wi-Fi, and flow.
           </p>
 
@@ -130,9 +130,9 @@ export default function HomePage() {
                   });
                 }
               }}
-              className="flex-1 px-4 py-2 rounded-full border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent-light)]"
+              className="flex-1 px-4 py-2 rounded-md border border-[var(--border)] shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--border)] bg-[var(--surface)] text-[var(--foreground)]"
             />
-            <button className="px-6 py-2 rounded-full bg-[var(--accent)] text-white font-medium hover:opacity-90 transition">
+            <button className="px-6 py-2 rounded-md bg-[var(--accent)] text-white font-semibold hover:brightness-90 transition">
               Search
             </button>
           </div>
@@ -144,7 +144,7 @@ export default function HomePage() {
                 <button
                   key={tag}
                   onClick={() => setSearchTerm(tag)}
-                  className="px-3 py-1 rounded-full bg-gray-200 hover:bg-[var(--accent-light)] hover:text-white transition"
+                  className="px-3 py-1 rounded-md bg-[var(--surface)] text-[var(--foreground)] hover:bg-[var(--border)] border border-[var(--border)] transition"
                 >
                   {tag}
                 </button>
@@ -152,7 +152,7 @@ export default function HomePage() {
             </div>
           )}
 
-          <div className="flex flex-wrap justify-center items-center gap-2 mt-4">
+          <div className="flex flex-wrap justify-center items-center gap-3 mt-6">
             <FilterBar
               tags={Array.from(new Set(allLocations.flatMap(loc => loc.tags || [])))}
               activeTags={activeTags}
@@ -172,7 +172,7 @@ export default function HomePage() {
       </div>
 
       <section className="mt-16 px-4">
-        <h2 className="text-3xl font-bold mb-6 text-gray-900">Open Near You</h2>
+        <h2 className="text-3xl font-bold mb-6 text-[var(--foreground)]">Open Near You</h2>
         <OpenNowCards allLocations={filteredLocations} userCoords={userCoords} activeTags={activeTags} distanceLimit={distanceLimit} />
       </section>
 

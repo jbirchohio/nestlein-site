@@ -51,7 +51,7 @@ export default function RootLayout({
       >
         {children}
 
-        <footer className="mt-24 border-t border-gray-200 text-sm text-center text-gray-500 py-10">
+        <footer className="mt-24 border-t border-[var(--border)] text-sm text-center text-[var(--text-secondary)] py-10">
           <p>Built for remote workers. © {new Date().getFullYear()} NestleIn</p>
         </footer>
       </body>
