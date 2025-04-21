@@ -64,9 +64,18 @@ export default function HomePage() {
           <h1 className="text-5xl sm:text-6xl font-bold text-gray-900 mb-4 leading-tight">
             Find Your Next Power Spot.
           </h1>
-          <p className="text-xl text-gray-600 font-inter">
+          <p className="text-xl text-gray-600 font-inter mb-6">
             Browse remote-friendly cafés, cowork corners & creative nooks — filtered by vibe, Wi-Fi, and flow.
           </p>
+
+          <div className="flex flex-wrap justify-center items-center gap-2">
+            <FilterBar
+              tags={Array.from(new Set(allLocations.flatMap(loc => loc.tags || [])))}
+              activeTags={activeTags}
+              setActiveTags={setActiveTags}
+            />
+            <DistanceSliderPill distance={distanceLimit} setDistance={setDistanceLimit} />
+          </div>
         </div>
       </div>
 
@@ -76,17 +85,6 @@ export default function HomePage() {
 
       <div className="px-4">
         <SmartFilterBanner />
-        <div className="flex flex-wrap items-start gap-2 mt-4">
-          <div className="flex-1">
-            <FilterBar
-              tags={Array.from(new Set(allLocations.flatMap(loc => loc.tags || [])))}
-              activeTags={activeTags}
-              setActiveTags={setActiveTags}
-            />
-          </div>
-          <DistanceSliderPill distance={distanceLimit} setDistance={setDistanceLimit} />
-        </div>
-        <Header />
       </div>
 
       <section className="mt-16 px-4">
@@ -102,7 +100,13 @@ export default function HomePage() {
       {featuredTag && (
         <section className="mt-16 px-4">
           <h2 className="text-3xl font-bold mb-6 text-gray-900">Featured: {featuredTag}</h2>
-          <FeaturedTagCards allLocations={allLocations} tag={featuredTag} userCoords={userCoords} activeTags={activeTags} distanceLimit={distanceLimit} />
+          <FeaturedTagCards
+            allLocations={allLocations}
+            tag={featuredTag}
+            userCoords={userCoords}
+            activeTags={activeTags}
+            distanceLimit={distanceLimit}
+          />
         </section>
       )}
     </HomeShell>
