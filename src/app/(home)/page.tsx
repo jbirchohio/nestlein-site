@@ -4,22 +4,19 @@ import { useState, useEffect, useMemo } from 'react';
 import HomeShell from '@/components/HomeShell';
 import SmartFilterBanner from '@/components/SmartFilterBanner';
 import FilterBar from '@/components/FilterBar';
-import OpenNowCards from '@/components/home/OpenNowCards';
-import TopRatedCards from '@/components/home/TopRatedCards';
 import FeaturedTagCards from '@/components/home/FeaturedTagCards';
 import DistanceSliderPill from '@/components/DistanceSliderPill';
 import ModalWrapper from '@/components/ModalWrapper';
+import LocationCardGrid from '@/components/LocationCardGrid';
 import { Suspense } from 'react';
 import Fuse from 'fuse.js';
 
 function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState(value);
-
   useEffect(() => {
     const handler = setTimeout(() => setDebouncedValue(value), delay);
     return () => clearTimeout(handler);
   }, [value, delay]);
-
   return debouncedValue;
 }
 
@@ -38,10 +35,10 @@ interface Location {
 export default function HomePage() {
   const [allLocations, setAllLocations] = useState<Location[]>([]);
   const [userCoords, setUserCoords] = useState<{ lat: number; lon: number } | null>(null);
-  const [featuredTag, setFeaturedTag] = useState<string>('');
+  const [featuredTag, setFeaturedTag] = useState('');
   const [activeTags, setActiveTags] = useState<string[]>([]);
   const [distanceLimit, setDistanceLimit] = useState(5);
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [recentSearches, setRecentSearches] = useState<string[]>(() => {
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem('recentSearches');
@@ -57,8 +54,7 @@ export default function HomePage() {
       keys: ['name', 'address', 'tags'],
       threshold: 0.3,
       ignoreLocation: true,
-    }),
-    [allLocations]
+    }), [allLocations]
   );
 
   useEffect(() => {
@@ -69,12 +65,8 @@ export default function HomePage() {
 
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
-          (pos) => {
-            setUserCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
-          },
-          () => {
-            console.warn('📍 User denied geolocation. Showing nationwide fallback.');
-          }
+          (pos) => setUserCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+          () => console.warn('📍 User denied geolocation. Showing fallback.')
         );
       }
 
@@ -103,11 +95,13 @@ export default function HomePage() {
     });
   }, [debouncedSearch, activeTags, distanceLimit, userCoords, allLocations, fuse]);
 
+  const hasFilters = debouncedSearch.trim() || activeTags.length > 0;
+
   return (
     <HomeShell>
       <div className="relative text-center max-w-4xl mx-auto mb-16 px-4 pt-32 pb-24 bg-[url('/hero.jpg')] bg-cover bg-center rounded-xl shadow-lg">
         <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl">
-          <h1 className="text-5xl sm:text-6xl font-bold text-gray-900 mb-4 leading-tight">
+          <h1 className="text-5xl sm:text-6xl font-bold text-[var(--foreground)] mb-4 leading-tight">
             Find Your Next Power Spot.
           </h1>
           <p className="text-xl text-[var(--text-secondary)] font-inter mb-6">
@@ -138,8 +132,8 @@ export default function HomePage() {
           </div>
 
           {recentSearches.length > 0 && (
-            <div className="mt-4 text-sm text-gray-600 flex flex-wrap justify-center gap-2">
-              <span className="font-medium text-gray-700">Recent:</span>
+            <div className="mt-4 text-sm text-[var(--text-secondary)] flex flex-wrap justify-center gap-2">
+              <span className="font-medium text-[var(--foreground)]">Recent:</span>
               {recentSearches.map((tag) => (
                 <button
                   key={tag}
@@ -171,19 +165,16 @@ export default function HomePage() {
         <SmartFilterBanner />
       </div>
 
-      <section className="mt-16 px-4">
-        <h2 className="text-3xl font-bold mb-6 text-[var(--foreground)]">Open Near You</h2>
-        <OpenNowCards allLocations={filteredLocations} userCoords={userCoords} activeTags={activeTags} distanceLimit={distanceLimit} />
-      </section>
-
-      <section className="mt-16 px-4">
-        <h2 className="text-3xl font-bold mb-6 text-gray-900">Top Rated Spots</h2>
-        <TopRatedCards allLocations={filteredLocations} userCoords={userCoords} activeTags={activeTags} distanceLimit={distanceLimit} />
+      <section className="mt-16 px-4 animate-fade-in">
+        <h2 className="text-3xl font-bold mb-6 text-[var(--foreground)]">
+          {hasFilters ? 'Filtered Results' : 'Featured Remote Spots'}
+        </h2>
+        <LocationCardGrid locations={hasFilters ? filteredLocations : allLocations.slice(0, 6)} />
       </section>
 
       {featuredTag && (
-        <section className="mt-16 px-4">
-          <h2 className="text-3xl font-bold mb-6 text-gray-900">Featured: {featuredTag}</h2>
+        <section className="mt-16 px-4 animate-fade-in">
+          <h2 className="text-3xl font-bold mb-6 text-[var(--foreground)]">Featured: {featuredTag}</h2>
           <FeaturedTagCards
             allLocations={filteredLocations}
             tag={featuredTag}
