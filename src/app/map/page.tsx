@@ -1,5 +1,9 @@
 // src/app/map/page.tsx
-import MapPageClient from '@/components/MapPageClient';
+import dynamic from 'next/dynamic';
+
+const MapPageClient = dynamic(() => import('@/components/MapPageClient'), {
+  ssr: false,
+});
 
 export default function Page() {
   return <MapPageClient />;
