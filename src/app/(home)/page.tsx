@@ -118,7 +118,6 @@ export default function HomePage() {
   }, [debouncedSearch, activeTags, distanceLimit, userCoords, allLocations, fuse]);
 
   const mappableLocations = filteredLocations.filter(loc => loc.latitude && loc.longitude);
-  const hasFilters = debouncedSearch.trim() || activeTags.length > 0;
 
   return (
     <HomeShell>
