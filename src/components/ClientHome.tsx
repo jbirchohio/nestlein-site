@@ -20,7 +20,7 @@ function useDebounce<T>(value: T, delay: number): T {
 }
 
 function getDistanceBetween(lat1: number, lon1: number, lat2: number, lon2: number) {
-  const R = 3958.8; // miles
+  const R = 3958.8;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
   const a =
@@ -50,27 +50,24 @@ export default function HomePage() {
   const [activeTags, setActiveTags] = useState<string[]>([]);
   const [distanceLimit, setDistanceLimit] = useState(5);
   const [searchTerm, setSearchTerm] = useState('');
-  const [recentSearches, setRecentSearches] = useState<string[]>([]);
-  const isClient = typeof window !== 'undefined';
-
-  useEffect(() => {
-    if (isClient) {
+  const [recentSearches, setRecentSearches] = useState<string[]>(() => {
+    if (typeof window !== 'undefined') {
       const stored = localStorage.getItem('recentSearches');
-      if (stored) setRecentSearches(JSON.parse(stored));
+      return stored ? JSON.parse(stored) : [];
     }
-  }, [isClient]);
+    return [];
+  });
 
   const debouncedSearch = useDebounce(searchTerm, 300);
 
-  const fuse = useMemo(() => {
-    if (!isClient) return null;
-    return new Fuse(allLocations, {
+  const fuse = useMemo(() =>
+    new Fuse(allLocations, {
       keys: ['name', 'address', 'tags'],
       threshold: 0.3,
       ignoreLocation: true,
       includeScore: true,
-    });
-  }, [isClient, allLocations]);
+    }), [allLocations]
+  );
 
   useEffect(() => {
     async function fetchLocations() {
@@ -91,7 +88,6 @@ export default function HomePage() {
             setAllLocations(withDistances);
           },
           () => {
-            console.warn('📍 User denied geolocation. Showing fallback.');
             setAllLocations(data);
           }
         );
@@ -104,7 +100,7 @@ export default function HomePage() {
   }, []);
 
   const filteredLocations = useMemo(() => {
-    const base = debouncedSearch.trim() && fuse
+    const base = debouncedSearch.trim()
       ? fuse.search(debouncedSearch).map((result) => result.item)
       : allLocations;
 
@@ -127,64 +123,66 @@ export default function HomePage() {
 
   return (
     <HomeShell>
-      <div className="relative mx-auto mb-16 pt-24 pb-20 px-6 sm:px-10 lg:px-16 xl:px-20 max-w-5xl xl:max-w-6xl bg-[url('/urban-oasis-hero.webp')] bg-cover bg-center rounded-xl shadow-lg overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-0 rounded-xl" />
+      <div className="relative w-full bg-[url('/urban-oasis-hero.webp')] bg-cover bg-center">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-0" />
 
-        <div className="relative z-10 bg-white/80 backdrop-blur-sm p-6 rounded-xl">
-          <h1 className="text-5xl sm:text-6xl font-bold text-[var(--foreground)] mb-4 leading-tight">
-            Find Your Next Power Spot.
-          </h1>
-          <p className="text-xl text-[var(--text-secondary)] font-inter mb-6">
-            Browse remote-friendly cafés, cowork corners & creative nooks — filtered by vibe, Wi-Fi, and flow.
-          </p>
+        <div className="relative z-10 max-w-5xl mx-auto px-6 py-20 sm:px-10 lg:px-16 xl:px-20">
+          <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl">
+            <h1 className="text-5xl sm:text-6xl font-bold text-[var(--foreground)] mb-4 leading-tight">
+              Find Your Next Power Spot.
+            </h1>
+            <p className="text-xl text-[var(--text-secondary)] font-inter mb-6">
+              Browse remote-friendly cafés, cowork corners & creative nooks — filtered by vibe, Wi-Fi, and flow.
+            </p>
 
-          <div className="flex flex-col sm:flex-row gap-2 mb-4">
-            <input
-              type="text"
-              placeholder="Find cafés, workspaces, or vibes near you..."
-              value={searchTerm}
-              onChange={(e) => {
-                const value = e.target.value;
-                setSearchTerm(value);
-                if (value.trim()) {
-                  setRecentSearches((prev) => {
-                    const updated = [value, ...prev.filter(v => v !== value)].slice(0, 5);
-                    if (isClient) localStorage.setItem('recentSearches', JSON.stringify(updated));
-                    return updated;
-                  });
-                }
-              }}
-              className="flex-1 px-4 py-2 rounded-md border border-[var(--border)] shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--border)] bg-[var(--surface)] text-[var(--foreground)]"
-            />
-            <button className="px-6 py-2 rounded-md bg-[var(--accent)] text-white font-semibold hover:brightness-90 transition">
-              Search
-            </button>
-          </div>
-
-          {recentSearches.length > 0 && (
-            <div className="mt-4 text-sm text-[var(--text-secondary)] flex flex-wrap justify-center gap-2">
-              <span className="font-medium text-[var(--foreground)]">Recent:</span>
-              {recentSearches.map((tag) => (
-                <button
-                  key={tag}
-                  onClick={() => setSearchTerm(tag)}
-                  className="px-3 py-1 rounded-md bg-[var(--surface)] text-[var(--foreground)] hover:bg-[var(--border)] border border-[var(--border)] transition"
-                >
-                  {tag}
-                </button>
-              ))}
+            <div className="flex flex-col sm:flex-row gap-2 mb-4">
+              <input
+                type="text"
+                placeholder="Find cafés, workspaces, or vibes near you..."
+                value={searchTerm}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setSearchTerm(value);
+                  if (value.trim()) {
+                    setRecentSearches((prev) => {
+                      const updated = [value, ...prev.filter(v => v !== value)].slice(0, 5);
+                      localStorage.setItem('recentSearches', JSON.stringify(updated));
+                      return updated;
+                    });
+                  }
+                }}
+                className="flex-1 px-4 py-2 rounded-md border border-[var(--border)] shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--border)] bg-[var(--surface)] text-[var(--foreground)]"
+              />
+              <button className="px-6 py-2 rounded-md bg-[var(--accent)] text-white font-semibold hover:brightness-90 transition">
+                Search
+              </button>
             </div>
-          )}
 
-          <div className="flex flex-wrap justify-center items-center gap-3 mt-6">
-            <FilterBar
-              tags={Array.from(new Set(allLocations.flatMap(loc => loc.tags || [])))}
-              activeTags={activeTags}
-              setActiveTags={setActiveTags}
-            />
-            {userCoords && (
-              <DistanceSliderPill distance={distanceLimit} setDistance={setDistanceLimit} />
+            {recentSearches.length > 0 && (
+              <div className="mt-4 text-sm text-[var(--text-secondary)] flex flex-wrap justify-center gap-2">
+                <span className="font-medium text-[var(--foreground)]">Recent:</span>
+                {recentSearches.map((tag) => (
+                  <button
+                    key={tag}
+                    onClick={() => setSearchTerm(tag)}
+                    className="px-3 py-1 rounded-md bg-[var(--surface)] text-[var(--foreground)] hover:bg-[var(--border)] border border-[var(--border)] transition"
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
             )}
+
+            <div className="flex flex-wrap justify-center items-center gap-3 mt-6">
+              <FilterBar
+                tags={Array.from(new Set(allLocations.flatMap(loc => loc.tags || [])))}
+                activeTags={activeTags}
+                setActiveTags={setActiveTags}
+              />
+              {userCoords && (
+                <DistanceSliderPill distance={distanceLimit} setDistance={setDistanceLimit} />
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -193,25 +191,17 @@ export default function HomePage() {
         <ModalWrapper />
       </Suspense>
 
-      {/* Desktop only: list + map */}
-<div className="hidden lg:grid grid-cols-12 gap-6 px-4">
-  <div className="col-span-7">
-    <LocationCardGrid locations={filteredLocations} />
-  </div>
-  <div className="col-span-5">
-    <MapView
-      locations={mappableLocations}
-      center={[userCoords?.lat ?? 39.5, userCoords?.lon ?? -98.35]}
-    />
-  </div>
-</div>
-
-{/* Mobile only: show full list, no map */}
-<div className="lg:hidden px-4">
-  <LocationCardGrid locations={filteredLocations} />
-</div>
-
-
-  </HomeShell>
-);
+      <div className="hidden lg:grid grid-cols-12 gap-6 px-4">
+        <div className="col-span-7">
+          <LocationCardGrid locations={filteredLocations} />
+        </div>
+        <div className="col-span-5">
+          <MapView
+            locations={mappableLocations}
+            center={[userCoords?.lat ?? 39.5, userCoords?.lon ?? -98.35]}
+          />
+        </div>
+      </div>
+    </HomeShell>
+  );
 }
