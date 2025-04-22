@@ -4,7 +4,6 @@ import Head from "next/head";
 import "./globals.css";
 import { LocationProvider } from '@/context/LocationContext';
 
-
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -14,12 +13,6 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
-
-export default function HomeLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <LocationProvider>
-      {children}
-    </LocationProvider>
 
 export const metadata: Metadata = {
   title: "NestleIn | Find Remote-Ready Work Spots",
@@ -35,7 +28,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <Head>
-        {/* Preload Satoshi via Bunny Fonts */}
         <link
           rel="preload"
           href="https://fonts.bunny.net/css?family=satoshi:400,500,700"
@@ -46,7 +38,6 @@ export default function RootLayout({
             el.rel = 'stylesheet';
           }}
         />
-
         <noscript>
           <link
             rel="stylesheet"
@@ -57,11 +48,12 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${geistMono.variable} font-satoshi antialiased bg-[var(--background)] text-[var(--foreground)]`}
       >
-        {children}
-
-        <footer className="mt-24 border-t border-[var(--border)] text-sm text-center text-[var(--text-secondary)] py-10">
-          <p>Built for remote workers. © {new Date().getFullYear()} NestleIn</p>
-        </footer>
+        <LocationProvider>
+          {children}
+          <footer className="mt-24 border-t border-[var(--border)] text-sm text-center text-[var(--text-secondary)] py-10">
+            <p>Built for remote workers. © {new Date().getFullYear()} NestleIn</p>
+          </footer>
+        </LocationProvider>
       </body>
     </html>
   );
