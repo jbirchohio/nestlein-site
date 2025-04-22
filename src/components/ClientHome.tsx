@@ -9,6 +9,7 @@ import LocationCardGrid from '@/components/LocationCardGrid';
 import MapView from '@/components/MapView';
 import { Suspense } from 'react';
 import Fuse from 'fuse.js';
+import { useRouter } from 'next/navigation';
 import { MapPin } from 'lucide-react';
 
 function useDebounce<T>(value: T, delay: number): T {
@@ -46,6 +47,7 @@ interface Location {
 }
 
 export default function HomePage() {
+  const router = useRouter();
   const [allLocations, setAllLocations] = useState<Location[]>([]);
   const [userCoords, setUserCoords] = useState<{ lat: number; lon: number } | null>(null);
   const [activeTags, setActiveTags] = useState<string[]>([]);
