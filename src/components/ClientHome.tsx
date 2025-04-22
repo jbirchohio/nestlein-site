@@ -9,8 +9,6 @@ import LocationCardGrid from '@/components/LocationCardGrid';
 import MapView from '@/components/MapView';
 import { Suspense } from 'react';
 import Fuse from 'fuse.js';
-import { useRouter } from 'next/navigation';
-import { MapPin } from 'lucide-react';
 
 function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState(value);
