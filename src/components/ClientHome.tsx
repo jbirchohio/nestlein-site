@@ -196,29 +196,18 @@ export default function HomePage() {
         <ModalWrapper />
       </Suspense>
 
-      {/* Desktop: show list + map */}
-  <div className="hidden lg:grid grid-cols-12 gap-6 px-4">
-    <div className="col-span-7">
-      <LocationCardGrid locations={filteredLocations} />
-    </div>
-    <div className="col-span-5">
-      <MapView
-        locations={mappableLocations}
-        center={[userCoords?.lat ?? 39.5, userCoords?.lon ?? -98.35]}
-      />
-    </div>
+      {/* Desktop only: list + map */}
+<div className="hidden lg:grid grid-cols-12 gap-6 px-4">
+  <div className="col-span-7">
+    <LocationCardGrid locations={filteredLocations} />
   </div>
-
-    {/* Mobile: only show list + “View Map” button */}
-<div className="fixed bottom-4 right-4 lg:hidden">
-  <button
-    className="flex items-center gap-2 px-4 py-2 bg-[var(--accent)] text-white rounded-full shadow-lg"
-    onClick={() => router.push('/map')}
-  >
-    <MapPin size={16} />
-    View Map
-  </button>
-</div>
+  <div className="col-span-5">
+    <MapView
+      locations={mappableLocations}
+      center={[userCoords?.lat ?? 39.5, userCoords?.lon ?? -98.35]}
+    />
+  </div>
+</div
 
   </HomeShell>
 );
