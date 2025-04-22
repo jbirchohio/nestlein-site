@@ -8,7 +8,7 @@ import 'leaflet/dist/leaflet.css';
 import './MapView.css';
 import { useSwipeToDismiss } from '@/hooks/useSwipeToDismiss';
 
-import pinIconUrl from '/remote-control-buttons.svg';
+const pinIconUrl = '/remote-control-buttons.svg';
 
 interface Location {
   slug: string;
