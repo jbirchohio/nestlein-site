@@ -45,7 +45,6 @@ interface Location {
 }
 
 export default function HomePage() {
-  const router = useRouter();
   const [allLocations, setAllLocations] = useState<Location[]>([]);
   const [userCoords, setUserCoords] = useState<{ lat: number; lon: number } | null>(null);
   const [activeTags, setActiveTags] = useState<string[]>([]);
