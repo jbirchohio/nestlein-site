@@ -126,7 +126,7 @@ export default function HomePage() {
       <div className="relative w-full bg-[url('/urban-oasis-hero.webp')] bg-cover bg-center">
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-0" />
 
-        <div className="relative z-10 max-w-5xl mx-auto px-6 py-20 sm:px-10 lg:px-16 xl:px-20">
+        <div className="relative z-10 max-w-5xl mx-auto px-6 pt-28 pb-20 sm:px-10 lg:px-16 xl:px-20">
           <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl">
             <h1 className="text-5xl sm:text-6xl font-bold text-[var(--foreground)] mb-4 leading-tight">
               Find Your Next Power Spot.
@@ -191,7 +191,11 @@ export default function HomePage() {
         <ModalWrapper />
       </Suspense>
 
-      <div className="hidden lg:grid grid-cols-12 gap-6 px-4">
+      <div className="block lg:hidden px-4 mt-10">
+        <LocationCardGrid locations={filteredLocations} />
+      </div>
+
+      <div className="hidden lg:grid grid-cols-12 gap-6 px-4 mt-10">
         <div className="col-span-7">
           <LocationCardGrid locations={filteredLocations} />
         </div>
