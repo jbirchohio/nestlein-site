@@ -52,14 +52,6 @@ export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
 
-    useEffect(() => {
-      if (typeof window !== 'undefined') {
-        const stored = localStorage.getItem('recentSearches');
-        if (stored) setRecentSearches(JSON.parse(stored));
-      }
-    }, []);
-
-
   const debouncedSearch = useDebounce(searchTerm, 300);
 
   const fuse = useMemo(() =>
@@ -96,6 +88,11 @@ export default function HomePage() {
         );
       } else {
         setAllLocations(data);
+      }
+
+      if (typeof window !== 'undefined') {
+        const stored = localStorage.getItem('recentSearches');
+        if (stored) setRecentSearches(JSON.parse(stored));
       }
     }
 
