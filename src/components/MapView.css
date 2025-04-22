@@ -1,0 +1,48 @@
+/* MapView.css */
+
+.map-wrapper {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+.leaflet-map {
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+  border-radius: 1rem;
+}
+
+/* Mobile drawer style */
+@media (max-width: 768px) {
+  .map-wrapper {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60vh;
+    max-height: 500px;
+    background: white;
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+    transition: transform 0.3s ease;
+    transform: translateY(0);
+  }
+  .map-wrapper.hidden {
+    transform: translateY(100%);
+  }
+}
+
+/* Desktop layout */
+@media (min-width: 769px) {
+  .map-wrapper {
+    position: sticky;
+    top: 2rem;
+    height: calc(100vh - 4rem);
+    max-height: 800px;
+    width: 100%;
+    border-radius: 1rem;
+    overflow: hidden;
+  }
+}

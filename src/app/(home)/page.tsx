@@ -6,6 +6,7 @@ import FilterBar from '@/components/FilterBar';
 import DistanceSliderPill from '@/components/DistanceSliderPill';
 import ModalWrapper from '@/components/ModalWrapper';
 import LocationCardGrid from '@/components/LocationCardGrid';
+import MapView from '@/components/MapView';
 import { Suspense } from 'react';
 import Fuse from 'fuse.js';
 
@@ -116,15 +117,14 @@ export default function HomePage() {
     });
   }, [debouncedSearch, activeTags, distanceLimit, userCoords, allLocations, fuse]);
 
+  const mappableLocations = filteredLocations.filter(loc => loc.latitude && loc.longitude);
   const hasFilters = debouncedSearch.trim() || activeTags.length > 0;
 
   return (
     <HomeShell>
       <div className="relative mx-auto mb-16 pt-24 pb-20 px-6 sm:px-10 lg:px-16 xl:px-20 max-w-5xl xl:max-w-6xl bg-[url('/urban-oasis-hero.webp')] bg-cover bg-center rounded-xl shadow-lg overflow-hidden">
-        {/* gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-0 rounded-xl" />
 
-        {/* content */}
         <div className="relative z-10 bg-white/80 backdrop-blur-sm p-6 rounded-xl">
           <h1 className="text-5xl sm:text-6xl font-bold text-[var(--foreground)] mb-4 leading-tight">
             Find Your Next Power Spot.
@@ -188,12 +188,33 @@ export default function HomePage() {
         <ModalWrapper />
       </Suspense>
 
-      <section className="mt-16 px-4 animate-fade-in">
-        <h2 className="text-3xl font-bold mb-6 text-[var(--foreground)]">
-          {hasFilters ? 'Filtered Results' : 'Featured Remote Spots'}
-        </h2>
-        <LocationCardGrid locations={hasFilters ? filteredLocations : allLocations.slice(0, 6)} />
-      </section>
+      {/* Desktop: side-by-side layout */}
+      <div className="hidden lg:grid grid-cols-12 gap-6 px-4">
+        <div className="col-span-7">
+          <LocationCardGrid locations={filteredLocations} />
+        </div>
+        <div className="col-span-5">
+          <MapView
+            locations={mappableLocations}
+            center={[
+              userCoords?.lat ?? 39.5,
+              userCoords?.lon ?? -98.35,
+            ]}
+          />
+        </div>
+      </div>
+
+      {/* Mobile: drawer overlay */}
+      <div className="lg:hidden">
+        <LocationCardGrid locations={filteredLocations} />
+        <MapView
+          locations={mappableLocations}
+          center={[
+            userCoords?.lat ?? 39.5,
+            userCoords?.lon ?? -98.35,
+          ]}
+        />
+      </div>
     </HomeShell>
   );
 }
