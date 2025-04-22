@@ -1,4 +1,4 @@
-// MapView.tsx
+// src/components/MapView.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -21,6 +21,7 @@ interface MapViewProps {
   locations: Location[];
   center: [number, number];
   zoom?: number;
+  className?: string;
 }
 
 const CustomPin = new L.Icon({
@@ -36,7 +37,6 @@ function AutoZoom({ locations }: { locations: Location[] }) {
 
   useEffect(() => {
     if (locations.length === 0) return;
-
     const bounds = L.latLngBounds(
       locations.map((loc) => [loc.latitude, loc.longitude] as [number, number])
     );
@@ -46,7 +46,12 @@ function AutoZoom({ locations }: { locations: Location[] }) {
   return null;
 }
 
-export default function MapView({ locations, center, zoom = 12 }: MapViewProps) {
+export default function MapView({
+  locations,
+  center,
+  zoom = 12,
+  className = '',
+}: MapViewProps) {
   const [isVisible, setIsVisible] = useState(true);
   const { ref, bounced } = useSwipeToDismiss(() => setIsVisible(false), 80);
 
@@ -63,13 +68,21 @@ export default function MapView({ locations, center, zoom = 12 }: MapViewProps) 
 
       <div
         ref={ref}
-        className={`map-wrapper transition-transform duration-300 ease-in-out ${!isVisible ? 'hidden' : ''} ${bounced ? 'animate-bounce-back' : ''}`}
+        className={[
+          'map-wrapper',
+          'transition-transform duration-300 ease-in-out',
+          !isVisible && 'hidden',
+          bounced && 'animate-bounce-back',
+          className, // now accepted
+        ]
+          .filter(Boolean)
+          .join(' ')}
       >
         <MapContainer
           className="leaflet-map"
           center={center}
           zoom={zoom}
-          scrollWheelZoom={true}
+          scrollWheelZoom
           style={{ height: '100%', width: '100%' }}
         >
           <TileLayer
@@ -78,11 +91,7 @@ export default function MapView({ locations, center, zoom = 12 }: MapViewProps) 
           />
 
           {locations.map((loc) => (
-            <Marker
-              key={loc.slug}
-              position={[loc.latitude, loc.longitude]}
-              icon={CustomPin}
-            >
+            <Marker key={loc.slug} position={[loc.latitude, loc.longitude]} icon={CustomPin}>
               <Popup>{loc.name}</Popup>
             </Marker>
           ))}
