@@ -1,6 +1,5 @@
 'use client';
 
-import React, { useEffect } from 'react';
 import MapView from '@/components/MapView';
 import { useLocationContext } from '@/context/LocationContext';
 
