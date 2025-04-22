@@ -117,7 +117,10 @@ export default function HomePage() {
     });
   }, [debouncedSearch, activeTags, distanceLimit, userCoords, allLocations, fuse]);
 
-  const mappableLocations = filteredLocations.filter(loc => loc.latitude && loc.longitude);
+  const mappableLocations = filteredLocations.filter(
+    (loc): loc is Location & { latitude: number; longitude: number } =>
+      typeof loc.latitude === 'number' && typeof loc.longitude === 'number'
+  );
 
   return (
     <HomeShell>
