@@ -9,6 +9,8 @@ import LocationCardGrid from '@/components/LocationCardGrid';
 import MapView from '@/components/MapView';
 import { Suspense } from 'react';
 import Fuse from 'fuse.js';
+import { useRouter } from 'next/navigation';
+import { MapPin } from 'lucide-react';
 
 function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -193,28 +195,30 @@ export default function HomePage() {
         <ModalWrapper />
       </Suspense>
 
-      {/* Desktop: 2/3 cards | 1/3 map */}
-    <div className="hidden lg:flex lg:gap-6 lg:px-4 lg:items-start">
-      <div className="w-2/3">
-        <LocationCardGrid locations={filteredLocations} />
-      </div>
-      <div className="w-1/3 h-[600px] rounded-xl overflow-hidden">
-        <MapView
-          locations={mappableLocations}
-          center={[userCoords?.lat ?? 39.5, userCoords?.lon ?? -98.35]}
-          className="w-full h-full"
-        />
-      </div>
-    </div>
-
-    {/* Mobile: cards then swipe‑to‑dismiss map */}
-    <div className="lg:hidden px-4">
+      {/* Desktop: show list + map */}
+  <div className="hidden lg:grid grid-cols-12 gap-6 px-4">
+    <div className="col-span-7">
       <LocationCardGrid locations={filteredLocations} />
+    </div>
+    <div className="col-span-5">
       <MapView
         locations={mappableLocations}
         center={[userCoords?.lat ?? 39.5, userCoords?.lon ?? -98.35]}
       />
     </div>
+  </div>
+
+    {/* Mobile: only show list + “View Map” button */}
+<div className="fixed bottom-4 right-4 lg:hidden">
+  <button
+    className="flex items-center gap-2 px-4 py-2 bg-[var(--accent)] text-white rounded-full shadow-lg"
+    onClick={() => router.push('/map')}
+  >
+    <MapPin size={16} />
+    View Map
+  </button>
+</div>
+
   </HomeShell>
 );
 }
