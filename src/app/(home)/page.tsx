@@ -50,13 +50,15 @@ export default function HomePage() {
   const [activeTags, setActiveTags] = useState<string[]>([]);
   const [distanceLimit, setDistanceLimit] = useState(5);
   const [searchTerm, setSearchTerm] = useState('');
-  const [recentSearches, setRecentSearches] = useState<string[]>(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('recentSearches');
-      return stored ? JSON.parse(stored) : [];
-    }
-    return [];
-  });
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+
+    useEffect(() => {
+      if (typeof window !== 'undefined') {
+        const stored = localStorage.getItem('recentSearches');
+        if (stored) setRecentSearches(JSON.parse(stored));
+      }
+    }, []);
+
 
   const debouncedSearch = useDebounce(searchTerm, 300);
 
