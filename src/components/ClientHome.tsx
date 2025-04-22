@@ -197,17 +197,17 @@ export default function HomePage() {
       </Suspense>
 
       {/* Desktop only: list + map */}
-<div className="hidden lg:grid grid-cols-12 gap-6 px-4">
-  <div className="col-span-7">
-    <LocationCardGrid locations={filteredLocations} />
-  </div>
-  <div className="col-span-5">
-    <MapView
+      <div className="hidden lg:grid grid-cols-12 gap-6 px-4">
+  	<div className="col-span-7">
+   	 <LocationCardGrid locations={filteredLocations} />
+  	</div>
+  	<div className="col-span-5">
+      <MapView
       locations={mappableLocations}
       center={[userCoords?.lat ?? 39.5, userCoords?.lon ?? -98.35]}
     />
-  </div>
-</div
+       </div>
+       </div>
 
   </HomeShell>
 );
