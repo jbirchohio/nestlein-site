@@ -1,19 +1,19 @@
 'use client';
-import HomeShell from '@/components/HomeShell';
+
+import React, { useEffect } from 'react';
 import MapView from '@/components/MapView';
-import { useLocationContext } from '@/context/LocationContext'; // however you provide your location list
+import { useLocationContext } from '@/context/LocationContext';
 
 export default function MapPage() {
-  const { mappableLocations, userCoords } = useLocationContext();
+  const { locations, center } = useLocationContext();
+
   return (
-    <HomeShell>
-      <div className="h-screen w-full">
-        <MapView
-          locations={mappableLocations}
-          center={[userCoords?.lat ?? 39.5, userCoords?.lon ?? -98.35]}
-          className="h-full w-full"
-        />
-      </div>
-    </HomeShell>
+    <div className="h-full">
+      <MapView
+        locations={locations}
+        center={center}
+        zoom={12}
+      />
+    </div>
   );
 }

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter, Geist_Mono } from "next/font/google";
 import Head from "next/head";
 import "./globals.css";
+import { LocationProvider } from '@/context/LocationContext';
+
 
 const inter = Inter({
   variable: "--font-inter",
@@ -12,6 +14,12 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
+export default function HomeLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <LocationProvider>
+      {children}
+    </LocationProvider>
 
 export const metadata: Metadata = {
   title: "NestleIn | Find Remote-Ready Work Spots",
