@@ -1,18 +1,9 @@
-'use client';
+import dynamic from 'next/dynamic';
 
-import MapView from '@/components/MapView';
-import { useLocationContext } from '@/context/LocationContext';
+const MapPageClient = dynamic(() => import('@/components/MapPageClient'), {
+  ssr: false,
+});
 
-export default function MapPage() {
-  const { locations, center } = useLocationContext();
-
-  return (
-    <div className="h-full">
-      <MapView
-        locations={locations}
-        center={center}
-        zoom={12}
-      />
-    </div>
-  );
+export default function Page() {
+  return <MapPageClient />;
 }
