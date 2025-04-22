@@ -51,24 +51,26 @@ export default function HomePage() {
   const [distanceLimit, setDistanceLimit] = useState(5);
   const [searchTerm, setSearchTerm] = useState('');
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const isClient = typeof window !== 'undefined';
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (isClient) {
       const stored = localStorage.getItem('recentSearches');
       if (stored) setRecentSearches(JSON.parse(stored));
     }
-  }, []);
+  }, [isClient]);
 
   const debouncedSearch = useDebounce(searchTerm, 300);
 
-  const fuse = useMemo(() =>
-    new Fuse(allLocations, {
+  const fuse = useMemo(() => {
+    if (!isClient) return null;
+    return new Fuse(allLocations, {
       keys: ['name', 'address', 'tags'],
       threshold: 0.3,
       ignoreLocation: true,
       includeScore: true,
-    }), [allLocations]
-  );
+    });
+  }, [isClient, allLocations]);
 
   useEffect(() => {
     async function fetchLocations() {
@@ -102,7 +104,7 @@ export default function HomePage() {
   }, []);
 
   const filteredLocations = useMemo(() => {
-    const base = debouncedSearch.trim()
+    const base = debouncedSearch.trim() && fuse
       ? fuse.search(debouncedSearch).map((result) => result.item)
       : allLocations;
 
@@ -147,7 +149,7 @@ export default function HomePage() {
                 if (value.trim()) {
                   setRecentSearches((prev) => {
                     const updated = [value, ...prev.filter(v => v !== value)].slice(0, 5);
-                    localStorage.setItem('recentSearches', JSON.stringify(updated));
+                    if (isClient) localStorage.setItem('recentSearches', JSON.stringify(updated));
                     return updated;
                   });
                 }
