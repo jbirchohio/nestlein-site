@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import HomeShell from '@/components/HomeShell';
 import FilterBar from '@/components/FilterBar';
 import DistanceSliderPill from '@/components/DistanceSliderPill';

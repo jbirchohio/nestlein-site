@@ -5,6 +5,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './MapView.css';
+import { useState, useEffect } from 'react';
 
 const pinIcon = new L.Icon({
   iconUrl: '/remote-control-buttons.svg',
