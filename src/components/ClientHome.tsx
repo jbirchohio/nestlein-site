@@ -217,3 +217,4 @@ export default function HomePage() {
     </div>
   </HomeShell>
 );
+}
