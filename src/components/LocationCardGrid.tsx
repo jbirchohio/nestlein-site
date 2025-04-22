@@ -1,3 +1,4 @@
+// src/components/LocationCardGrid.tsx
 'use client';
 
 import LocationCard from './LocationCard';
@@ -24,7 +25,7 @@ export default function LocationCardGrid({ locations }: { locations: Location[] 
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
       {locations.map((location) => (
         <LocationCard key={location.slug} location={location} />
       ))}
