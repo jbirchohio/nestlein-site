@@ -13,21 +13,25 @@
   "open_now": "Closed",
   "review_score": 4.7,
   "review_count": 21,
+  "email": "slick-carousel@1.8.1",
   "best_time_to_work_remotely": "Unknown",
-  "remote_work_summary": "The Cambridge Public Library - Collins Branch offers a quiet environment ideal for focused work. It provides a wheelchair accessible entrance, ensuring ease of access for all visitors.",
+  "remote_work_summary": "The Collins Branch of the Cambridge Public Library offers a cozy and welcoming environment with friendly staff, making it a pleasant spot for remote work. However, details on Wi-Fi, outlets, and noise levels are not specified.",
   "remote_work_features": {
     "wi_fi_quality": "Unknown",
     "outlet_access": "Unknown",
     "noise_level": "Quiet",
-    "seating_comfort": "Unknown",
+    "seating_comfort": "Comfortable",
     "natural_light": "Unknown",
-    "stay_duration_friendliness": "Unknown",
+    "stay_duration_friendliness": "Friendly",
     "food_drink_options": "Unknown",
-    "bathroom_access": "Unknown",
-    "parking_availability": "Unknown"
+    "bathroom_access": "Available",
+    "parking_availability": "Street parking with residents permits"
   },
   "tags": [
     "Quiet",
+    "Friendly Staff",
+    "Neighborhood Vibe",
+    "Cozy",
     "Wheelchair Accessible"
   ]
 }

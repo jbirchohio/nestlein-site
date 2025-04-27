@@ -11,29 +11,28 @@
   "longitude": -73.9968265,
   "hours": "Mon\u2013Fri: 9:30\u202fAM to 7\u202fPM, Sat\u2013Sun: Closed",
   "open_now": "Open",
-  "tags": [
-    "Coworking space"
-  ],
   "review_score": 5,
   "review_count": 8,
+  "email": "hello@designtown.nyc",
   "best_time_to_work_remotely": "Before 10 AM",
-  "remote_work_summary": "Design Town is an excellent coworking space for creatives and independent workers, offering a supportive and friendly community. The environment is conducive to work with a nice group of designers and a great space to work.",
+  "remote_work_summary": "Design Town is a cozy coworking space ideal for creatives and remote workers. It offers strong Wi-Fi and a supportive community, making it a great place to work.",
   "remote_work_features": {
-    "wi_fi_quality": "High",
-    "outlet_access": "Good",
+    "wi_fi_quality": "Strong",
+    "outlet_access": "Unknown",
     "noise_level": "Quiet",
     "seating_comfort": "Comfortable",
-    "natural_light": "Good",
+    "natural_light": "Unknown",
     "stay_duration_friendliness": "Friendly",
     "food_drink_options": "Limited",
-    "bathroom_access": "Accessible",
+    "bathroom_access": "Unknown",
     "parking_availability": "Unknown"
   },
-  "scores": {
-    "food_quality": 7,
-    "service": 9,
-    "ambiance": 8,
-    "value": 8,
-    "experience": 9
-  }
+  "tags": [
+    "Coworking",
+    "Creatives",
+    "Strong Wifi",
+    "Community",
+    "Quiet",
+    "Comfortable Seating"
+  ]
 }
