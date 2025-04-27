@@ -11,20 +11,18 @@
   "longitude": -74.0293825,
   "hours": "Mon\u2013Fri: 7\u202fAM to 2\u202fPM, Sat\u2013Sun: Closed",
   "open_now": "Open",
-  "tags": [
-    "Coffee shop"
-  ],
   "review_score": 5,
   "review_count": 3,
+  "email": "info@swevenhoboken.com",
   "best_time_to_work_remotely": "Before 10 AM",
-  "remote_work_summary": "Antique Kitchen offers a calm atmosphere with delicious food and great service, making it a pleasant spot for remote work. However, the limited hours and lack of information on Wi-Fi and outlets might be a consideration.",
+  "remote_work_summary": "Antique Kitchen offers a calm atmosphere with delicious food and great service, making it a pleasant spot for remote work. The environment is conducive for working, but specific details about Wi-Fi and outlet access are not available.",
   "remote_work_features": {
     "wi_fi_quality": "Unknown",
     "outlet_access": "Unknown",
     "noise_level": "Calm",
     "seating_comfort": "Unknown",
     "natural_light": "Unknown",
-    "stay_duration_friendliness": "Limited due to hours",
+    "stay_duration_friendliness": "Unknown",
     "food_drink_options": "Delicious food",
     "bathroom_access": "Unknown",
     "parking_availability": "Unknown"
@@ -33,5 +31,11 @@
     "food_quality": 9,
     "service": 9,
     "ambiance": 8
-  }
+  },
+  "tags": [
+    "Calm",
+    "Delicious Food",
+    "Great Service",
+    "Early Morning"
+  ]
 }

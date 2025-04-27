@@ -11,13 +11,11 @@
   "longitude": -73.9719159,
   "hours": "Mon\u2013Fri: 9\u202fAM to 5:30\u202fPM, Sat\u2013Sun: Closed",
   "open_now": "Open",
-  "tags": [
-    "Coworking space"
-  ],
   "review_score": 5,
   "review_count": 8,
+  "email": "info@workthere.com",
   "best_time_to_work_remotely": "Before 10 AM",
-  "remote_work_summary": "Workthere New York offers a professional coworking environment with a focus on tailored services. The space is wheelchair accessible and ideal for those seeking a dedicated workspace in the city.",
+  "remote_work_summary": "Workthere New York offers a professional coworking environment with a focus on shared and executive spaces. The space is wheelchair accessible and provides a quiet atmosphere suitable for productive work.",
   "remote_work_features": {
     "wi_fi_quality": "Unknown",
     "outlet_access": "Unknown",
@@ -29,8 +27,10 @@
     "bathroom_access": "Unknown",
     "parking_availability": "Unknown"
   },
-  "scores": {
-    "service": 9,
-    "experience": 9
-  }
+  "tags": [
+    "Coworking Space",
+    "Quiet",
+    "Wheelchair Accessible",
+    "Professional Service"
+  ]
 }

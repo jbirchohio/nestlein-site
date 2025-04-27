@@ -11,13 +11,11 @@
   "longitude": -74.1477635,
   "hours": "Mon\u2013Sun: 11:35\u202fAM to 10\u202fPM",
   "open_now": "Open",
-  "tags": [
-    "American restaurant"
-  ],
-  "review_score": 5,
+  "review_score": 4.8,
   "review_count": 17,
+  "email": "",
   "best_time_to_work_remotely": "Mid-afternoon",
-  "remote_work_summary": "Ironbound Cafe offers a welcoming atmosphere with friendly staff and accommodating service. While primarily a restaurant, it provides a comfortable space for a casual working session, especially during quieter mid-afternoon hours.",
+  "remote_work_summary": "Ironbound Cafe offers a welcoming atmosphere with friendly staff and a cool neighborhood vibe. While it may not be specifically designed for remote work, its accommodating service and comfortable seating can make it a decent spot for working during quieter times.",
   "remote_work_features": {
     "wi_fi_quality": "Unknown",
     "outlet_access": "Unknown",
@@ -25,13 +23,23 @@
     "seating_comfort": "Comfortable",
     "natural_light": "Unknown",
     "stay_duration_friendliness": "Friendly",
-    "food_drink_options": "Good",
+    "food_drink_options": "Great food and liquor selection",
     "bathroom_access": "Available",
     "parking_availability": "Unknown"
   },
   "scores": {
-    "food_quality": 8,
+    "food_quality": 9,
     "service": 9,
-    "ambiance": 7
-  }
+    "ambiance": 8,
+    "value": 8,
+    "experience": 9
+  },
+  "tags": [
+    "Friendly Staff",
+    "Cool Neighborhood",
+    "Comfortable Seating",
+    "Great Food",
+    "Liquor Selection",
+    "Mid-Afternoon"
+  ]
 }

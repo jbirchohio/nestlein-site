@@ -12,28 +12,27 @@
   "hours": "Mon\u2013Fri: 8\u202fAM to 10\u202fPM, Sat\u2013Sun: 10\u202fAM to 6\u202fPM",
   "open_now": "Open",
   "review_score": 4.5,
-  "review_count": 323,
+  "review_count": 325,
+  "email": "",
   "best_time_to_work_remotely": "Before 10 AM",
-  "remote_work_summary": "NeueHouse Madison Square offers a well-designed coworking space with a great atmosphere and impeccable bathrooms. However, Wi-Fi connection issues have been reported, which might be a concern for remote workers relying on stable internet.",
+  "remote_work_summary": "NeueHouse Madison Square offers a sophisticated and creative atmosphere ideal for remote work. The space is well-designed with impeccable bathrooms and a variety of seating areas, although it can get busy during events.",
   "remote_work_features": {
-    "wi_fi_quality": "Poor",
+    "wi_fi_quality": "Unknown",
     "outlet_access": "Unknown",
-    "noise_level": "Quiet",
-    "seating_comfort": "Comfortable",
-    "natural_light": "Unknown",
-    "stay_duration_friendliness": "Friendly",
-    "food_drink_options": "Good",
+    "noise_level": "Moderate",
+    "seating_comfort": "High",
+    "natural_light": "Good",
+    "stay_duration_friendliness": "High",
+    "food_drink_options": "Excellent",
     "bathroom_access": "Excellent",
     "parking_availability": "Unknown"
   },
   "tags": [
-    "Coworking",
-    "Cultural Center",
-    "Event Venue",
-    "Social Club",
-    "Quiet",
-    "Comfortable Seating",
+    "Creative Atmosphere",
+    "Sophisticated",
     "Good Food",
-    "Excellent Bathrooms"
+    "Events",
+    "Social Club",
+    "Cultural Center"
   ]
 }
