@@ -1,0 +1,48 @@
+{
+  "slug": "the-blackwell-inn-pfahl-conference-center-43210",
+  "name": "The Blackwell Inn & Pfahl Conference Center",
+  "place_id": "ChIJPf2Qr5eOOIgRLDwJntbbQw4",
+  "address": "2110 Tuttle Park Pl, Columbus, OH 43210",
+  "phone_number": "(614) 247-4000",
+  "website": "http://www.theblackwell.com/?ref=roamly",
+  "menu_url": null,
+  "logo_url": "https://lh3.googleusercontent.com/p/AF1QipMFhZfr9n1q8wjsSfED0ncifF2w42o8SeROwDyT=w408-h326-k-no",
+  "latitude": 40.0046873,
+  "longitude": -83.0168672,
+  "hours": "",
+  "open_now": "Open",
+  "review_score": 4.6,
+  "review_count": 1058,
+  "email": "3x@3x.png",
+  "best_time_to_work_remotely": "Unknown",
+  "remote_work_summary": "Located at the corner of OSU campus, The Blackwell Inn & Pfahl Conference Center offers a convenient location for remote work with good food options and friendly staff. Ideal for those attending events at OSU, it provides a comfortable environment with easy parking access.",
+  "remote_work_features": {
+    "wi_fi_quality": "Unknown",
+    "outlet_access": "Unknown",
+    "noise_level": "Unknown",
+    "seating_comfort": "Unknown",
+    "natural_light": "Unknown",
+    "stay_duration_friendliness": "Unknown",
+    "food_drink_options": "Good",
+    "bathroom_access": "Unknown",
+    "parking_availability": "Available"
+  },
+  "scores": {
+    "food_quality": 8,
+    "service": 9,
+    "ambiance": 8,
+    "experience": 9
+  },
+  "tags": [
+    "Good Coffee Nearby",
+    "Comfortable Chairs"
+  ],
+  "space_type": "Hotel Lobby",
+  "features": [
+    "Good Coffee",
+    "Parking On-site"
+  ],
+  "wifi_quality": "Unknown",
+  "outlet_access": "Unknown",
+  "noise_level": "Unknown"
+}
