@@ -15,31 +15,11 @@
   "review_count": 1058,
   "email": "3x@3x.png",
   "best_time_to_work_remotely": "Unknown",
-  "remote_work_summary": "Located at the corner of OSU campus, The Blackwell Inn & Pfahl Conference Center offers a convenient location for remote work with good food options and friendly staff. Ideal for those attending events at OSU, it provides a comfortable environment with easy parking access.",
-  "remote_work_features": {
-    "wi_fi_quality": "Unknown",
-    "outlet_access": "Unknown",
-    "noise_level": "Unknown",
-    "seating_comfort": "Unknown",
-    "natural_light": "Unknown",
-    "stay_duration_friendliness": "Unknown",
-    "food_drink_options": "Good",
-    "bathroom_access": "Unknown",
-    "parking_availability": "Available"
-  },
-  "scores": {
-    "food_quality": 8,
-    "service": 9,
-    "ambiance": 8,
-    "experience": 9
-  },
-  "tags": [
-    "Good Coffee Nearby",
-    "Comfortable Chairs"
-  ],
+  "remote_work_summary": "The Blackwell Inn & Pfahl Conference Center is a hotel located at the corner of the OSU campus, providing a convenient location for events. The hotel offers a friendly and helpful staff, making it a comfortable place for remote work. While the focus is on events and conferences, it might not be the quietest spot for solo work.",
   "space_type": "Hotel Lobby",
   "features": [
-    "Good Coffee",
+    "Food Options",
+    "Comfortable Seating",
     "Parking On-site"
   ],
   "wifi_quality": "Unknown",

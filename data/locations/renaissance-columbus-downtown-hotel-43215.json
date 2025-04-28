@@ -14,22 +14,16 @@
   "review_score": 4.3,
   "review_count": 2209,
   "email": "",
-  "best_time_to_work_remotely": "Unknown",
-  "remote_work_summary": "The Renaissance Columbus Downtown Hotel offers a comfortable environment for remote work with its clean rooms and exceptional service. Ideal for business travelers, it provides a professional setting in downtown Columbus.",
+  "best_time_to_work_remotely": "After 6 PM",
+  "remote_work_summary": "Located in downtown Columbus, the Renaissance Columbus Downtown Hotel offers a comfortable setting for remote work. While the noise level can be moderate due to thin walls, the hotel provides a pleasant atmosphere with good service.",
   "remote_work_features": {
-    "wi_fi_quality": "Unknown",
-    "outlet_access": "Unknown",
     "noise_level": "Moderate",
-    "seating_comfort": "Unknown",
-    "natural_light": "Unknown",
-    "stay_duration_friendliness": "Unknown",
-    "food_drink_options": "Unknown",
-    "bathroom_access": "Unknown",
-    "parking_availability": "Unknown"
+    "seating_comfort": "Comfortable"
   },
   "scores": {
     "service": 9,
-    "ambiance": 7
+    "ambiance": 7,
+    "experience": 8
   },
   "tags": [
     "Meeting-Friendly Environment",

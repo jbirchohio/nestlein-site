@@ -15,16 +15,34 @@
   "review_count": 3542,
   "email": "",
   "best_time_to_work_remotely": "Unknown",
-  "remote_work_summary": "Located in downtown Columbus, Hilton Columbus Downtown offers a modern and accommodating space for remote work. The hotel is connected to the convention center, making it ideal for business travelers.",
+  "remote_work_summary": "Located in downtown Columbus, Hilton Columbus Downtown offers a modern and clean environment suitable for remote work. The hotel provides a quiet ambiance, making it ideal for focused work, with helpful staff and valet parking available.",
+  "remote_work_features": {
+    "wi_fi_quality": "Unknown",
+    "outlet_access": "Unknown",
+    "noise_level": "Quiet",
+    "seating_comfort": "Unknown",
+    "natural_light": "Unknown",
+    "stay_duration_friendliness": "Unknown",
+    "food_drink_options": "Unknown",
+    "bathroom_access": "Unknown",
+    "parking_availability": "Valet Parking"
+  },
+  "scores": {
+    "service": 9,
+    "ambiance": 8,
+    "experience": 9
+  },
+  "tags": [
+    "Quiet",
+    "Good Service",
+    "Downtown Location"
+  ],
   "space_type": "Hotel Lobby",
   "features": [
-    "Power Outlets",
-    "Food Options",
-    "Comfortable Seating",
-    "Parking On-site"
+    "Quiet Space",
+    "Valet Parking"
   ],
   "wifi_quality": "Unknown",
   "outlet_access": "Unknown",
-  "noise_level": "Unknown",
-  "price_level": "$$$"
+  "noise_level": "Quiet"
 }
